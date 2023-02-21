@@ -33,18 +33,26 @@ local_repo/
         git pull origin main
         ```
 2.	Dependencies & Packages
-    * Install Packages
+    * Install Python Packages [Make sure to be in top-level directory]
         ```
         pip install -r requirements.txt
+        ```
+    * Install Node Packages [Make sure to be in /frontend]
+        ```
+        npm install
+        ```
+    * If installing Node packages
+        ```
+        npm install --save new-dependency
         ```
 
 
 # Build and Test
-1. Backend:
+1. Backend [Make sure to be in /backend]:
     ```
     python manage.py runserver
     ```
-2. Frontend:
+2. Frontend [Make sure to be in /frontend]:
     ```
     npm start
     ```
