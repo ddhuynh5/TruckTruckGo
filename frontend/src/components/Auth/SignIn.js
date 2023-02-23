@@ -1,15 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export default function SignIn() {
+const [username, setUsername] = useState('');
+const [password, setPassword] = useState('');
 
-    return (
-        <><div class="form-group">
-            <label for="InputUsername">Username</label>
-            <input type="username" class="form-control" id="InputUsername" placeholder="Enter Username" />
+const handleLogin = () => {
+    console.log('Username:', username);
+    console.log('Password:', password);
+    // Add code here to handle the login logic
+};
+
+return (
+    <div className="container">
+    <form>
+        <div className="form-group">
+        <label htmlFor="InputUsername">Username</label>
+        <input
+            type="username"
+            className="form-control"
+            id="InputUsername"
+            placeholder="Enter Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+        />
         </div>
-        <div class="form-group">
-            <label for="InputPassword">Password</label>
-            <input type="password" class="form-control" id="InputPassword" placeholder="Enter Password" />
-        </div></>
-    );
+        <div className="form-group">
+        <label htmlFor="InputPassword">Password</label>
+        <input
+            type="password"
+            className="form-control"
+            id="InputPassword"
+            placeholder="Enter Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+        />
+        </div>
+        <button type="submit" className="btn btn-primary" onClick={handleLogin}>
+        Login
+        </button>
+    </form>
+    </div>
+);
 }
