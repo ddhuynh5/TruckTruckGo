@@ -10,6 +10,18 @@ const handleLogin = () => {
     // Add code here to handle the login logic
 };
 
+const hidePass=()=> {
+    var x=document.getElementById("InputPassword");
+    if(x.type === "password"){
+        x.type="text";
+    }
+    else{
+        x.type="password";
+    }
+}
+
+
+
 return (
     <div className="container">
     <form>
@@ -38,6 +50,7 @@ return (
         <button type="submit" className="btn btn-primary" onClick={handleLogin}>
         Login
         </button>
+        <input type="checkbox" onClick={hidePass}/>Show Password
     </form>
     </div>
 );
