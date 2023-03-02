@@ -52,6 +52,16 @@ local_repo/
     ```
     python manage.py runserver
     ```
+    If you run into this or a similar message:
+    ```
+    You have 18 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): admin, auth, contenttypes, sessions.
+    Run 'python manage.py migrate' to apply them.
+    ```
+    Run the following to initialize a local test database:
+    ```
+    python manage.py makemigrations
+    python manage.py migrate
+    ```
 2. Frontend [Make sure to be in /frontend]:
     ```
     npm start
