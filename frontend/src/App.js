@@ -7,6 +7,7 @@ import LandingPage from './components/Auth/LandingPage';
 import ForgotPass from './components/Auth/ForgotPass';
 import ForgotEmail from'./components/Auth/ForgotEmail';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import SettingsPage from './components/settings/SettingsPage';
 
 
 function App() {
@@ -18,7 +19,9 @@ function App() {
         <Route path='/signup' element={<SignUp />} />
         <Route path='/drivers' element={<Drivers />} />
         <Route path='/forgotpass' element={<ForgotPass />} />
+        <Route path='/accountsettings' element={<SettingsPage />} />
         <Route path='/forgotemail' element={<ForgotEmail />} />
+
       </Routes>
     </BrowserRouter>
   );
