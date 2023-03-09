@@ -2,10 +2,11 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 import SignUp from './components/Auth/SignUp';
 import SignIn from './components/Auth/SignIn';
-import Drivers from './components/test / backend_test';
+import Drivers from './components/test/backend_test';
 import LandingPage from './components/Auth/LandingPage';
-
+import ForgotPass from './components/Auth/ForgotPass';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path='/signin' element={<SignIn />} />
         <Route path='/signup' element={<SignUp />} />
         <Route path='/drivers' element={<Drivers />} />
+        <Route path='/forgotpass' element={<ForgotPass />} />
       </Routes>
     </BrowserRouter>
   );

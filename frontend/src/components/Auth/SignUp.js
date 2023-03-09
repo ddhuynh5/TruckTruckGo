@@ -96,7 +96,7 @@ export default function SignUp() {
       <h1>Reached Sign Up Page</h1>
       <div className="form">
         <div>
-          <h1>User Registration</h1>
+          <h2>User Registration</h2>
         </div>
         
         <div className="messages">
@@ -143,6 +143,7 @@ export default function SignUp() {
           <button onClick={handleSubmit} className="btn" type="submit">
             Submit
           </button>
+          <p><a href="SignIn">Already have an account?</a></p>
         </form>
       </div>
     </>

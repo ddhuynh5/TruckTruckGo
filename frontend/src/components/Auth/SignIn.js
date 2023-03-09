@@ -1,14 +1,35 @@
 import React, { useState } from 'react';
+import SignUp from './SignUp';
 
 export default function SignIn() {
 const [username, setUsername] = useState('');
 const [password, setPassword] = useState('');
+const [attempts, loginAttempts] = useState(3);
 
 const handleLogin = () => {
-    console.log('Username:', username);
-    console.log('Password:', password);
+    //console.log('Username:', username);
+    //console.log('Password:', password);
     // Add code here to handle the login logic
-};
+    var username = document.getElementById("InputUsername").value;
+	var password = document.getElementById("InputPassword").value;
+
+	if(username === "" || password === ""){
+		alert ("Please fill out the required fields!");
+	}else{
+		if (username === "admin" && password === "admin"){
+			alert ("Login successful");
+		}else{
+			loginAttempts(attempts - 1);
+			document.getElementById("msg").innerHTML="<center class='text-danger'>Invalid username or password</center>";
+			alert("You have "+ attempts +" login attempts remaining;");
+			if(loginAttempts === 0){
+				document.getElementById("inputUsername").disabled=true;
+				document.getElementById("inputPassword").disabled=true;
+				document.getElementById("submit").disabled=true;
+			}
+		}
+	}
+}
 
 const hidePass=()=> {
     var x=document.getElementById("InputPassword");
@@ -25,6 +46,7 @@ const hidePass=()=> {
 return (
     <div className="container">
     <form>
+        <h1>Sign In</h1>
         <div className="form-group">
         <label htmlFor="InputUsername">Username</label>
         <input
@@ -51,6 +73,11 @@ return (
         Login
         </button>
         <input type="checkbox" onClick={hidePass}/>Show Password
+        <div className="msg">
+				<span id="msg"></span>
+				<br />
+        </div>
+        <p><a href="ForgotPass">Forgot Password?</a></p>
     </form>
     </div>
 );
