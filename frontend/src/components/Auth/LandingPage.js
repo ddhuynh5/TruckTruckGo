@@ -22,7 +22,11 @@ const hidePass=()=> {
 }
 
 const changePage = () => {
-    window.location='';
+    window.location='/signin';
+};
+
+const changePage2 = () => {
+    window.location='/signup';
 };
 
 
@@ -38,7 +42,7 @@ return (
         <button type="submit" className="btn" onClick={changePage}>
         Sign In
         </button>
-        <button type="submit" className="startBtn" onClick={changePage}>
+        <button type="submit" className="startBtn" onClick={changePage2}>
         Get started
         </button>
         <p className="bodyText">Get rewarded for your good driving!</p>

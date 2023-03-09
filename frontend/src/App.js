@@ -5,6 +5,7 @@ import SignIn from './components/Auth/SignIn';
 import Drivers from './components/test/backend_test';
 import LandingPage from './components/Auth/LandingPage';
 import ForgotPass from './components/Auth/ForgotPass';
+import ForgotEmail from'./components/Auth/ForgotEmail';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import SettingsPage from './components/settings/SettingsPage';
 
@@ -19,6 +20,8 @@ function App() {
         <Route path='/drivers' element={<Drivers />} />
         <Route path='/forgotpass' element={<ForgotPass />} />
         <Route path='/accountsettings' element={<SettingsPage />} />
+        <Route path='/forgotemail' element={<ForgotEmail />} />
+
       </Routes>
     </BrowserRouter>
   );

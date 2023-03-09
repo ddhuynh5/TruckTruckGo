@@ -78,6 +78,7 @@ return (
 				<br />
         </div>
         <p><a href="ForgotPass">Forgot Password?</a></p>
+        <p><a href="ForgotEmail">Forgot Email?</a></p>
     </form>
     </div>
 );
