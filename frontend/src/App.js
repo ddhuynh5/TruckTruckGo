@@ -8,7 +8,7 @@ import ForgotPass from './components/Auth/ForgotPass';
 import ForgotEmail from'./components/Auth/ForgotEmail';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import SettingsPage from './components/settings/SettingsPage';
-
+import HomePage from './components/Auth/HomePage';
 
 
 function App() {
@@ -22,6 +22,7 @@ function App() {
         <Route path='/forgotpass' element={<ForgotPass />} />
         <Route path='/accountsettings' element={<SettingsPage />} />
         <Route path='/forgotemail' element={<ForgotEmail />} />
+        <Route path='/home' element={<HomePage />}/>
 
       </Routes>
     </BrowserRouter>

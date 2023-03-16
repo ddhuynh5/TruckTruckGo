@@ -179,6 +179,11 @@ button {
   width: 50%;
 }
 
+.homepagebtn {
+  float: left;
+  width: 25%;
+}
+
 /* Add padding to container elements */
 .container {
   padding: 10px;
