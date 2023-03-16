@@ -16,14 +16,6 @@ export default function SignUp() {
     setNameError(false);
   };
 
-  function Checkbox() {
-    const [isChecked, setIsChecked] = useState(false);
-
-    const handleCheckboxChange = (event) => {
-      setIsChecked(event.target.checked);
-    };
-  }
-
   const handleEmail = (e) => {
     const emailValue = e.target.value;
     setEmail(emailValue);
@@ -58,10 +50,6 @@ export default function SignUp() {
     } else {
       setSubmitted(true);
       setError(false);
-
-      // Check if "Remember Me" checkbox is checked
-      const rememberMe = document.getElementById('remember_me').checked;
-      console.log('Remember Me:', rememberMe);
     }
   };
 
@@ -73,7 +61,7 @@ export default function SignUp() {
           display: submitted ? '' : 'none',
         }}
       >
-        <h1>User {name} successfully registered!!</h1>
+        <p>User {name} successfully registered!!</p>
       </div>
     );
   };
@@ -86,66 +74,54 @@ export default function SignUp() {
           display: error ? '' : 'none',
         }}
       >
-        <h1>Please enter all the fields correctly</h1>
+        <p>Please enter all the fields correctly</p>
       </div>
     );
   };
 
   return (
-    <>
-      <h1>Reached Sign Up Page</h1>
-      <div className="form">
-        <div>
-          <h2>User Registration</h2>
-        </div>
-
-        <div className="messages">
-          {errorMessage()}
-          {successMessage()}
-        </div>
-
-        <form>
-          <label className="label">Name</label>
-          <input
-            onChange={handleName}
-            className="input"
-            value={name}
-            type="text"
-          />
-
-          <label className="label">Email</label>
-          <input
-            onChange={handleEmail}
-            className="input"
-            value={email}
-            type="email"
-          />
-          {emailError && (
-            <div className="error">Please enter a valid email address</div>
-          )}
-
-          <label className="label">Password</label>
-          <input
-            onChange={handlePassword}
-            className="input"
-            value={password}
-            type="password"
-          />
-          {passwordError && (
-            <div className="error">
-              Password must be at least 8 characters long and contain at least
-              one capital letter and one number
-            </div>
-          )}
-
-          <input type="checkbox" id="remember_me" />Remember Me
-
-          <button onClick={handleSubmit} className="btn" type="submit">
-            Submit
-          </button>
-          <p><a href="SignIn">Already have an account?</a></p>
-        </form>
+    <div className = "wrapper">
+      <div class="banner">
+        <h1>Route Rewards</h1>
       </div>
-    </>
+      <div class="container">
+          <form name = "Sign Up"> 
+            <h2>User Registration</h2>
+              <div className="messages">
+                {errorMessage()}
+                {successMessage()}
+              </div>
+
+              <label for="name"><b>Name</b></label>
+              <input
+                onChange={handleName}
+                className="input"
+                value={name}
+                type="text"
+              />
+
+              <label for="email"><b>Email</b></label>
+              <input
+                onChange={handleEmail}
+                className="input"
+                value={email}
+                type="text"
+              /> {emailError && (<div class="error">Please enter a valid email address</div>)}
+
+              <label for="password"><b>Password</b></label>
+              <input
+                onChange={handlePassword}
+                className="input"
+                value={password}
+                type="password"
+              /> {passwordError && (<div class="error">Password must be at least 8 characters long and contain at least
+                  one capital letter and one number</div>)}
+
+              <p><a href="SignIn">Already have an account?</a></p>
+
+              <button onClick={handleSubmit} class="signupbtn" type="button"> Sign Up </button>
+          </form>
+      </div>
+    </div>
   );
 }

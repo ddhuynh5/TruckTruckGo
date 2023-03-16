@@ -10,6 +10,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import SettingsPage from './components/settings/SettingsPage';
 
 
+
 function App() {
   return (
     <BrowserRouter>

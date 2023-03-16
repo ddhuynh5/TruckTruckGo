@@ -13,28 +13,31 @@ export default function ForgotPass() {
     }
 
 
-    return (
+return (
+    <div className='wrapper'>
+        <div class="banner"><h1>Route Rewards</h1></div>
         <div className="container">
-            <form>
-                <h1>Forgot Password</h1>
-                <div className="form-group">
-                    <label htmlFor="InputEmail">Email account is registered with:</label>
-                    <input
-                        type="email"
-                        className="form-control"
-                        id="InputEmail"
-                        placeholder="Enter Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                </div>
-                <button type="reset" className="btn-reset" onClick={handleReset}>Reset Password</button>
-                <p><a href="SignUp">Don't have an account?</a></p>
-            </form>
+        <form>
+        <h2>Forgot Password</h2>
+            <div className="form-group">
+            <label htmlFor="InputEmail">Email account is registered with:</label>
+            <input
+                type="email"
+                className="form-control"
+                id="InputEmail"
+                placeholder="Enter Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+            />
+            </div>
+            <button type="reset" className="btn-reset" onClick={handleReset}>Reset Password</button>
+            <p><a href="SignUp">Don't have an account?</a></p>
+        </form>
             <div className="msg">
-                <span id="msg"></span>
-                <br />
+                    <span id="msg"></span>
+                    <br />
             </div>
         </div>
-    );
+    </div>
+);
 }

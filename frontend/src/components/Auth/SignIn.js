@@ -43,81 +43,46 @@ export default function SignIn() {
 
 
 
-    return (
+return (
+    <div className='wrapper'>
+        <div class="banner"><h1>Route Rewards</h1></div>
         <div className="container">
-            <form>
-                <h1>Sign In</h1>
-                <div className="form-group">
-                    <label htmlFor="InputUsername">Username</label>
-                    <input
-                        type="username"
-                        className="form-control"
-                        id="InputUsername"
-                        placeholder="Enter Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="InputPassword">Password</label>
-                    <input
-                        type="password"
-                        className="form-control"
-                        id="InputPassword"
-                        placeholder="Enter Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                </div>
-                <button type="submit" className="btn btn-primary" onClick={handleLogin}>
-                    Login
-                </button>
-                <input type="checkbox" onClick={hidePass} />Show Password
-                <div className="msg">
+        <form>
+            <h2>Sign In</h2>
+            <div className="form-group">
+            <label htmlFor="InputUsername">Username</label>
+            <input
+                type="username"
+                className="form-control"
+                id="InputUsername"
+                placeholder="Enter Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+            />
+            </div>
+            <div className="form-group">
+            <label htmlFor="InputPassword">Password</label>
+            <input
+                type="password"
+                className="form-control"
+                id="InputPassword"
+                placeholder="Enter Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+            />
+            </div>
+            <button type="submit" className="btn btn-primary" class = "button" onClick={handleLogin}>
+            Login
+            </button>
+            <input type="checkbox" onClick={hidePass}/>Show Password
+            <div className="msg">
                     <span id="msg"></span>
                     <br />
-                </div>
-                <p><a href="ForgotPass">Forgot Password?</a></p>
-            </form>
+            </div>
+            <p><a href="ForgotPass">Forgot Password?</a></p>
+            <p><a href="ForgotEmail">Forgot Email?</a></p>
+        </form>
         </div>
-    );
-    return (
-        <div className="container">
-            <form>
-                <h1>Sign In</h1>
-                <div className="form-group">
-                    <label htmlFor="InputUsername">Username</label>
-                    <input
-                        type="username"
-                        className="form-control"
-                        id="InputUsername"
-                        placeholder="Enter Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="InputPassword">Password</label>
-                    <input
-                        type="password"
-                        className="form-control"
-                        id="InputPassword"
-                        placeholder="Enter Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                </div>
-                <button type="submit" className="btn btn-primary" onClick={handleLogin}>
-                    Login
-                </button>
-                <input type="checkbox" onClick={hidePass} />Show Password
-                <div className="msg">
-                    <span id="msg"></span>
-                    <br />
-                </div>
-                <p><a href="ForgotPass">Forgot Password?</a></p>
-                <p><a href="ForgotEmail">Forgot Email?</a></p>
-            </form>
-        </div>
-    );
+    </div>
+);
 }

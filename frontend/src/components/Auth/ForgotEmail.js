@@ -14,26 +14,29 @@ const handleEmailReset = () => {
 
 
 return (
-    <div className="container">
-    <form>
-    <h1>Forgot Email</h1>
-        <div className="form-group">
-        <label htmlFor="InputBackupEmail">Enter a backup email account:</label>
-        <input
-            type="email"
-            className="form-control"
-            id="InputBackupEmail"
-            placeholder="Enter Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-        />
-        </div>
-        <button type="reset" className="btn-reset" onClick={handleEmailReset}>Reset Email</button>
-        <p><a href="SignUp">Don't have an account?</a></p>
-    </form>
-        <div className="msg">
-				<span id="msg"></span>
-				<br />
+    <div className='wrapper'>
+        <div class="banner"><h1>Route Rewards</h1></div>
+        <div className="container">
+        <form>
+        <h2>Forgot Email</h2>
+            <div className="form-group">
+            <label htmlFor="InputBackupEmail">Enter a backup email account:</label>
+            <input
+                type="email"
+                className="form-control"
+                id="InputBackupEmail"
+                placeholder="Enter Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+            />
+            </div>
+            <button type="reset" className="btn-reset" onClick={handleEmailReset}>Reset Email</button>
+            <p><a href="SignUp">Don't have an account?</a></p>
+        </form>
+            <div className="msg">
+                    <span id="msg"></span>
+                    <br />
+            </div>
         </div>
     </div>
 );

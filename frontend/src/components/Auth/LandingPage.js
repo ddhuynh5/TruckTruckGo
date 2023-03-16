@@ -3,29 +3,10 @@ import styles from '../../App.css';
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 
-export default function SignIn() {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-
-    const handleLogin = () => {
-        console.log('Username:', username);
-        console.log('Password:', password);
-        // Add code here to handle the login logic
-    };
-
-    const hidePass = () => {
-        var x = document.getElementById("InputPassword");
-        if (x.type === "password") {
-            x.type = "text";
-        }
-        else {
-            x.type = "password";
-        }
-    }
-
-    const changePage = () => {
-        window.location = '/signin';
-    };
+export default function LandingPage() {
+const changePage = () => {
+    window.location='/signin';
+};
 
     const changePage2 = () => {
         window.location = '/signup';
@@ -33,20 +14,24 @@ export default function SignIn() {
 
 
 
-    return (
+return ( 
+    <div className='wrapper'>
+        <h1 class="banner">Route Rewards</h1>
         <div className="container">
-            <body>
-                <h1 className="title">Good Driver Incentive Program</h1>
-                <p className="headLog">Already have an account?</p>
-
-                <button type="submit" className="btn" onClick={changePage}>
-                    Sign In
-                </button>
-                <button type="submit" className="startBtn" onClick={changePage}>
-                    Get started
-                </button>
-                <p className="bodyText">Get rewarded for your good driving!</p>
-            </body>
+            <p class = "landing">Earn points from our sponsors and get rewarded for your good driving! Sign up today!</p>
+            <button class = "button" onClick={changePage}>Sign In</button>
+            <button class = "button" onClick={changePage2}>Sign Up</button>
+            <p class = "landing">Some of our sponsors:</p>
+            <ul class="images">
+            <li>Nike <img src="img/nike.jpg"></img></li>
+            <li>Apple</li>
+            <li>Goodwill</li>
+            <li>Lowes</li>
+            <li>Bass Pro Shops</li>
+            <li>Doofenshmirtz Evil Inc.</li>
+            </ul>
+            <p class = "landing">Join today and start getting rewarded for your drives!</p>
         </div>
-    );
+    </div>
+);
 }
