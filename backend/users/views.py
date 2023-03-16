@@ -17,6 +17,10 @@ load_dotenv()
 DB_PASS = os.getenv("DB_PASS")
 
 
+def homepage():
+    return HttpResponse("Hello World")
+
+
 @api_view(["GET"])
 def get_driver(request):
     """ Pulls Drivers from Users Table """
@@ -47,3 +51,7 @@ def get_driver(request):
     database.close()
 
     return HttpResponse(data, content_type="application/json")
+
+
+#@api_view(["GET"])
+#def 

@@ -18,7 +18,7 @@ export default function SignUp() {
 
   function Checkbox() {
     const [isChecked, setIsChecked] = useState(false);
-  
+
     const handleCheckboxChange = (event) => {
       setIsChecked(event.target.checked);
     };
@@ -58,7 +58,7 @@ export default function SignUp() {
     } else {
       setSubmitted(true);
       setError(false);
-  
+
       // Check if "Remember Me" checkbox is checked
       const rememberMe = document.getElementById('remember_me').checked;
       console.log('Remember Me:', rememberMe);
@@ -98,7 +98,7 @@ export default function SignUp() {
         <div>
           <h2>User Registration</h2>
         </div>
-        
+
         <div className="messages">
           {errorMessage()}
           {successMessage()}
@@ -138,7 +138,7 @@ export default function SignUp() {
             </div>
           )}
 
-           <input type="checkbox" id ="remember_me" />Remember Me
+          <input type="checkbox" id="remember_me" />Remember Me
 
           <button onClick={handleSubmit} className="btn" type="submit">
             Submit

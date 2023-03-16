@@ -18,6 +18,7 @@ from django.urls import path
 from users import views
 
 urlpatterns = [
+    path("/", views.homepage),
     path("admin/", admin.site.urls),
     path("drivers", views.get_driver),
 ]
