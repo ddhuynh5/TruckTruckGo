@@ -10,6 +10,10 @@ export default function SignUp() {
   const [passwordError, setPasswordError] = useState(false);
   const [error, setError] = useState(false);
 
+  const changePage = () => {
+    window.location='/home';
+  };
+
   const handleName = (e) => {
     setName(e.target.value);
     setSubmitted(false);
@@ -50,6 +54,7 @@ export default function SignUp() {
     } else {
       setSubmitted(true);
       setError(false);
+      changePage();
     }
   };
 
@@ -63,6 +68,7 @@ export default function SignUp() {
       >
         <p>User {name} successfully registered!!</p>
       </div>
+      
     );
   };
 

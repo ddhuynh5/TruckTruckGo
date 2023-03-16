@@ -6,6 +6,10 @@ export default function SignIn() {
     const [password, setPassword] = useState('');
     const [attempts, loginAttempts] = useState(3);
 
+    const changePage = () => {
+        window.location='/home';
+    };
+
     const handleLogin = () => {
         //console.log('Username:', username);
         //console.log('Password:', password);
@@ -17,6 +21,7 @@ export default function SignIn() {
             alert("Please fill out the required fields!");
         } else {
             if (username === "admin" && password === "admin") {
+                changePage();
                 alert("Login successful");
             } else {
                 loginAttempts(attempts - 1);
