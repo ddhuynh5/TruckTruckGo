@@ -143,4 +143,4 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-DEFAULT_FROM_EMAIL = "test_email@testing.com"
+DEFAULT_FROM_EMAIL = "scrummybears4910@gmail.com"
