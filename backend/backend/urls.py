@@ -21,5 +21,6 @@ urlpatterns = [
     path("", views.homepage),
     path("admin/", admin.site.urls),
     path("drivers", views.get_driver),
-    path("signup_driver", views.signup_driver)
+    path("signup", views.signup),
+    path("password_reset", views.password_reset, name="password_reset")
 ]
