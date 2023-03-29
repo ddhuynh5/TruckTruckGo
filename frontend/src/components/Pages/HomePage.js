@@ -5,12 +5,18 @@ import { Link } from "react-router-dom";
 
 export default function HomePage() {
 
-const changePage = () => {
+const changePageSettings = () => {
     window.location='/accountsettings';
 };
+const changePageHome = () => {
+    window.location='/cart';
+};
+const changePageSponsors = () => {
+    window.location='/sponsors';
+};
 
-const changePage2 = () => {
-    window.location='/accountsettings';
+const changePagePoints = () => {
+    window.location='/points';
 };
 
 
@@ -22,9 +28,9 @@ return(
                 <nav class="navbar navbar-dark navbar-expand p-0 bg-dark">
                     <div class="container-fluid">
                         <ul class="navbar-nav d-none d-md-flex mr-auto">
-                            <li class="nav-item"><a class="nav-link" href="#" data-abc="true">Sponsors</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#" data-abc="true">Points</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#" data-abc="true">My Cart</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" onClick={changePageSponsors} data-abc="true">Sponsors</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" onClick={changePagePoints} data-abc="true">Points</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" onClick={changePageHome} data-abc="true">My Cart</a></li>
                         </ul>
                         <ul class="navbar-nav d-flex align-items-center">
                             <li class="nav-item">
@@ -33,7 +39,7 @@ return(
                                 </div>
                             </li>
                             <li class="nav-item">
-                                <a href="#" onClick={changePage} class="nav-link d-flex align-items-center" data-abc="true"><span>Truck Driver</span><i class='bx bxs-chevron-down'></i></a>
+                                <a href="#" onClick={changePageSettings} class="nav-link d-flex align-items-center" data-abc="true"><span>Truck Driver</span><i class='bx bxs-chevron-down'></i></a>
                             </li>
                         </ul>
                     </div> 
@@ -50,7 +56,7 @@ return(
                             </div>
                             <div class="col-md-2">
                                 <div class="d-flex flex-column ms-2">
-                                    <span class="qty">No items in cart</span>
+                                    <span class="qty">3 items in cart</span>
                                     <span class="fw-bold">4000 Points</span>
                                 </div>            
                             </div>
