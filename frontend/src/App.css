@@ -136,7 +136,7 @@ hr {
 
 ul.images {
     margin: 0;
-    padding: 0;
+    padding: 10px;
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -148,6 +148,7 @@ ul.images {
     flex: 0 0 auto;
     width: 350px;
     height: 200px;
+    text-align: center;
   }
   ul.images li img{
     max-width: 100%;
@@ -196,6 +197,26 @@ button {
     text-align: center;
     padding: 5px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.homepagetxt {
+   text-align: left;
+   padding: 5px;
+   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.searchBar{
+  padding: 5px;
+  vertical-align: middle;
+  border: #282c34;
+}
+.searchButton {
+  text-align: center;
+  vertical-align: middle;
+  margin: 15px;
+  padding: 15px;
+  width: auto;
+  height: max-content;
 }
 
 /* WEB ACCESSIBILITY Change styles for cancel button and signup button on extra small screens */
