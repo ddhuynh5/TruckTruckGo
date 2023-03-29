@@ -41,7 +41,7 @@ def validate_email(email):
 def get_driver(request):
     """ Pulls Drivers from Users Table """
 
-    queryset = Driver.objects.filter(role_id=3).order_by("role_id", "sponsor_id").values("first_name", "last_name", "email", "address")
+    queryset = Drivers.objects.filter(role_id=3).order_by("role_id", "sponsor_id").values("first_name", "last_name", "email", "sponsor_id", "address")
     json_data = json.dumps(list(queryset))
 
     return HttpResponse(json_data, content_type="application/json")
