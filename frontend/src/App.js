@@ -8,7 +8,10 @@ import ForgotPass from './components/Auth/ForgotPass';
 import ForgotEmail from'./components/Auth/ForgotEmail';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import SettingsPage from './components/settings/SettingsPage';
-import HomePage from './components/Auth/HomePage';
+import HomePage from './components/Pages/HomePage';
+import Cart from './components/Pages/Cart';
+import Sponsors from './components/Pages/Sponsors';
+import Points from './components/Pages/Points';
 
 
 function App() {
@@ -23,6 +26,9 @@ function App() {
         <Route path='/accountsettings' element={<SettingsPage />} />
         <Route path='/forgotemail' element={<ForgotEmail />} />
         <Route path='/home' element={<HomePage />}/>
+        <Route path='/cart' element={<Cart />}/>
+        <Route path='/sponsors' element={<Sponsors />}/>
+        <Route path='/points' element={<Points />}/>
 
       </Routes>
     </BrowserRouter>

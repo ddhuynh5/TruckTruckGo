@@ -136,7 +136,7 @@ hr {
 
 ul.images {
     margin: 0;
-    padding: 0;
+    padding: 10px;
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -148,6 +148,7 @@ ul.images {
     flex: 0 0 auto;
     width: 350px;
     height: 200px;
+    text-align: center;
   }
   ul.images li img{
     max-width: 100%;
@@ -198,6 +199,53 @@ button {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
+.homepagetxt {
+   text-align: left;
+   padding: 5px;
+   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.searchBar{
+  padding: 5px;
+  vertical-align: middle;
+  border: #282c34;
+}
+.searchButton {
+  text-align: center;
+  vertical-align: middle;
+  margin: 15px;
+  padding: 15px;
+  width: auto;
+  height: max-content;
+}
+.card{
+  margin: auto;
+  max-width: 950px;
+  width: 90%;
+  box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 1rem;
+  border: transparent;
+}
+.row{
+  margin: 0;
+}
+.close{
+  margin-left: auto;
+  font-size: 0.7rem;
+}
+.col-2, .col{
+  padding: 0 1vh;
+}
+.btncheckout{
+  background-color: #000;
+  border-color: #000;
+  color: white;
+  width: 100%;
+  font-size: 0.7rem;
+  margin-top: 4vh;
+  padding: 1vh;
+  border-radius: 0;
+}
 /* WEB ACCESSIBILITY Change styles for cancel button and signup button on extra small screens */
 @media screen and (max-width: 300px) {
   .signupbtn {
