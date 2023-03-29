@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 
 export default function HomePage() {
+    const [search, setSearch] = useState('');
 
 const changePageSettings = () => {
     window.location='/accountsettings';
@@ -19,6 +20,19 @@ const changePagePoints = () => {
     window.location='/points';
 };
 
+const handleSearch = (e) => {
+    const SearchValue = e.target.value;
+    setSearch(SearchValue);
+};
+
+const handleSubmit = (e) => {
+    e.preventDefault();
+    if (search === '') {
+        window.location='/home';
+    } else {
+        window.location= '/home#search='+ search;
+    }
+};
 
 return(
     <div className='wrapper'>
@@ -50,8 +64,8 @@ return(
                         <div class="row p-2 pt-3 pb-3 d-flex align-items-center">
                             <div class="col-md-8">
                                 <div class="d-flex form-inputs">
-                                    <input class="searchBar" type="text" placeholder="Search any product..."></input>
-                                    <button class = "searchButton">Search</button>
+                                    <input class="searchBar" type="text" onChange={handleSearch} placeholder="Search any product..."></input>
+                                    <button class = "searchButton" onClick={handleSubmit}>Search</button>
                                 </div>
                             </div>
                             <div class="col-md-2">
@@ -67,11 +81,11 @@ return(
                 <nav class="navbar navbar-expand-lg navbar-light bg-light">
                     <div class="container-fluid">
                         <ul class="navbar-nav">
-                            <li class="nav-item"><a class="nav-link" href="#search+electronics">Electronics</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#search+clothes">Clothes</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#search+furniture">Furniture</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#search+phones">Phones</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#search+shoes">Shoes</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#search/category/electronics">Electronics</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#search/category/clothes">Clothes</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#search/category/furniture">Furniture</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#search/category/phones">Phones</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#shoes">Shoes</a></li>
                         </ul>
                     </div>
                 </nav>
