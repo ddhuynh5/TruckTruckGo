@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import CryptoJS from 'crypto-js';
 
 export default function SignUp() {
   const [name, setName] = useState('');
@@ -49,11 +50,16 @@ export default function SignUp() {
     } else if (nameError || emailError || passwordError) {
       setError(true);
     } else {
+      // Generate a random token
+      const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      // Encrypt the token
+      const encryptedToken = CryptoJS.AES.encrypt(token, 'my-secret-key').toString();
       axios.post('/api/register', { name, email, password })
         .then(res => {
           setSubmitted(true);
           setError(false);
-          document.cookie = `authToken=${res.data.token}; path=/`;
+          // Set the encrypted token in a cookie
+          document.cookie = `authToken=${encryptedToken}; path=/`;
           window.location = '/home';
         })
         .catch(err => {

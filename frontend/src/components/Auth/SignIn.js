@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import SignUp from './SignUp';
 import Cookies from 'js-cookie';
 import { v4 as uuidv4 } from 'uuid';
+import CryptoJS from 'crypto-js';
 
 export default function SignIn() {
   const [username, setUsername] = useState('');
@@ -19,10 +20,14 @@ export default function SignIn() {
     if (username === "" || password === "") {
       alert("Please fill out the required fields!");
     } else {
-      if (username === "admin" && password === "admin") {
-        const authToken = uuidv4();
-        // You can also encrypt the token here before setting it as a cookie
-        Cookies.set('authToken', authToken, { expires: 7 });
+      const userAuth = {
+        "admin": "admin_token", // For testing purposes only
+        "jane_doe": generateToken(), // Replace with actual user token
+        "john_smith": generateToken() // Replace with actual user token
+      };
+      if (userAuth.hasOwnProperty(username) && userAuth[username] === password) {
+        // Set authentication cookie with user token on successful login
+        Cookies.set('authToken', userAuth[username], { expires: 7 });
         changePage();
         alert("Login successful");
       } else {
@@ -30,13 +35,28 @@ export default function SignIn() {
         document.getElementById("msg").innerHTML = "<center class='text-danger'>Invalid username or password</center>";
         alert("You have " + attempts + " login attempts remaining;");
         if (loginAttempts === 0) {
-          document.getElementById("inputUsername").disabled = true;
-          document.getElementById("inputPassword").disabled = true;
+          document.getElementById("InputUsername").disabled = true;
+          document.getElementById("InputPassword").disabled = true;
           document.getElementById("submit").disabled = true;
         }
       }
     }
+  };
+  
+  const encrypt = (data) => {
+    const encryptedData = CryptoJS.AES.encrypt(data, 'secret_key').toString();
+    return encryptedData;
   }
+  
+  const decrypt = (encryptedData) => {
+    const decryptedData = CryptoJS.AES.decrypt(encryptedData, 'secret_key').toString(CryptoJS.enc.Utf8);
+    return decryptedData;
+  }
+  
+  const generateToken = () => {
+    // Generate a random token for the user
+    return btoa(Math.random().toString(36).substr(2, 10));
+  };
 
   const hidePass = () => {
     var x = document.getElementById("InputPassword");
