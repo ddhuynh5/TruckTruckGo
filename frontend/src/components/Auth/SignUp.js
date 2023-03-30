@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import CryptoJS from 'crypto-js';
 
 export default function SignUp() {
   const [name, setName] = useState('');
@@ -9,10 +11,6 @@ export default function SignUp() {
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [error, setError] = useState(false);
-
-  const changePage = () => {
-    window.location='/home';
-  };
 
   const handleName = (e) => {
     setName(e.target.value);
@@ -52,9 +50,22 @@ export default function SignUp() {
     } else if (nameError || emailError || passwordError) {
       setError(true);
     } else {
-      setSubmitted(true);
-      setError(false);
-      changePage();
+      // Generate a random token
+      const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      // Encrypt the token
+      const encryptedToken = CryptoJS.AES.encrypt(token, 'my-secret-key').toString();
+      axios.post('/api/register', { name, email, password })
+        .then(res => {
+          setSubmitted(true);
+          setError(false);
+          // Set the encrypted token in a cookie
+          document.cookie = `authToken=${encryptedToken}; path=/`;
+          window.location = '/home';
+        })
+        .catch(err => {
+          console.error(err);
+          setError(true);
+        });
     }
   };
 
@@ -113,7 +124,6 @@ export default function SignUp() {
                 value={email}
                 type="text"
               /> {emailError && (<div class="error">Please enter a valid email address</div>)}
-
               <label for="password"><b>Password</b></label>
               <input
                 onChange={handlePassword}
