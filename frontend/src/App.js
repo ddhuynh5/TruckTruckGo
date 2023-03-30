@@ -2,10 +2,9 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 import SignUp from './components/Auth/SignUp';
 import SignIn from './components/Auth/SignIn';
-import Drivers from './components/test/backend_test';
 import LandingPage from './components/Auth/LandingPage';
 import ForgotPass from './components/Auth/ForgotPass';
-import ForgotEmail from'./components/Auth/ForgotEmail';
+import ForgotEmail from './components/Auth/ForgotEmail';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import SettingsPage from './components/settings/SettingsPage';
 import HomePage from './components/Pages/HomePage';
@@ -21,15 +20,13 @@ function App() {
         <Route exact path='/' element={<LandingPage />} />
         <Route path='/signin' element={<SignIn />} />
         <Route path='/signup' element={<SignUp />} />
-        <Route path='/drivers' element={<Drivers />} />
         <Route path='/forgotpass' element={<ForgotPass />} />
         <Route path='/accountsettings' element={<SettingsPage />} />
-        <Route path='/forgotemail' element={<ForgotEmail />} />
-        <Route path='/home' element={<HomePage />}/>
-        <Route path='/cart' element={<Cart />}/>
-        <Route path='/sponsors' element={<Sponsors />}/>
-        <Route path='/points' element={<Points />}/>
-
+        {/* <Route path='/forgotemail' element={<ForgotEmail />} /> */}
+        <Route path='/home' element={<HomePage />} />
+        <Route path='/cart' element={<Cart />} />
+        <Route path='/sponsors' element={<Sponsors />} />
+        <Route path='/points' element={<Points />} />
       </Routes>
     </BrowserRouter>
   );

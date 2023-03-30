@@ -1,4 +1,4 @@
-import styles from '../../App.css';
+import '../../App.css';
 
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
@@ -135,6 +135,5 @@ return(
                 <Copyright sx={{ pt: 4 }} />
             </container>
         </div>
-    </div>
-)
+    )
 }

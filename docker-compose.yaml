@@ -5,14 +5,19 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    volumes:
+      - ./backend:/backend
     ports:
       - "8000:8000"
-    command: bash -c "python manage.py runserver"
+    command: bash -c "python manage.py runserver 0.0.0.0:8000"
 
   web:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/frontend
+      - ./frontend:/node_modules
     ports:
       - "3000:3000"
     command: "npm start"

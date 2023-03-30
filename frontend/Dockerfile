@@ -6,6 +6,8 @@ COPY . .
 
 RUN npm ci
 
+VOLUME /frontend
+
 EXPOSE 3000
 
 CMD ["npm", "start"]
