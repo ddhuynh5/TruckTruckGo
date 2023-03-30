@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SignUp from './SignUp';
 import Cookies from 'js-cookie';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function SignIn() {
   const [username, setUsername] = useState('');
@@ -12,18 +13,16 @@ export default function SignIn() {
   };
 
   const handleLogin = () => {
-    //console.log('Username:', username);
-    //console.log('Password:', password);
-    // Add code here to handle the login logic
-    var username = document.getElementById("InputUsername").value;
-    var password = document.getElementById("InputPassword").value;
-
+    const username = document.getElementById("InputUsername").value;
+    const password = document.getElementById("InputPassword").value;
+  
     if (username === "" || password === "") {
       alert("Please fill out the required fields!");
     } else {
       if (username === "admin" && password === "admin") {
-        // Set authentication cookie with user id on successful login
-        Cookies.set('authToken', '1234', { expires: 7 });
+        const authToken = uuidv4();
+        // You can also encrypt the token here before setting it as a cookie
+        Cookies.set('authToken', authToken, { expires: 7 });
         changePage();
         alert("Login successful");
       } else {
