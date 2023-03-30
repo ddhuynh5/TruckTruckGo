@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 export default function SignUp() {
   const [name, setName] = useState('');
@@ -9,10 +10,6 @@ export default function SignUp() {
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [error, setError] = useState(false);
-
-  const changePage = () => {
-    window.location='/home';
-  };
 
   const handleName = (e) => {
     setName(e.target.value);
@@ -52,9 +49,17 @@ export default function SignUp() {
     } else if (nameError || emailError || passwordError) {
       setError(true);
     } else {
-      setSubmitted(true);
-      setError(false);
-      changePage();
+      axios.post('/api/register', { name, email, password })
+        .then(res => {
+          setSubmitted(true);
+          setError(false);
+          document.cookie = `authToken=${res.data.token}; path=/`;
+          window.location = '/home';
+        })
+        .catch(err => {
+          console.error(err);
+          setError(true);
+        });
     }
   };
 
@@ -113,7 +118,6 @@ export default function SignUp() {
                 value={email}
                 type="text"
               /> {emailError && (<div class="error">Please enter a valid email address</div>)}
-
               <label for="password"><b>Password</b></label>
               <input
                 onChange={handlePassword}
