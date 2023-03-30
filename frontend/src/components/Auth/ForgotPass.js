@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+
+
 export default function ForgotPass() {
     const [email, setEmail] = useState('');
 
@@ -8,10 +11,15 @@ export default function ForgotPass() {
             document.getElementById("msg").innerHTML = "<center class='text'>Please enter an email</center>";
         } else {
             setEmail(email);
-            document.getElementById("msg").innerHTML = "<center class='text'>Check your email for a link to reset your password</center>";
+            axios.post('http://localhost:8000/password_reset', { email })
+                .then(() => {
+                    document.getElementById("msg").innerHTML = "<center class='text'>Check your email for a link to reset your password</center>";
+                })
+                .catch(err => {
+                    console.error(err);
+                });
         }
     }
-
 
     return (
         <div className='wrapper'>

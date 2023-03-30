@@ -10,13 +10,13 @@ export default function SignIn() {
   const [attempts, loginAttempts] = useState(3);
 
   const changePage = () => {
-    window.location='/home';
+    window.location = '/home';
   };
 
   const handleLogin = () => {
     const username = document.getElementById("InputUsername").value;
     const password = document.getElementById("InputPassword").value;
-  
+
     if (username === "" || password === "") {
       alert("Please fill out the required fields!");
     } else {
@@ -32,7 +32,7 @@ export default function SignIn() {
         alert("Login successful");
       } else {
         loginAttempts(attempts - 1);
-        document.getElementById("msg").innerHTML = "<center class='text-danger'>Invalid username or password</center>";
+        document.getElementById("msg").innerHTML = "<center className='text-danger'>Invalid username or password</center>";
         alert("You have " + attempts + " login attempts remaining;");
         if (loginAttempts === 0) {
           document.getElementById("InputUsername").disabled = true;
@@ -42,17 +42,17 @@ export default function SignIn() {
       }
     }
   };
-  
+
   const encrypt = (data) => {
     const encryptedData = CryptoJS.AES.encrypt(data, 'secret_key').toString();
     return encryptedData;
   }
-  
+
   const decrypt = (encryptedData) => {
     const decryptedData = CryptoJS.AES.decrypt(encryptedData, 'secret_key').toString(CryptoJS.enc.Utf8);
     return decryptedData;
   }
-  
+
   const generateToken = () => {
     // Generate a random token for the user
     return btoa(Math.random().toString(36).substr(2, 10));
@@ -79,7 +79,7 @@ export default function SignIn() {
 
   return (
     <div className='wrapper'>
-      <div class="banner"><h1>Route Rewards</h1></div>
+      <div className="banner"><h1>Route Rewards</h1></div>
       <div className="container">
         <form>
           <h2>Sign In</h2>
@@ -105,16 +105,16 @@ export default function SignIn() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <button type="submit" className="btn btn-primary" class = "button" onClick={handleLogin}>
+          <button type="submit" className="button" onClick={handleLogin}>
             Login
           </button>
-          <input type="checkbox" onClick={hidePass}/>Show Password
+          <input type="checkbox" onClick={hidePass} />Show Password
           <div className="msg">
             <span id="msg"></span>
             <br />
           </div>
           <p><a href="ForgotPass">Forgot Password?</a></p>
-          <p><a href="ForgotEmail">Forgot Email?</a></p>
+          {/* <p><a href="ForgotEmail">Forgot Email?</a></p> */}
         </form>
       </div>
     </div>
