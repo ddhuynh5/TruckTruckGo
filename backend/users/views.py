@@ -41,7 +41,7 @@ def validate_email(email):
 def get_driver(request):
     """ Pulls Drivers from Users Table """
 
-    queryset = Driver.objects.filter(role_id=3).order_by("role_id", "sponsor_id").values("first_name", "last_name", "email", "address")
+    queryset = Drivers.objects.filter(role_id=3).order_by("role_id", "sponsor_id").values("first_name", "last_name", "email", "sponsor_id", "address")
     json_data = json.dumps(list(queryset))
 
     return HttpResponse(json_data, content_type="application/json")
@@ -125,10 +125,16 @@ def signup(request):
 
         email = data["email"]
         if not validate_email(email):
-            return JsonResponse({"error": "Invalid email"})
+            return JsonResponse({"Invalid email": email}, status=400)
 
         # Create a new User object from the form data
         try:
+            # Check if all required fields are present and not empty
+            required_fields = ['first_name', 'last_name', 'email', 'password', 'role_id', 'sponsor_id']
+            for field in required_fields:
+                if not data.get(field):
+                    return JsonResponse({"Missing or empty field": field}, status=400)
+
             if not Users.objects.filter(email=data["email"]).exists():
                 user = Users.objects.create(
                     first_name=data["first_name"],
@@ -141,14 +147,12 @@ def signup(request):
                 )
                 user.save()
             else:
-                return JsonResponse({
-                    "error": "User with this email already exists"
-                })
+                return JsonResponse({"User with this email already exists": email}, status=400)
         except ConnectionRefusedError as error:
             print(error)
 
         # Send a welcome email to the new user
         response = send_welcome_email(user.email, user.first_name)
 
-        return JsonResponse({"success": True})
+        return JsonResponse({"success": True}, status=200)
 
