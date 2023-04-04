@@ -15,12 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from users import views
+from users import views as users_views
+from catalog import views as catalog_views
 
 urlpatterns = [
-    path("", views.homepage),
+    #path("", users_views.homepage),
     path("admin/", admin.site.urls),
-    path("drivers", views.get_driver),
-    path("signup", views.signup),
-    path("password_reset", views.password_reset, name="password_reset")
+    path("drivers", users_views.get_driver),
+    path("signup", users_views.signup),
+    path("password_reset", users_views.password_reset),
+    path("catalog", catalog_views.get_products)
 ]
