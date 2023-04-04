@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from users import views as users_views
 from catalog import views as catalog_views
+from points import views as points_views
 
 urlpatterns = [
     #path("", users_views.homepage),
@@ -24,5 +25,6 @@ urlpatterns = [
     path("drivers", users_views.get_driver),
     path("signup", users_views.signup),
     path("password_reset", users_views.password_reset),
-    path("catalog", catalog_views.get_products)
+    path("catalog", catalog_views.get_products),
+    path("points", points_views.get_points)
 ]

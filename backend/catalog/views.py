@@ -41,7 +41,7 @@ def get_products(request):
             if not response.dict():
                 return JsonResponse({"message": "No items found"}, status=404)
             
-            return HttpResponse(json.dumps(response.dict()), status=200)
+            return HttpResponse(json.dumps(response.dict()), status=200, content_type="application/json")
 
         except ConnectionError as e:
             print(e)
