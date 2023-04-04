@@ -27,7 +27,12 @@ def homepage(request):
 
 
 def validate_email(email):
-    """ Validates the email usign Django's EmailValidator """
+    """
+        Validates the email using Django's EmailValidator
+
+        parameter - email: Email to be validated
+        return - bool: true if valid, false if not
+    """
 
     validator = EmailValidator()
     try:
@@ -49,7 +54,15 @@ def get_driver(request):
 
 @api_view(["GET"])
 def check_password(request):
-    """ 1-1 check on current password vs previous password """
+    """
+        1-1 check on current password vs previous password
+
+        parameter - request: holds user's email and password
+        return - JSON:
+            True: password match
+            False: no match
+            Error: User doesn't exist in the table
+    """
 
     if request.method == "GET":
         try:
@@ -71,7 +84,14 @@ def check_password(request):
 
 @api_view(["GET"])
 def login_exists(request):
-    """ Checks if the login exists in database """
+    """
+        Checks if the login exists in database
+
+        parameter - request: holds user's email
+        return - JSON:
+            True: User exists
+            False: User doesn't exist
+    """
 
     if request.method == "GET":
         email = request.GET.get("email")
@@ -89,7 +109,15 @@ def login_exists(request):
 
 @api_view(["POST"])
 def password_reset(request):
-    """ Sends a password reset email to user """
+    """
+        Sends a password reset email to user
+
+        parameter - request: email to send password reset email to
+        return - JSON:
+            Error: Email entered is invalid
+            Error: User doesn't exist in database
+            True: Successfully sent email
+    """
 
     if request.method == "POST":
         data = json.loads(request.body)
@@ -116,7 +144,23 @@ def password_reset(request):
 
 @api_view(["POST"])
 def signup(request):
-    """ Creates new record from data gathered on frontend """
+    """
+        Creates new record from data gathered on frontend
+
+        parameter - request:
+            first name
+            last name
+            address
+            role id
+            sponsor id
+            email
+            password
+        return - JSON:
+            Invalid email, 400 status
+            Missing [field here], 400 status
+            User with [email here] already exists, 400 status
+            True: Successfully create new user
+    """
 
     if request.method == "POST":
         # Get the form data from the JSON request body
