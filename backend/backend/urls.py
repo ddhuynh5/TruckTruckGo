@@ -25,6 +25,7 @@ urlpatterns = [
     path("signup", users_views.signup),
     path("login", users_views.login),
     path("password_reset", users_views.password_reset),
+    path("update", users_views.update),
     path("catalog", catalog_views.get_products),
     path("points", points_views.get_points)
 ]
