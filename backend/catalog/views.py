@@ -17,6 +17,10 @@ def get_products(request):
         Returns a list of items from eBay API in JSON format
 
         parameter - request: holds keyword/s to use with eBay API
+            Example:
+                {
+                    "keywords": "iphone"
+                }
         return - JSON: a list of items from eBay API in JSON format
     """
 

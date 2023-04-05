@@ -9,8 +9,10 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.crypto import get_random_string
 from django.urls import reverse
+from django.core import serializers
 from django.core.validators import EmailValidator
 from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.decorators import api_view
 from .models import Drivers, Users
 from .email_notifications import send_welcome_email, send_password_reset
@@ -18,12 +20,6 @@ from .email_notifications import send_welcome_email, send_password_reset
 # get environment variable from .env
 load_dotenv()
 DB_PASS = os.getenv("DB_PASS")
-
-
-def homepage(request):
-    """ Backend temp home page """
-    
-    return HttpResponse("Hello World")
 
 
 def validate_email(email):
@@ -101,10 +97,41 @@ def login_exists(request):
 
         try:
             user = Users.objects.get(email=email)
-        except Users.DoesNotExist:
+            if not user:
+                raise ObjectDoesNotExist()
+        except ObjectDoesNotExist:
             return JsonResponse({"exists": False})
         else:
             return JsonResponse({"exists": True})
+
+
+@api_view(["POST"])
+def login(request):
+    """
+        Checks user login with db
+
+        Parameter:
+            email - The user's email address
+            password - The user's password
+        Returns:
+            User data in JSON format
+    """
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+
+        if not validate_email(data["email"]):
+            return JsonResponse({"error": "Invalid email"}, status=400)
+
+        try:
+            password = hashlib.sha512(data["password"].encode()).hexdigest()
+            user = Users.objects.filter(email=data["email"], password=password)
+            if not user:
+                raise ObjectDoesNotExist()
+            json_data = serializers.serialize("json", user)
+            return HttpResponse(json_data, content_type="application/json")
+        except ObjectDoesNotExist:
+            return JsonResponse({"error": "User does not exist"}, status=400)
 
 
 @api_view(["POST"])
@@ -194,6 +221,7 @@ def signup(request):
                 return JsonResponse({"User with this email already exists": email}, status=400)
         except ConnectionRefusedError as error:
             print(error)
+            return JsonResponse({"Connection Error": error}, status=400)
 
         # Send a welcome email to the new user
         response = send_welcome_email(user.email, user.first_name)
