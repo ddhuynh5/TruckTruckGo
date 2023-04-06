@@ -3,11 +3,13 @@
 import os
 import json
 import bcrypt
+from datetime import datetime
 from dotenv import load_dotenv
 
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.crypto import get_random_string
+from django.utils import timezone
 from django.urls import reverse
 from django.core import serializers
 from django.core.validators import EmailValidator
@@ -21,6 +23,8 @@ from .email_notifications import send_welcome_email, send_password_reset
 # get environment variable from .env
 load_dotenv()
 DB_PASS = os.getenv("DB_PASS")
+
+MAX_LOGIN_ATTEMPTS = 5
 
 
 def validate_email(email):
@@ -214,17 +218,42 @@ def login(request):
         try:
             password = data["password"].encode("utf-8")
             user = Users.objects.get(email=data["email"])
+
+            if "lockout_time" in request.COOKIES and request.COOKIES["lockout_time"] != "undefined":
+                locked_until = datetime.fromisoformat(request.COOKIES["lockout_time"]).astimezone(timezone.utc)
+                if timezone.now() < locked_until:
+                    remaining_time = locked_until - timezone.now()
+                    remaining_time_str = f"{remaining_time.seconds // 60} minutes and {remaining_time.seconds % 60} seconds"
+                    return JsonResponse({
+                        "error": f"Maximum login attempts exceeded. You may try again in {remaining_time_str}."
+                    }, status=400)
+                else:
+                    response = JsonResponse({
+                        "error": "You may attempt to log in again."
+                    }, status=400)
+                    response.delete_cookie("lockout_time")
+                    user.login_attempts = 0
+                    user.save()
+                    return response
+
             if not bcrypt.checkpw(password, user.password):
                 user.login_attempts += 1
-                if user.login_attempts >= 3:
+                if user.login_attempts >= MAX_LOGIN_ATTEMPTS:
                     # Limit exceeded, show error message
-                    return JsonResponse({"error": "Maximum login attempts exceeded"}, status=400)
+                    lockout = timezone.now() + timezone.timedelta(minutes=5)
+                    remaining_time = lockout - timezone.now()
+                    remaining_time_str = f"{remaining_time.seconds // 60} minutes and {remaining_time.seconds % 60} seconds"
+                    response = JsonResponse({
+                        "error": f"Maximum login attempts exceeded. You may try again after {remaining_time_str}."
+                    }, status=400)
+                    response.set_cookie("lockout_time", lockout)
+                    return response
                 else:
                     user.save()
                     # Password incorrect, show error message
                     return JsonResponse({
                         "Error": "Incorrect password",
-                        "Login Attempts Remaining": 3 - user.login_attempts
+                        "Login Attempts Remaining": MAX_LOGIN_ATTEMPTS - user.login_attempts
                     }, status=400)
             else:
                 # Password correct, return user data
