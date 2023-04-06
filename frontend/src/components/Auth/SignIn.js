@@ -3,42 +3,41 @@ import SignUp from './SignUp';
 import Cookies from 'js-cookie';
 import { v4 as uuidv4 } from 'uuid';
 import CryptoJS from 'crypto-js';
+import { login, saveCookies, getRoleName } from './Auth_Helper';
 
 export default function SignIn() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [attempts, loginAttempts] = useState(3);
+  const [email, setEmail] = useState('');
+  const [roleId, setRoleId] = useState('');
 
   const changePage = () => {
     window.location = '/home';
   };
 
-  const handleLogin = () => {
+  const handleLogin = async (event) => {
+    event.preventDefault();
+
     const username = document.getElementById("InputUsername").value;
     const password = document.getElementById("InputPassword").value;
 
-    if (username === "" || password === "") {
-      alert("Please fill out the required fields!");
-    } else {
-      const userAuth = {
-        "admin": "admin_token", // For testing purposes only
-        "jane_doe": generateToken(), // Replace with actual user token
-        "john_smith": generateToken() // Replace with actual user token
-      };
-      if (userAuth.hasOwnProperty(username) && userAuth[username] === password) {
-        // Set authentication cookie with user token on successful login
-        Cookies.set('authToken', userAuth[username], { expires: 7 });
-        changePage();
-        alert("Login successful");
+    try {
+      const response = await login(username, password);
+      setEmail(response[0].fields.email);
+      setRoleId(response[0].fields.role_id);
+      saveCookies({
+        email: email,
+        role: getRoleName(roleId),
+      });
+      changePage();
+    } catch (error) {
+      if (error && error["Login Attempts Remaining"]) {
+        alert(`Incorrect password. Login attempts remaining: ${error["Login Attempts Remaining"]}`);
+      } else if (error && error["error"]) {
+        alert(error["error"]);
       } else {
-        loginAttempts(attempts - 1);
-        document.getElementById("msg").innerHTML = "<center className='text-danger'>Invalid username or password</center>";
-        alert("You have " + attempts + " login attempts remaining;");
-        if (loginAttempts === 0) {
-          document.getElementById("InputUsername").disabled = true;
-          document.getElementById("InputPassword").disabled = true;
-          document.getElementById("submit").disabled = true;
-        }
+        console.error(error);
+        alert("An error occurred while logging in.");
       }
     }
   };
@@ -71,8 +70,10 @@ export default function SignIn() {
   // Check for authentication cookie on mount
   React.useEffect(() => {
     const authToken = Cookies.get('authToken');
-    if (authToken) {
-      // Authenticate user based on authToken...
+    const emailCookie = Cookies.get('email');
+    const roleCookie = Cookies.get('role');
+    if (authToken && emailCookie && roleCookie) {
+      // Authenticate user based on authToke...
       changePage();
     }
   }, []);
@@ -84,12 +85,12 @@ export default function SignIn() {
         <form>
           <h2>Sign In</h2>
           <div className="form-group">
-            <label htmlFor="InputUsername">Username</label>
+            <label htmlFor="InputUsername">Email</label>
             <input
               type="username"
               className="form-control"
               id="InputUsername"
-              placeholder="Enter Username"
+              placeholder="Enter Email"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
