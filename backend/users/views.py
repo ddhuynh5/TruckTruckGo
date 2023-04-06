@@ -330,7 +330,7 @@ def signup(request):
 
         email = data["email"]
         if not validate_email(email):
-            return JsonResponse({"Invalid email": email}, status=400)
+            return JsonResponse({"Error": "Invalid email"}, status=400)
 
         # Create a new User object from the form data
         try:
@@ -338,7 +338,7 @@ def signup(request):
             required_fields = ["first_name", "last_name", "email", "password", "role_id", "sponsor_id"]
             for field in required_fields:
                 if not data.get(field):
-                    return JsonResponse({"Missing or empty field": field}, status=400)
+                    return JsonResponse({"Error": f"Missing or empty [{field}]"}, status=400)
 
             if not Users.objects.filter(email=email).exists():
                 user = Users.objects.create(
@@ -358,10 +358,10 @@ def signup(request):
                     print(e)
                     return JsonResponse({"Error: ": str(e)}, status=400)
             else:
-                return JsonResponse({"User with this email already exists": email}, status=400)
+                return JsonResponse({"Error": f"User [{email}] already exists"}, status=400)
         except ConnectionRefusedError as error:
             print(error)
-            return JsonResponse({"Connection Error": error}, status=400)
+            return JsonResponse({"Error": error}, status=400)
 
         # Send a welcome email to the new user
         response = send_welcome_email(user.email, user.first_name)
