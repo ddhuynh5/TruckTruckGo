@@ -2,7 +2,7 @@
 
 import os
 import json
-import hashlib
+import bcrypt
 from dotenv import load_dotenv
 
 from django.http import HttpResponse, JsonResponse
@@ -150,14 +150,15 @@ def check_password(request):
     if request.method == "GET":
         try:
             email = request.GET.get("email")
+            password = request.GET.get("password")
 
             if not validate_email(email):
                 return JsonResponse({"error": "Invalid email"})
 
-            current_pass = hashlib.sha512(request.GET.get("password").encode()).hexdigest()
+            current_pass = password.encode("utf-8")
             prev_pass = Users.objects.filter(email=email).values("password")
             
-            if current_pass == prev_pass:
+            if bcrypt.checkpw(current_pass, prev_pass):
                 return JsonResponse({"matches": True})
             else:
                 return JsonResponse({"matches": False})
@@ -198,8 +199,8 @@ def login(request):
         Checks user login with db
 
         Parameter:
-            email - The user"s email address
-            password - The user"s password
+            email - The user's email address
+            password - The user's password
         Returns:
             User data in JSON format
     """
@@ -211,13 +212,28 @@ def login(request):
             return JsonResponse({"error": "Invalid email"}, status=400)
 
         try:
-            password = hashlib.sha512(data["password"].encode()).hexdigest()
-            user = Users.objects.filter(email=data["email"], password=password)
-            if not user:
-                raise ObjectDoesNotExist()
-            json_data = serializers.serialize("json", user)
-            return HttpResponse(json_data, content_type="application/json")
+            password = data["password"].encode("utf-8")
+            user = Users.objects.get(email=data["email"])
+            if not bcrypt.checkpw(password, user.password):
+                user.login_attempts += 1
+                if user.login_attempts >= 3:
+                    # Limit exceeded, show error message
+                    return JsonResponse({"error": "Maximum login attempts exceeded"}, status=400)
+                else:
+                    user.save()
+                    # Password incorrect, show error message
+                    return JsonResponse({
+                        "Error": "Incorrect password",
+                        "Login Attempts Remaining": 3 - user.login_attempts
+                    }, status=400)
+            else:
+                # Password correct, return user data
+                json_data = serializers.serialize("json", [user])
+                user.login_attempts = 0
+                user.save()
+                return HttpResponse(json_data, content_type="application/json")
         except ObjectDoesNotExist:
+            # User does not exist, show error message
             return JsonResponse({"error": "User does not exist"}, status=400)
 
 
@@ -281,7 +297,7 @@ def signup(request):
     if request.method == "POST":
         # Get the form data from the JSON request body
         data = json.loads(request.body)
-        password = hashlib.sha512(data["password"].encode()).hexdigest()
+        password = bcrypt.hashpw(data["password"].encode(), bcrypt.gensalt())
 
         email = data["email"]
         if not validate_email(email):
@@ -332,8 +348,11 @@ def update(request):
         Updates user in database
 
         Parameter:
-            email - User's email, used to locate in db
-
+            email - User"s email, used to locate in db
+            [parameter to update here]
+        Returns:
+            Success msg if record updated
+            Error - connection, invalid email, can't find user in db
     """
 
     if request.method == "POST":
