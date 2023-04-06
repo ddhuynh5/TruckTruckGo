@@ -320,8 +320,10 @@ def signup(request):
 
         # Send a welcome email to the new user
         response = send_welcome_email(user.email, user.first_name)
+        new_user = Users.objects.filter(email=email)
+        json_data = serializers.serialize("json", new_user)
 
-        return JsonResponse({"success": True}, status=200)
+        return HttpResponse(json_data, content_type="application/json", status=response)
 
 
 @api_view(["POST"])
