@@ -9,10 +9,11 @@ def get_points(request):
         Returns points for driver
 
         parameter: 
-            Driver's ID - in form: 
-            { 
-                "id": [Driver's Id Here]
-            }
+            Driver's ID
+            Example: 
+                { 
+                    "id": [Driver's Id Here]
+                }
         return:
             Driver's points
     """

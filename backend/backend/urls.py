@@ -20,11 +20,12 @@ from catalog import views as catalog_views
 from points import views as points_views
 
 urlpatterns = [
-    #path("", users_views.homepage),
     path("admin/", admin.site.urls),
     path("drivers", users_views.get_driver),
     path("signup", users_views.signup),
+    path("login", users_views.login),
     path("password_reset", users_views.password_reset),
+    path("update", users_views.update),
     path("catalog", catalog_views.get_products),
     path("points", points_views.get_points)
 ]
