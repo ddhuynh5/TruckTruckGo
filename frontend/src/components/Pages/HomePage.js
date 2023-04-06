@@ -2,16 +2,11 @@ import '../../App.css';
 
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
-import Typography from '@mui/material/Typography';
-import { Col, Container, Dropdown, ListGroup, Row } from "react-bootstrap";
+import Navbar from './Navbar';
 
 export default function HomePage() {
     const [search, setSearch] = useState('');
 
-    const changePageSettings = () => {window.location='/accountsettings';};
-    const changePageHome = () => {window.location='/cart';};
-    const changePageSponsors = () => {window.location='/sponsors';};
-    const changePagePoints = () => {window.location='/points';};
     const handleSearch = (e) => {
         const SearchValue = e.target.value;
         setSearch(SearchValue);
@@ -25,48 +20,9 @@ export default function HomePage() {
         }
     };
 
-    function Copyright(props) {
-        return (
-        <Typography variant="body2" color="text.secondary" align="center" {...props}>
-            {'Copyright © '}
-            <Link color="inherit" href="https://mui.com/">
-            Your Website
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-        );
-    }
-
-    function Navbar(){
-        return(
-            <nav class="navbar navbar-dark navbar-expand p-0 bg-dark">
-                <div class="container-fluid">
-                    <ul class="navbar-nav d-none d-md-flex mr-auto">
-                        <li class="nav-item"><a class="nav-link" href="#" onClick={changePageSponsors} data-abc="true">Sponsors</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#" onClick={changePagePoints} data-abc="true">Points</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#" onClick={changePageHome} data-abc="true">My Cart</a></li>
-                    </ul>
-                    <ul class="navbar-nav d-flex align-items-center">
-                        <li class="nav-item">
-                            <div class="d-flex flex-row">
-                                <img src="https://i.pinimg.com/originals/f1/0f/f7/f10ff70a7155e5ab666bcdd1b45b726d.jpg" class="rounded-circle" width="30"></img>
-                            </div>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" onClick={changePageSettings} class="nav-link d-flex align-items-center" data-abc="true"><span>Truck Driver</span><i class='bx bxs-chevron-down'></i></a>
-                        </li>
-                    </ul>
-                </div> 
-            </nav> 
-        );
-    }
-
     function Filter(){
         return(
-            <Dropdown>
-                <button class="btnfilter">Filter</button>
-            </Dropdown>
+            <button class="btnfilter">Filter</button>
         );
     }
 
@@ -132,8 +88,8 @@ return(
                 <ProductDisplay></ProductDisplay>
                 <ProductDisplay></ProductDisplay>
                 <ProductDisplay></ProductDisplay>
-                <Copyright sx={{ pt: 4 }} />
             </container>
         </div>
+    </div>
     )
 }
