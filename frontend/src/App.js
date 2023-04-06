@@ -11,6 +11,7 @@ import HomePage from './components/Pages/HomePage';
 import Cart from './components/Pages/Cart';
 import Sponsors from './components/Pages/Sponsors';
 import Points from './components/Pages/Points';
+import CatalogPage from './components/Pages/Products';
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
         <Route path='/cart' element={<Cart />} />
         <Route path='/sponsors' element={<Sponsors />} />
         <Route path='/points' element={<Points />} />
+        <Route path='/catalog' element={<CatalogPage />} />
       </Routes>
     </BrowserRouter>
   );

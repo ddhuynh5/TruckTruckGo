@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
-import axios from 'axios';
 import CryptoJS from 'crypto-js';
+import { signup, saveCookies, getRoleName } from './AuthHelper';
 
 export default function SignUp() {
   const [first_name, setFirstName] = useState('');
@@ -99,11 +99,11 @@ export default function SignUp() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     // check role - not currently taking Sponsor/Admin, so reject those
     if (selectedRole && selectedRole.label !== "Driver") {
       setSelectedRole(null);
-      alert("We are not currently taking applications for Sponsors or Admins at the current moment.");
+      alert("We are not currently taking applications for Sponsors or Admins at the moment.");
     }
 
     e.preventDefault();
@@ -118,26 +118,35 @@ export default function SignUp() {
       const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
       // Encrypt the token
       const encryptedToken = CryptoJS.AES.encrypt(token, 'my-secret-key').toString();
-      axios.post('http://localhost:8000/signup', {
-        first_name,
-        last_name,
-        address,
-        role_id: selectedRole.value,
-        sponsor_id: selectedSponsor.value,
-        email,
-        password
-      })
-        .then(() => {
-          setSubmitted(true);
-          setError(false);
-          // Set the encrypted token in a cookie
-          document.cookie = `authToken=${encryptedToken}; path=/`;
-          window.location = '/home';
+      try {
+        const response = await signup(
+          first_name,
+          last_name,
+          address,
+          selectedRole.value,
+          selectedSponsor.value,
+          email,
+          password
+        );
+
+        setSubmitted(true);
+        setError(false);
+        saveCookies({
+          authToken: encryptedToken,
+          email: response[0].fields.email,
+          role: getRoleName(response[0].fields.role_id)
         })
-        .catch(err => {
-          console.error(err);
-          setError(true);
-        });
+        window.location = '/home';
+      }
+      catch (error) {
+        setError(true);
+        if (error && error["Error"]) {
+          alert(error["Error"]);
+        } else {
+          console.error(error);
+          alert("An error occurred during registration.");
+        }
+      }
     }
   };
 
