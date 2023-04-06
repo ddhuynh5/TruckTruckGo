@@ -43,11 +43,11 @@ def get_products(request):
             response = api.execute("findItemsAdvanced", api_request)
             
             if not response.dict():
-                return JsonResponse({"message": "No items found"}, status=404)
+                return JsonResponse({"Error": "No items found"}, status=400)
             
             return HttpResponse(json.dumps(response.dict()), status=200, content_type="application/json")
 
         except ConnectionError as e:
             print(e)
             print(e.response.dict())
-            return JsonResponse({"message": "Could not establish a connection to eBay API"}, status=400)
+            return JsonResponse({"Error": "Could not establish a connection to eBay API"}, status=400)
