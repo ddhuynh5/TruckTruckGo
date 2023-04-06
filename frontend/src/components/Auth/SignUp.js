@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
 import CryptoJS from 'crypto-js';
-import { signup, saveCookies, getRoleName } from './Auth_Helper';
+import { signup, saveCookies, getRoleName } from './AuthHelper';
 
 export default function SignUp() {
   const [first_name, setFirstName] = useState('');
@@ -144,7 +144,7 @@ export default function SignUp() {
           alert(error["Error"]);
         } else {
           console.error(error);
-          alert("An error occurred while logging in.");
+          alert("An error occurred during registration.");
         }
       }
     }

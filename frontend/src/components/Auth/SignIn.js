@@ -3,13 +3,11 @@ import SignUp from './SignUp';
 import Cookies from 'js-cookie';
 import { v4 as uuidv4 } from 'uuid';
 import CryptoJS from 'crypto-js';
-import { login, saveCookies, getRoleName } from './Auth_Helper';
+import { login, saveCookies, getRoleName } from './AuthHelper';
 
 export default function SignIn() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
-  const [roleId, setRoleId] = useState('');
 
   const changePage = () => {
     window.location = '/home';
@@ -23,11 +21,9 @@ export default function SignIn() {
 
     try {
       const response = await login(username, password);
-      setEmail(response[0].fields.email);
-      setRoleId(response[0].fields.role_id);
       saveCookies({
-        email: email,
-        role: getRoleName(roleId),
+        email: response[0].fields.email,
+        role: getRoleName(response[0].fields.role_id),
       });
       changePage();
     } catch (error) {
