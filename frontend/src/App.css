@@ -87,11 +87,12 @@
 }
 
 body {
-  background-color: #6089db;
-  height: 100%;
-  background-position: 50% 20%;
-  background-repeat: no-repeat;
-  background-size: 1600px 950px;
+    background-color: #6089db;
+    background-image: linear-gradient( #6089db, #a3c2ff);
+    height: 100%;
+    background-position: 50% 20%;
+    background-repeat: no-repeat;
+    background-size: cover;
 
 }
 
@@ -290,10 +291,13 @@ button:hover {
   padding: 5px;
   vertical-align: middle;
   border: #282c34;
+  border-style: solid;
+  border-width: 5px;
 }
 
 .searchButton {
   text-align: center;
+  background-image: linear-gradient( #6089db, #a3c2ff);
   vertical-align: middle;
   margin: 15px;
   padding: 15px;
@@ -308,6 +312,7 @@ button:hover {
   box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   border-radius: 1rem;
   border: transparent;
+  padding: 5px;
 }
 
 .row {
@@ -334,7 +339,13 @@ button:hover {
   padding: 1vh;
   border-radius: 0;
 }
-
+.btnfilter{
+  border-color: #000;
+  background-image: linear-gradient( #6089db, #a3c2ff);
+  width: min-content;
+  padding: 5px;
+  border-radius: 2px;
+}
 /* WEB ACCESSIBILITY Change styles for cancel button and signup button on extra small screens */
 @media screen and (max-width: 300px) {
   .signupbtn {
