@@ -6,6 +6,7 @@ import CryptoJS from 'crypto-js';
 import { login, saveCookies, getRoleName } from './AuthHelper';
 import RememberMe from './RememberMe';
 import { rememberMeState } from './RememberMe';
+import Navbar from '../Pages/Navbar';
 
 export default function SignIn() {
   const [username, setUsername] = useState('');
@@ -24,12 +25,12 @@ export default function SignIn() {
     try {
       const response = await login(username, password);
 
-      if(rememberMeState == true){
+      if (rememberMeState == true) {
         saveCookies({
           email: response[0].fields.email,
           role: getRoleName(response[0].fields.role_id),
-      });
-    }
+        });
+      }
       changePage();
     } catch (error) {
       if (error && error["Login Attempts Remaining"]) {
@@ -81,6 +82,7 @@ export default function SignIn() {
 
   return (
     <div className='wrapper'>
+      <Navbar />
       <div className="banner"><h1>Route Rewards</h1></div>
       <div className="container">
         <form>
@@ -110,8 +112,12 @@ export default function SignIn() {
           <button type="submit" className="button" onClick={handleLogin}>
             Login
           </button>
-          <input type="checkbox" onClick={hidePass} /> Show Password
-         <RememberMe />
+          <div>
+            <input type="checkbox" onClick={hidePass} /> Show Password
+          </div>
+          <div>
+            <RememberMe />
+          </div>
           <div className="msg">
             <span id="msg"></span>
             <br />

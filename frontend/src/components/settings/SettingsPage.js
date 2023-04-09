@@ -1,12 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-
-
+import React from 'react';
 import ProfileInfo from './ProfileInfo';
-import Navbar from './Navbar'
+import Navbar from '../Pages/Navbar'
 
-export default function SettingsPage(){
-
+export default function SettingsPage() {
   return (
     <>
       <Navbar />

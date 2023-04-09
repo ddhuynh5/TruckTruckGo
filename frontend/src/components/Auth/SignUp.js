@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 import CryptoJS from 'crypto-js';
 import { signup, saveCookies, getRoleName } from './AuthHelper';
+import Navbar from '../Pages/Navbar';
 
 export default function SignUp() {
   const [first_name, setFirstName] = useState('');
@@ -179,6 +180,7 @@ export default function SignUp() {
 
   return (
     <div className="wrapper">
+      <Navbar />
       <div className="banner">
         <h1>Route Rewards</h1>
       </div>

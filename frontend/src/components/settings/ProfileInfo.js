@@ -119,14 +119,14 @@ export default function ProfileInfo() {
 
   return (
     <div className="wrapper">
-      <div class="banner">
+      <div className="banner">
         <h1>Settings</h1>
       </div>
-      <div class="container" style={{ backgroundColor: "#f2f2f2" }}>
+      <div className="container" style={{ backgroundColor: "#f2f2f2" }}>
         <form name="Sign Up">
           <h2>Profile Information</h2>
 
-          <label for="name"><b>Full Name</b></label>
+          <label htmlFor="name"><b>Full Name</b></label>
           <input
             onChange={handleFullName}
             className="input"
@@ -135,7 +135,7 @@ export default function ProfileInfo() {
             readOnly={!isEditable}
           />
 
-          <label for="email"><b>Email</b></label>
+          <label htmlFor="email"><b>Email</b></label>
           <input
             onChange={handleEmail}
             className="input"
@@ -144,7 +144,7 @@ export default function ProfileInfo() {
             readOnly={!isEditable}
           />
 
-          {/* <label for="password"><b>Password</b></label>
+          {/* <label htmlFor="password"><b>Password</b></label>
           <input
             onChange={handlePassword}
             className="input"
@@ -152,7 +152,7 @@ export default function ProfileInfo() {
             type="password"
           /> */}
 
-          <label for="address"><b>Address</b></label>
+          <label htmlFor="address"><b>Address</b></label>
           <input
             onChange={handleAddress}
             className="input"
