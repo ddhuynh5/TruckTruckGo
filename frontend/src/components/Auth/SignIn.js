@@ -4,6 +4,8 @@ import Cookies from 'js-cookie';
 import { v4 as uuidv4 } from 'uuid';
 import CryptoJS from 'crypto-js';
 import { login, saveCookies, getRoleName } from './AuthHelper';
+import RememberMe from './RememberMe';
+import { rememberMeState } from './RememberMe';
 
 export default function SignIn() {
   const [username, setUsername] = useState('');
@@ -21,10 +23,13 @@ export default function SignIn() {
 
     try {
       const response = await login(username, password);
-      saveCookies({
-        email: response[0].fields.email,
-        role: getRoleName(response[0].fields.role_id),
+
+      if(rememberMeState == true){
+        saveCookies({
+          email: response[0].fields.email,
+          role: getRoleName(response[0].fields.role_id),
       });
+    }
       changePage();
     } catch (error) {
       if (error && error["Login Attempts Remaining"]) {
@@ -105,7 +110,8 @@ export default function SignIn() {
           <button type="submit" className="button" onClick={handleLogin}>
             Login
           </button>
-          <input type="checkbox" onClick={hidePass} />Show Password
+          <input type="checkbox" onClick={hidePass} /> Show Password
+         <RememberMe />
           <div className="msg">
             <span id="msg"></span>
             <br />
