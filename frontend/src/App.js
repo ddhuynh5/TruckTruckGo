@@ -4,11 +4,10 @@ import SignUp from './components/Auth/SignUp';
 import SignIn from './components/Auth/SignIn';
 import LandingPage from './components/Auth/LandingPage';
 import ForgotPass from './components/Auth/ForgotPass';
-import ForgotEmail from './components/Auth/ForgotEmail';
+//import ForgotEmail from './components/Auth/ForgotEmail';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import SettingsPage from './components/settings/SettingsPage';
 import HomePage from './components/Pages/HomePage';
-import Cart from './components/Pages/Cart';
 import Sponsors from './components/Pages/Sponsors';
 import Points from './components/Pages/Points';
 import CatalogPage from './components/Pages/Products';
@@ -25,7 +24,6 @@ function App() {
         <Route path='/accountsettings' element={<SettingsPage />} />
         {/* <Route path='/forgotemail' element={<ForgotEmail />} /> */}
         <Route path='/home' element={<HomePage />} />
-        <Route path='/cart' element={<Cart />} />
         <Route path='/sponsors' element={<Sponsors />} />
         <Route path='/points' element={<Points />} />
         <Route path='/catalog' element={<CatalogPage />} />

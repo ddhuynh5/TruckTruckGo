@@ -65,12 +65,9 @@ const RememberMe = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label> 
-        <input type="checkbox" id="rememcheck" checked={rememberMe} onChange={handleRememberMeChange} /> Remember Me?
-      </label>
-      <br />
-    </form>
+    <>
+      <input type="checkbox" id="rememcheck" checked={rememberMe} onChange={handleRememberMeChange} /> Remember Me?
+    </>
   );
 };
 

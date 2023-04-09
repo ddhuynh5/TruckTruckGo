@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import Navbar from './Navbar';
 
 export default function Points() {
-    function PointDisplay(){
-        return(
+    function PointDisplay() {
+        return (
             <div className="col-md-2">
                 <div className="d-flex flex-column ms-2">
                     <h1>0 points</h1>
@@ -15,16 +15,16 @@ export default function Points() {
         );
     }
 
-    return(
+    return (
         <div className='wrapper'>
-            <h1 class='banner'>Route Rewards</h1>
+            <Navbar />
+            <h1 className='banner'>Route Rewards</h1>
             <div className="container">
-                <header class="section-header">
-                    <Navbar></Navbar>
+                <header className="section-header">
                 </header>
                 <span> </span>
-                <div className = "card">   
-                    <PointDisplay></PointDisplay>
+                <div className="card">
+                    <PointDisplay />
                 </div>
             </div>
         </div>
