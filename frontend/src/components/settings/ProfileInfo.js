@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import axios from 'axios';
 
-function FetchDrivers() {
-  return axios.get("http://localhost:8000/drivers", {})
-    .then(response => response.data)
-    .catch(error => console.error(error));
+async function FetchDrivers() {
+  try {
+    const response = await axios.get("http://localhost:8000/drivers", {});
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
 }
+
 
 /* function FetchSponsors() {
   return axios.get("http://localhost:8000/sponsors", {})

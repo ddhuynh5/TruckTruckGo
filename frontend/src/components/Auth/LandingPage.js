@@ -17,7 +17,7 @@ export default function LandingPage() {
 
     return (
         <div className='wrapper'>
-            <h1 className="banner">Scrummy Bears Driving</h1>
+            <h1 className="banner">Welcome to Scrummy Bears Driving!</h1>
             <div className="container" style={{ padding: "100px" }}>
                 <p className="landing">Get rewarded for driving safely and join our community of smart drivers today!</p>
                 <button className="button" onClick={changePage}>Sign In</button>

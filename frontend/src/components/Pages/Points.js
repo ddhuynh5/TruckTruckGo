@@ -1,7 +1,7 @@
 import '../../App.css';
 
 import React, { useState } from 'react';
-import Navbar from './Navbar';
+import Header from './Header';
 
 export default function Points() {
     function PointDisplay() {
@@ -17,8 +17,7 @@ export default function Points() {
 
     return (
         <div className='wrapper'>
-            <Navbar />
-            <h1 className='banner'>Route Rewards</h1>
+            <Header />
             <div className="container">
                 <header className="section-header">
                 </header>

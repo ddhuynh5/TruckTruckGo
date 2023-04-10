@@ -87,12 +87,11 @@
 }
 
 body {
-    background-color: #6089db;
-    background-image: linear-gradient( #6089db, #a3c2ff);
-    height: 100%;
-    background-position: 50% 20%;
-    background-repeat: no-repeat;
-    background-size: cover;
+  background-color: #6089db;
+  height: 100%;
+  background-position: 50% 20%;
+  background-repeat: no-repeat;
+  background-size: cover;
 
 }
 
@@ -272,7 +271,7 @@ button:hover {
   padding: 10px;
   margin-top: 10px;
   border-radius: 10px;
-  background-color: rgb(249, 241, 241);
+  background-color: whitesmoke;
 }
 
 .banner {
@@ -297,13 +296,41 @@ button:hover {
 
 .searchButton {
   text-align: center;
-  background-image: linear-gradient( #6089db, #a3c2ff);
+  background-image: linear-gradient(#6089db, #a3c2ff);
   vertical-align: middle;
   margin: 15px;
   padding: 15px;
   width: auto;
   height: max-content;
 }
+
+.nav-button {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+  cursor: pointer;
+}
+
+.divider {
+  position: absolute;
+  height: 100%;
+  width: 1px;
+  background-color: black;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+
+/* @media (min-width: 1550px) {
+  .search-input {
+    background-color: yellow;
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+  }
+} */
 
 .card {
   margin: auto;
@@ -339,13 +366,15 @@ button:hover {
   padding: 1vh;
   border-radius: 0;
 }
-.btnfilter{
+
+.btnfilter {
   border-color: #000;
-  background-image: linear-gradient( #6089db, #a3c2ff);
+  background-image: linear-gradient(#6089db, #a3c2ff);
   width: min-content;
   padding: 5px;
   border-radius: 2px;
 }
+
 /* WEB ACCESSIBILITY Change styles for cancel button and signup button on extra small screens */
 @media screen and (max-width: 300px) {
   .signupbtn {
