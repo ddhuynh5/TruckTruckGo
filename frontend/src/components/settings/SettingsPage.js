@@ -1,11 +1,11 @@
 import React from 'react';
 import ProfileInfo from './ProfileInfo';
-import Navbar from '../Pages/Navbar'
+import Header from '../Pages/Header'
 
 export default function SettingsPage() {
   return (
     <>
-      <Navbar />
+      <Header />
       <ProfileInfo />
     </>
   )

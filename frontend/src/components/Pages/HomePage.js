@@ -1,95 +1,81 @@
 import '../../App.css';
 
-import React, { useState } from 'react';
-import { Link } from "react-router-dom";
-import Navbar from './Navbar';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from "react-router-dom";
+import Header from './Header';
+import { catalog } from './PagesHelper';
 
 export default function HomePage() {
-    const [search, setSearch] = useState('');
+    const location = useLocation();
+    const [catalogData, setCatalogData] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleSearch = (e) => {
-        const SearchValue = e.target.value;
-        setSearch(SearchValue);
+    useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+        const searchTerm = searchParams.get("searchTerm");
+
+        if (searchTerm)
+            SearchCatalog(searchTerm);
+        else
+            SearchCatalog("apple");
+    }, [location]);
+
+    const currencySymbolMap = {
+        // Most widely used currencies atm, add more as needed
+        USD: '$',
+        EUR: '€',
+        GBP: '£',
+        JPY: '¥',
+        CHF: 'Fr.',
+        CAD: 'C$',
+        AUD: 'A$',
+        NZD: 'NZ$',
+        HKD: 'HK$',
+        SGD: 'S$',
+        CNY: '¥',
+        KRW: '₩',
+        INR: '₹',
+        MXN: '$',
+        BRL: 'R$',
+        RUB: '₽',
+        TRY: '₺',
+        ZAR: 'R',
+        AED: 'د.إ',
+        SAR: '﷼',
+        QAR: '﷼',
     };
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (search === '') {
-            window.location = '/home';
-        } else {
-            window.location = '/home#search=' + search;
+
+    async function SearchCatalog(data) {
+        if (data) {
+            setIsLoading(true);
+            const items = await catalog(data);
+            setCatalogData(items);
+            setIsLoading(false);
         }
-    };
-
-    function Filter() {
-        return (
-            <button className="btnfilter">Filter</button>
-        );
-    }
-
-    function Categories() {
-        return (
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                <div className="container-fluid">
-                    <ul className="navbar-nav">
-                        <li className="nav-item"><a className="nav-link" href="#search/category/electronics">Electronics</a></li>
-                        <li className="nav-item"><a className="nav-link" href="#search/category/clothes">Clothes</a></li>
-                        <li className="nav-item"><a className="nav-link" href="#search/category/furniture">Furniture</a></li>
-                        <li className="nav-item"><a className="nav-link" href="#search/category/phones">Phones</a></li>
-                        <li className="nav-item"><a className="nav-link" href="#shoes">Shoes</a></li>
-                    </ul>
-                </div>
-            </nav>
-        );
-    }
-
-    function ProductDisplay() {
-        return (
-            <ul className="images">
-                <li> Sample Product <img src="https://cdn.shopify.com/s/files/1/0010/5457/2601/products/ScreenShot2022-07-15at12.52.37PM_530x@2x.png?v=1657904015"></img></li>
-                <li> Sample Product <img src="https://cdn.shopify.com/s/files/1/0010/5457/2601/products/ScreenShot2022-07-15at12.45.12PM_530x@2x.png?v=1657903564"></img></li>
-                <li> Sample Product <img src="https://m.media-amazon.com/images/W/IMAGERENDERING_521856-T1/images/I/71IQ-aaDVhL.jpg"></img></li>
-                <li> Sample Product <img src="https://m.media-amazon.com/images/I/71cFohr-HmL.jpg"></img></li>
-                <li> Sample Product <img src="https://cdn.shopify.com/s/files/1/0010/5457/2601/products/ScreenShot2022-07-15at12.52.37PM_530x@2x.png?v=1657904015"></img></li>
-                <li> Sample Product <img src="https://cdn.shopify.com/s/files/1/0010/5457/2601/products/ScreenShot2022-07-15at12.45.12PM_530x@2x.png?v=1657903564"></img></li>
-            </ul>
-        );
     }
 
     return (
-        <div className='wrapper'>
-            <Navbar />
-            <h1 className='banner'>Route Rewards</h1>
+        <>
+            <Header SearchCatalog={SearchCatalog} />
             <div className="container">
-                <header className="section-header">
-                    <section className="header-main border-bottom bg-white">
-                        <div className="container-fluid">
-                            <div className="row p-2 pt-3 pb-3 d-flex align-items-center">
-                                <div className="col-md-8">
-                                    <div className="d-flex form-inputs">
-                                        <input className="searchBar" type="text" onChange={handleSearch} placeholder="Search any product..."></input>
-                                        <button className="searchButton" onClick={handleSubmit}>Search</button>
-                                        <Filter></Filter>
-                                    </div>
-                                </div>
-                                <div className="col-md-2">
-                                    <div className="d-flex flex-column ms-2">
-                                        <span className="qty">3 items in cart</span>
-                                        <span className="fw-bold">4000 Points</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    <Categories></Categories>
-                </header>
-
-                <div className="container">
-                    <p className="homepagetxt">New Products</p>
-                    <ProductDisplay></ProductDisplay>
-                    <ProductDisplay></ProductDisplay>
-                    <ProductDisplay></ProductDisplay>
-                </div>
+                {isLoading && (
+                    <div className="loading-spinner">
+                        <div className="spinner"></div>
+                        <p>Loading...</p>
+                    </div>
+                )}
+                {catalogData && (
+                    <ul className="image-gallery">
+                        {catalogData.map((item) => (
+                            <li key={item.id}>
+                                <img src={item.galleryURL} alt={item.title} />
+                                <p>{item.title}</p>
+                                <p>{currencySymbolMap[item.sellingStatus.currentPrice._currencyId]}{item.sellingStatus.currentPrice.value}</p>
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
-        </div>
-    )
+        </>
+    );
 }

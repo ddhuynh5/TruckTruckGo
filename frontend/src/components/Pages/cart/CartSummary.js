@@ -12,7 +12,6 @@ const CartSummary = () => {
         <div>
             <h2>Summary</h2>
             <p>Total Price: ${totalPrice.toFixed(2)}</p>
-            <button>Checkout</button>
         </div>
     );
 };

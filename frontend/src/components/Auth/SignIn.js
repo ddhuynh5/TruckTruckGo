@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import SignUp from './SignUp';
 import Cookies from 'js-cookie';
-import { v4 as uuidv4 } from 'uuid';
-import CryptoJS from 'crypto-js';
+/* import { v4 as uuidv4 } from 'uuid';
+import CryptoJS from 'crypto-js'; */
 import { login, saveCookies, getRoleName } from './AuthHelper';
 import RememberMe from './RememberMe';
 import { rememberMeState } from './RememberMe';
-import Navbar from '../Pages/Navbar';
 
 export default function SignIn() {
   const [username, setUsername] = useState('');
@@ -25,12 +23,23 @@ export default function SignIn() {
     try {
       const response = await login(username, password);
 
-      if (rememberMeState == true) {
+      /* if (rememberMeState === true) {
         saveCookies({
           email: response[0].fields.email,
           role: getRoleName(response[0].fields.role_id),
+          firstName: response[0].fields.first_name,
+          lastName: response[0].fields.last_name
         });
-      }
+      } */
+      saveCookies({
+        email: response[0].fields.email,
+        role: getRoleName(response[0].fields.role_id),
+        firstName: response[0].fields.first_name,
+        lastName: response[0].fields.last_name,
+        sessionId: response[0].fields.session_id,
+        expiration: response[0].fields.expiration_time,
+        uniqueId: response[0].pk
+      });
       changePage();
     } catch (error) {
       if (error && error["Login Attempts Remaining"]) {
@@ -44,7 +53,7 @@ export default function SignIn() {
     }
   };
 
-  const encrypt = (data) => {
+  /* const encrypt = (data) => {
     const encryptedData = CryptoJS.AES.encrypt(data, 'secret_key').toString();
     return encryptedData;
   }
@@ -57,7 +66,7 @@ export default function SignIn() {
   const generateToken = () => {
     // Generate a random token for the user
     return btoa(Math.random().toString(36).substr(2, 10));
-  };
+  }; */
 
   const hidePass = () => {
     var x = document.getElementById("InputPassword");
@@ -82,8 +91,7 @@ export default function SignIn() {
 
   return (
     <div className='wrapper'>
-      <Navbar />
-      <div className="banner"><h1>Route Rewards</h1></div>
+      <div className="banner"><h1>Scrummy Bears Driving</h1></div>
       <div className="container">
         <form>
           <h2>Sign In</h2>
@@ -123,7 +131,7 @@ export default function SignIn() {
             <br />
           </div>
           <p><a href="ForgotPass">Forgot Password?</a></p>
-          {/* <p><a href="ForgotEmail">Forgot Email?</a></p> */}
+          <p><a href="signup">Don't have an account?</a></p>
         </form>
       </div>
     </div>
