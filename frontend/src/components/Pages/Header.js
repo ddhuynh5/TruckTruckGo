@@ -143,10 +143,10 @@ function Header(props) {
                             <Nav.Link href="/sponsors">Sponsors</Nav.Link>
                             <Nav.Link href="/points">Points: {totalPoints}</Nav.Link>
                             <NavDropdown
-                                title="Dropdown"
+                                title="Settings"
                                 id={`offcanvasNavbarDropdown-expand-${false}`}
                             >
-                                <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
+                                <NavDropdown.Item href="/accountsettings">Logout</NavDropdown.Item>
                                 <NavDropdown.Item href="#action4">
                                     Another action
                                 </NavDropdown.Item>
