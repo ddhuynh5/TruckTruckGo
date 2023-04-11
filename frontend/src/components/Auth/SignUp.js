@@ -104,6 +104,7 @@ export default function SignUp() {
     if (selectedRole && selectedRole.label !== "Driver") {
       setSelectedRole(null);
       alert("We are not currently taking applications for Sponsors or Admins at the moment.");
+      return;
     }
 
     e.preventDefault();
