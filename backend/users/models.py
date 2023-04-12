@@ -71,6 +71,7 @@ class Users(models.Model):
     address = models.CharField(max_length=255)
     login_attempts = models.IntegerField(default=0)
     unique_id = models.AutoField(primary_key=True)
+    session_id = models.CharField(max_length=255)
 
     class Meta:
         db_table = "Users"

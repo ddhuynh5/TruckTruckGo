@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 import CryptoJS from 'crypto-js';
 import { signup, saveCookies, getRoleName } from './AuthHelper';
-import Navbar from '../Pages/Navbar';
 
 export default function SignUp() {
   const [first_name, setFirstName] = useState('');
@@ -105,14 +104,15 @@ export default function SignUp() {
     if (selectedRole && selectedRole.label !== "Driver") {
       setSelectedRole(null);
       alert("We are not currently taking applications for Sponsors or Admins at the moment.");
+      return;
     }
 
     e.preventDefault();
-    if (first_name === '' || last_name == '' || address == '' || !selectedRole || email === '' || password === '')
+    if (first_name === '' || last_name === '' || address === '' || !selectedRole || email === '' || password === '')
       setError(true);
     else if (nameError || emailError || passwordError || addressError)
       setError(true);
-    else if (selectedRole.label == "Driver" && !selectedSponsor)
+    else if (selectedRole.label === "Driver" && !selectedSponsor)
       setError(true);
     else {
       // Generate a random token
@@ -180,9 +180,8 @@ export default function SignUp() {
 
   return (
     <div className="wrapper">
-      <Navbar />
       <div className="banner">
-        <h1>Route Rewards</h1>
+        <h1>Scrummy Bears Driving</h1>
       </div>
       <div className="container">
         <form name="Sign Up">
@@ -224,7 +223,7 @@ export default function SignUp() {
           />
           <br />
 
-          {selectedRole && selectedRole.value == 3 && (
+          {selectedRole && selectedRole.value === 3 && (
             <>
               <label htmlFor="sponsor"><b>Sponsor</b></label>
               <Select
@@ -236,7 +235,7 @@ export default function SignUp() {
             </>
           )}
 
-          {selectedRole && selectedRole.value == 2 && (
+          {selectedRole && selectedRole.value === 2 && (
             <>
               <label htmlFor="sponsor"><b>Sponsor</b></label>
               <Select
@@ -256,7 +255,7 @@ export default function SignUp() {
             </>
           )}
 
-          {selectedRole && selectedRole.value == 1 && (
+          {selectedRole && selectedRole.value === 1 && (
             <>
               <label htmlFor="admin"><b>Enter Administrator Code</b></label>
               <input

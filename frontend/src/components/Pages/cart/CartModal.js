@@ -15,13 +15,27 @@ const CartModal = ({ isOpen, closeModal, items }) => {
             isOpen={isOpen}
             onRequestClose={closeModal}
             contentLabel="Shopping Cart"
+            style={{
+                content: {
+                    margin: '0 auto',
+                    marginTop: '65px',
+                    width: '800px',
+                    height: '90%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    borderRadius: '10px'
+                }
+            }}
         >
             <h2>Cart Items</h2>
             <Divider />
             <CartItems items={items} />
             <Divider />
             <CartSummary />
-            <button onClick={closeModal}>Close</button>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <button>Checkout</button>
+                <button onClick={closeModal}>Close</button>
+            </div>
         </Modal>
     );
 };
