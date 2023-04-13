@@ -5,7 +5,7 @@ import { login, saveCookies, getRoleName } from './AuthHelper';
 export default function SignIn() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [stored, setStored] = useState('');
+  const [stored, setStored] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
   const changePage = () => {
@@ -29,7 +29,6 @@ export default function SignIn() {
         sessionId: response[0].fields.session_id,
         expiration: response[0].fields.expiration_time,
         uniqueId: response[0].pk,
-        remember: rememberMe
       });
       changePage();
     } catch (error) {
@@ -44,8 +43,13 @@ export default function SignIn() {
     }
   };
 
-  const handleRememberMeChange = (event) => {
-    setRememberMe(event.target.checked);
+  const handleRememberMeChange = () => {
+    setRememberMe(!rememberMe);
+    if (!rememberMe) {
+      Cookies.set('remember', true);
+    } else {
+      Cookies.remove('remember');
+    }
   };
 
   const hidePass = () => {
@@ -60,10 +64,15 @@ export default function SignIn() {
 
   // Check for remember me on mount
   React.useEffect(() => {
-    setStored(Cookies.get('remember'));
-    if (Boolean(stored))
+    const remember = Cookies.get('remember');
+    if (remember !== undefined) {
+      setStored(remember === "true");
+      setRememberMe(true);
+    }
+    if (stored) {
       changePage();
-  }, []);
+    }
+  }, [stored]);
 
   return (
     <div className='wrapper'>
@@ -100,7 +109,7 @@ export default function SignIn() {
             <input type="checkbox" onClick={hidePass} /> Show Password
           </div>
           <div>
-            <input type="checkbox" id="rememberMeCheck" checked={Boolean(stored)} onChange={handleRememberMeChange} /> Remember Me?
+            <input type="checkbox" id="rememberMeCheck" checked={rememberMe} onChange={handleRememberMeChange} /> Remember Me?
           </div>
           <div className="msg">
             <span id="msg"></span>

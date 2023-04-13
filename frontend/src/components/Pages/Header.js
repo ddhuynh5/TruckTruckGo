@@ -6,8 +6,7 @@ import Cookies from "js-cookie";
 import { points } from './PagesHelper';
 import { logout } from '../Auth/AuthHelper';
 import CartModal from './cart/CartModal';
-import cartIcon from '../../assets/images/shopping-cart.png';
-import { AiOutlineHome } from 'react-icons/ai';
+import { AiOutlineHome, AiOutlineShoppingCart } from 'react-icons/ai';
 import { SiGithubsponsors } from 'react-icons/si';
 import { HiOutlineSparkles, HiOutlineCog } from 'react-icons/hi';
 
@@ -76,14 +75,6 @@ function Header(props) {
             console.log("Logout successful");
             navigate(`/`);
         }
-    }
-
-    const cartIconStyle = {
-        backgroundImage: `url(${cartIcon})`,
-        backgroundSize: 'cover',
-        width: '30px',
-        height: '30px',
-        cursor: 'pointer',
     }
 
     // Static Cart Info
@@ -178,7 +169,7 @@ function Header(props) {
                         defaultValue={keywords ? keywords : ""}
                     />
                 </Form>
-                <button style={cartIconStyle} onClick={openModal} className='nav-button ms-auto me-2' />
+                <AiOutlineShoppingCart onClick={openModal} className='nav-button ms-auto me-2' style={{ fontSize: "2rem" }} />
                 {renderCartModal()}
             </Container>
         </Navbar>
