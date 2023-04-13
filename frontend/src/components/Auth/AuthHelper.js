@@ -1,4 +1,19 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import { useEffect } from 'react';
+import 'react-toastify/dist/ReactToastify.css';
+
+function showNotification(message) {
+    toast.error(message, {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+    });
+}
 
 function clearCookies() {
     const cookies = document.cookie.split(";");
@@ -11,20 +26,36 @@ function clearCookies() {
     }
 }
 
-axios.interceptors.response.use(
-    response => response,
-    error => {
-        if (error.response && error.response.status === 401) {
-            console.log("Unauthorized access detected.");
-            clearCookies();
-            localStorage.clear();
-            sessionStorage.clear();
-            window.location = "/";
-            alert("Sorry, you are not authorized to access this page. Please login to continue");
-        }
-        return Promise.reject(error);
-    }
-);
+
+export function useInterceptor() {
+    useEffect(() => {
+        axios.interceptors.response.use(
+            response => response,
+            error => {
+                if (error.response && error.response.status === 401) {
+                    console.log("Unauthorized access detected.");
+                    clearCookies();
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    toast.promise(
+                        new Promise((resolve, reject) => {
+                            showNotification("Sorry, you are not authorized to access this page. Please login to continue");
+                            setTimeout(resolve, 5000);
+                        }),
+                        {
+                            pending: "Please wait...",
+                            success: "Redirecting to login page...",
+                            error: "Error redirecting to login page"
+                        }
+                    ).then(() => {
+                        window.location = "/";
+                    });
+                }
+                return Promise.reject(error);
+            }
+        );
+    }, []);
+}
 
 export const login = async (email, password) => {
     try {

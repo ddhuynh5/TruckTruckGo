@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import nikeLogo from "../../assets/images/nike.png";
 import appleLogo from "../../assets/images/apple-logo.png";
 import goodwillLogo from "../../assets/images/goodwill.png";
