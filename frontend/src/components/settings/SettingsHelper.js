@@ -19,19 +19,15 @@ export const sponsor = async (unique_id) => {
     }
 };
 
-export const driver = async (keywords) => {
+export const driver = async (id) => {
     try {
         const response = await axios.post('http://localhost:8000/drivers', {
-            keywords: keywords
+            unique_id: id
         }, {
             withCredentials: true
         });
         const data = response.data;
-        const resultArray = Object.entries(data.searchResult.item).map(([key, value]) => ({
-            id: key,
-            ...value,
-        }));
-        return resultArray;
+        return data;
     } catch (error) {
         if ((error.response && error.response.status === 400) || error.response.status === 401) {
             throw error.response.data;
