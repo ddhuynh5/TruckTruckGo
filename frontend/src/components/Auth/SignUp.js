@@ -10,6 +10,7 @@ export default function SignUp() {
   const [password, setPassword] = useState('');
   const [admin, setAdmin] = useState('');
   const [sponsorCode, setSponsorCode] = useState('');
+  const [sponsorName, setSponsorName] = useState('');
 
   const [submitted, setSubmitted] = useState(false);
   const [nameError, setNameError] = useState(false);
@@ -73,6 +74,11 @@ export default function SignUp() {
     setSubmitted(false);
   };
 
+  const handleSponsorName = (e) => {
+    setSponsorName(e.target.value);
+    setSubmitted(false);
+  };
+
   const handleEmail = (e) => {
     const emailValue = e.target.value;
     setEmail(emailValue);
@@ -107,7 +113,7 @@ export default function SignUp() {
     }
 
     e.preventDefault();
-    if (first_name === '' || last_name === '' || address === '' || !selectedRole || email === '' || password === '')
+    if (address === '' || !selectedRole || email === '' || password === '')
       setError(true);
     else if (nameError || emailError || passwordError || addressError)
       setError(true);
@@ -190,30 +196,6 @@ export default function SignUp() {
             {successMessage()}
           </div>
 
-          <label htmlFor="first name"><b>First Name</b></label>
-          <input
-            onChange={handleFirstName}
-            className="input"
-            value={first_name}
-            type="text"
-          />
-
-          <label htmlFor="last name"><b>Last Name</b></label>
-          <input
-            onChange={handleLastName}
-            className="input"
-            value={last_name}
-            type="text"
-          />
-
-          <label htmlFor="address"><b>Address</b></label>
-          <input
-            onChange={handleAddress}
-            className="input"
-            value={address}
-            type="text"
-          />
-
           <label htmlFor="role"><b>Role</b></label>
           <Select
             options={roleOptions}
@@ -231,16 +213,34 @@ export default function SignUp() {
                 onChange={handleSponsorChange}
               />
               <br />
+
+              <label htmlFor="first name"><b>First Name</b></label>
+              <input
+                onChange={handleFirstName}
+                className="input"
+                value={first_name}
+                type="text"
+              />
+
+              <label htmlFor="last name"><b>Last Name</b></label>
+              <input
+                onChange={handleLastName}
+                className="input"
+                value={last_name}
+                type="text"
+              />
             </>
           )}
 
+
           {selectedRole && selectedRole.value === 2 && (
             <>
-              <label htmlFor="sponsor"><b>Sponsor</b></label>
-              <Select
-                options={sponsorOptions}
-                value={selectedSponsor}
-                onChange={handleSponsorChange}
+              <label htmlFor="sponsor_name"><b>Enter Sponsor Name</b></label>
+              <input
+                onChange={handleSponsorName}
+                className="input"
+                value={sponsorName}
+                type="text"
               />
               <br />
               <label htmlFor="sponsor_code"><b>Enter Sponsor Code</b></label>
@@ -266,6 +266,14 @@ export default function SignUp() {
               <br />
             </>
           )}
+
+          <label htmlFor="address"><b>Address</b></label>
+          <input
+            onChange={handleAddress}
+            className="input"
+            value={address}
+            type="text"
+          />
 
           <label htmlFor="email"><b>Email</b></label>
           <input
