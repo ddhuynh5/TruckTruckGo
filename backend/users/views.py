@@ -3,6 +3,8 @@
 import os
 import json
 import bcrypt
+import secrets
+import string
 from datetime import datetime
 from dotenv import load_dotenv
 
@@ -19,12 +21,29 @@ from rest_framework.decorators import api_view
 from .models import Users, Drivers, Sponsors, Admins
 from points.models import Points
 from .email_notifications import send_welcome_email, send_password_reset
+from decorators.login_decorator import check_session
+
 
 # get environment variable from .env
 load_dotenv()
 DB_PASS = os.getenv("DB_PASS")
 
 MAX_LOGIN_ATTEMPTS = 5
+TOKEN_LEN = 64
+
+
+def generate_token(length):
+    """ Token for session id """
+    alphabet = string.ascii_letters + string.digits
+    return ''.join(secrets.choice(alphabet) for i in range(length))
+
+
+def generate_unique_session_id():
+    """ Generates a token, checks DB for uniqueness - returns if unique """
+    while True:
+        session_id = generate_token(TOKEN_LEN)
+        if not Users.objects.filter(session_id=session_id).exists():
+            return session_id
 
 
 def validate_email(email):
@@ -130,6 +149,7 @@ def create_update_role(data, password, new_id, user=None):
 
 
 @api_view(["GET"])
+@check_session
 def get_driver(request):
     """ Pulls Drivers from Users Table """
 
@@ -140,6 +160,7 @@ def get_driver(request):
 
 
 @api_view(["GET"])
+@check_session
 def check_password(request):
     """
         1-1 check on current password vs previous password
@@ -171,6 +192,7 @@ def check_password(request):
 
 
 @api_view(["GET"])
+@check_session
 def login_exists(request):
     """
         Checks if the login exists in database
@@ -219,6 +241,7 @@ def login(request):
             password = data["password"].encode("utf-8")
             user = Users.objects.get(email=data["email"])
 
+            # Checking for login attempt timeout
             if "lockout_time" in request.COOKIES and request.COOKIES["lockout_time"] != "undefined":
                 locked_until = datetime.fromisoformat(request.COOKIES["lockout_time"]).astimezone(timezone.utc)
                 if timezone.now() < locked_until:
@@ -256,7 +279,9 @@ def login(request):
                         "Login Attempts Remaining": MAX_LOGIN_ATTEMPTS - user.login_attempts
                     }, status=400)
             else:
-                # Password correct, return user data
+                # Password correct, generate new session id, set new expiration time, return user data
+                session_id = generate_unique_session_id()
+                user.create_session(session_id=session_id)
                 json_data = serializers.serialize("json", [user])
                 user.login_attempts = 0
                 user.save()
@@ -264,6 +289,27 @@ def login(request):
         except ObjectDoesNotExist:
             # User does not exist, show error message
             return JsonResponse({"error": "User does not exist"}, status=400)
+
+
+@api_view(['POST'])
+def logout(request):
+    """ Logs user out """
+
+    if request.method == "POST":
+        session_id_from_cookie = request.COOKIES.get('sessionId')
+        if session_id_from_cookie:
+            user = Users.objects.filter(session_id=session_id_from_cookie).first()
+            if user:
+                # Set session expiration time to a past date to immediately invalidate the session
+                user.expiration_time = timezone.now() - timezone.timedelta(days=1)
+                user.session_id = None
+                user.save()
+                response = HttpResponse({'message': 'Logged out successfully'}, status=200)
+                cookies = ['sessionId', 'expiration', 'role', 'lastName', 'firstName', 'uniqueId', 'email', 'remember']
+                for cookie in cookies:
+                    response.delete_cookie(cookie)
+                return response
+        return HttpResponse({'error': 'Invalid session id'}, status=401)
 
 
 @api_view(["POST"])
@@ -350,6 +396,8 @@ def signup(request):
                     email=email,
                     password=password,
                 )
+                session_id = generate_unique_session_id()
+                user.create_session(session_id=session_id)
                 user.save()
                 new_id = user.unique_id
                 try:
@@ -372,6 +420,7 @@ def signup(request):
 
 
 @api_view(["POST"])
+@check_session
 def update(request):
     """
         Updates user in database

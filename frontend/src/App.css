@@ -385,7 +385,7 @@ button:hover {
 .text-dark{
 	font-weight: bold;
 	margin-top: 8px;
-	font-size: 13px;
+	font-size: 20px;
 	letter-spacing: 0.5px;
 }
 .card-bottom{
@@ -394,9 +394,13 @@ button:hover {
 }
 .flex-column{
 	color: #adb5bd;
+	font-size: 25px;
+}
+.flex-column i{
+	color: #adb5bd;
 	font-size: 13px;
 }
 .flex-column p{
 	letter-spacing: 1px;
-	font-size: 18px;
+	font-size: 50px;
 }
