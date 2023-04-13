@@ -1,17 +1,18 @@
 import os
 import json
-
 from dotenv import load_dotenv
-import xml.etree.ElementTree as ET
+
 from ebaysdk.finding import Connection as Finding
 from ebaysdk.exception import ConnectionError
 
 from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import api_view
+from decorators.login_decorator import check_session
 
 load_dotenv()
 
 @api_view(["POST"])
+@check_session
 def get_products(request):
     """
         Returns a list of items from eBay API in JSON format

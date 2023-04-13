@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
-import CryptoJS from 'crypto-js';
 import { signup, saveCookies, getRoleName } from './AuthHelper';
 
 export default function SignUp() {
@@ -115,10 +114,6 @@ export default function SignUp() {
     else if (selectedRole.label === "Driver" && !selectedSponsor)
       setError(true);
     else {
-      // Generate a random token
-      const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-      // Encrypt the token
-      const encryptedToken = CryptoJS.AES.encrypt(token, 'my-secret-key').toString();
       try {
         const response = await signup(
           first_name,
@@ -133,9 +128,13 @@ export default function SignUp() {
         setSubmitted(true);
         setError(false);
         saveCookies({
-          authToken: encryptedToken,
           email: response[0].fields.email,
-          role: getRoleName(response[0].fields.role_id)
+          role: getRoleName(response[0].fields.role_id),
+          firstName: response[0].fields.first_name,
+          lastName: response[0].fields.last_name,
+          sessionId: response[0].fields.session_id,
+          expiration: response[0].fields.expiration_time,
+          uniqueId: response[0].pk
         })
         window.location = '/home';
       }
