@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import Cookies from 'js-cookie';
-/* import { v4 as uuidv4 } from 'uuid';
-import CryptoJS from 'crypto-js'; */
 import { login, saveCookies, getRoleName } from './AuthHelper';
-import RememberMe from './RememberMe';
-import { rememberMeState } from './RememberMe';
 
 export default function SignIn() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [stored, setStored] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
 
   const changePage = () => {
     window.location = '/home';
@@ -23,14 +21,6 @@ export default function SignIn() {
     try {
       const response = await login(username, password);
 
-      /* if (rememberMeState === true) {
-        saveCookies({
-          email: response[0].fields.email,
-          role: getRoleName(response[0].fields.role_id),
-          firstName: response[0].fields.first_name,
-          lastName: response[0].fields.last_name
-        });
-      } */
       saveCookies({
         email: response[0].fields.email,
         role: getRoleName(response[0].fields.role_id),
@@ -38,7 +28,8 @@ export default function SignIn() {
         lastName: response[0].fields.last_name,
         sessionId: response[0].fields.session_id,
         expiration: response[0].fields.expiration_time,
-        uniqueId: response[0].pk
+        uniqueId: response[0].pk,
+        remember: rememberMe
       });
       changePage();
     } catch (error) {
@@ -53,20 +44,9 @@ export default function SignIn() {
     }
   };
 
-  /* const encrypt = (data) => {
-    const encryptedData = CryptoJS.AES.encrypt(data, 'secret_key').toString();
-    return encryptedData;
-  }
-
-  const decrypt = (encryptedData) => {
-    const decryptedData = CryptoJS.AES.decrypt(encryptedData, 'secret_key').toString(CryptoJS.enc.Utf8);
-    return decryptedData;
-  }
-
-  const generateToken = () => {
-    // Generate a random token for the user
-    return btoa(Math.random().toString(36).substr(2, 10));
-  }; */
+  const handleRememberMeChange = (event) => {
+    setRememberMe(event.target.checked);
+  };
 
   const hidePass = () => {
     var x = document.getElementById("InputPassword");
@@ -78,15 +58,11 @@ export default function SignIn() {
     }
   }
 
-  // Check for authentication cookie on mount
+  // Check for remember me on mount
   React.useEffect(() => {
-    const authToken = Cookies.get('authToken');
-    const emailCookie = Cookies.get('email');
-    const roleCookie = Cookies.get('role');
-    if (authToken && emailCookie && roleCookie) {
-      // Authenticate user based on authToke...
+    setStored(Cookies.get('remember'));
+    if (Boolean(stored))
       changePage();
-    }
   }, []);
 
   return (
@@ -124,7 +100,7 @@ export default function SignIn() {
             <input type="checkbox" onClick={hidePass} /> Show Password
           </div>
           <div>
-            <RememberMe />
+            <input type="checkbox" id="rememberMeCheck" checked={Boolean(stored)} onChange={handleRememberMeChange} /> Remember Me?
           </div>
           <div className="msg">
             <span id="msg"></span>
