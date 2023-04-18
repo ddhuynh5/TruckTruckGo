@@ -71,7 +71,8 @@ def set_points(driver_id, points=0):
         if not points_obj:
             raise ObjectDoesNotExist()
     except ObjectDoesNotExist:
-        points_obj = Points.objects.create(driver_id=driver_id, total_points=points)
+        points_obj = Points.objects.create(
+            driver_id=driver_id, total_points=points)
     points_obj.save()
 
 
@@ -128,15 +129,17 @@ def create_update_role(data, password, new_id, user=None):
         obj.save()
 
     if obj.role_id == 3:
-        set_points(new_id, data["total_points"] if "total_points" in data else 0)
+        set_points(new_id, data["total_points"]
+                   if "total_points" in data else 0)
 
     # Updating tables where previous role_id existed
-    non_new_roles = [role for role in roles.values() if role != roles[current_role]]
+    non_new_roles = [role for role in roles.values() if role !=
+                     roles[current_role]]
     for role in non_new_roles:
         if role == Drivers:
             Points.objects.filter(driver_id=new_id).delete()
         role.objects.filter(email=data["email"]).delete()
-    
+
     # Updating Users Table
     if related_model_class:
         related_obj = related_model_class.objects.get(email=data["email"])
@@ -148,15 +151,39 @@ def create_update_role(data, password, new_id, user=None):
         related_obj.save()
 
 
-@api_view(["GET"])
-@check_session
+@api_view(["POST"])
+# @check_session
 def get_driver(request):
-    """ Pulls Drivers from Users Table """
+    """ Pulls Drivers from Driver Table """
 
-    queryset = Drivers.objects.filter(role_id=3).order_by("role_id", "sponsor_id").values("first_name", "last_name", "email", "sponsor_id", "address")
-    json_data = json.dumps(list(queryset))
+    if request.method == "POST":
+        data = json.loads(request.body)
 
-    return HttpResponse(json_data, content_type="application/json")
+        current = list(Users.objects.filter(
+            unique_id=data["unique_id"]).values("first_name", "last_name", "email", "sponsor_id", "address"))
+        json_data = json.dumps(current)
+
+        return HttpResponse(json_data, content_type="application/json")
+
+
+@api_view(["POST"])
+@check_session
+def get_sponsor(request):
+    """ Pulls Sponsors from Sponsor Table """
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+
+        current = Users.objects.filter(
+            unique_id=data["unique_id"]).values("sponsor_id")
+        current_sponsor = Sponsors.objects.filter(
+            sponsor_id=current[0]["sponsor_id"]).values("sponsor_name")
+        all_sponsors = Sponsors.objects.values("sponsor_name")
+        sponsor_dict = {"current_sponsor": list(
+            current_sponsor), "all_sponsors": list(all_sponsors)}
+        json_data = json.dumps(sponsor_dict)
+
+        return HttpResponse(json_data, content_type="application/json")
 
 
 @api_view(["GET"])
@@ -182,7 +209,25 @@ def check_password(request):
 
             current_pass = password.encode("utf-8")
             prev_pass = Users.objects.filter(email=email).values("password")
-            
+
+            if bcrypt.checkpw(current_pass, prev_pass):
+                return JsonResponse({"matches": True})
+            else:
+                return JsonResponse({"matches": False})
+        except Users.DoesNotExist:
+            return JsonResponse({"error": "User does not exist"}, status=400)
+
+    if request.method == "POST":
+        try:
+            email = request.GET.get("email")
+            password = request.GET.get("password")
+
+            if not validate_email(email):
+                return JsonResponse({"error": "Invalid email"})
+
+            current_pass = password.encode("utf-8")
+            prev_pass = Users.objects.filter(email=email).values("password")
+
             if bcrypt.checkpw(current_pass, prev_pass):
                 return JsonResponse({"matches": True})
             else:
@@ -243,7 +288,8 @@ def login(request):
 
             # Checking for login attempt timeout
             if "lockout_time" in request.COOKIES and request.COOKIES["lockout_time"] != "undefined":
-                locked_until = datetime.fromisoformat(request.COOKIES["lockout_time"]).astimezone(timezone.utc)
+                locked_until = datetime.fromisoformat(
+                    request.COOKIES["lockout_time"]).astimezone(timezone.utc)
                 if timezone.now() < locked_until:
                     remaining_time = locked_until - timezone.now()
                     remaining_time_str = f"{remaining_time.seconds // 60} minutes and {remaining_time.seconds % 60} seconds"
@@ -298,14 +344,17 @@ def logout(request):
     if request.method == "POST":
         session_id_from_cookie = request.COOKIES.get('sessionId')
         if session_id_from_cookie:
-            user = Users.objects.filter(session_id=session_id_from_cookie).first()
+            user = Users.objects.filter(
+                session_id=session_id_from_cookie).first()
             if user:
                 # Set session expiration time to a past date to immediately invalidate the session
                 user.expiration_time = timezone.now() - timezone.timedelta(days=1)
                 user.session_id = None
                 user.save()
-                response = HttpResponse({'message': 'Logged out successfully'}, status=200)
-                cookies = ['sessionId', 'expiration', 'role', 'lastName', 'firstName', 'uniqueId', 'email', 'remember']
+                response = HttpResponse(
+                    {'message': 'Logged out successfully'}, status=200)
+                cookies = ['sessionId', 'expiration', 'role', 'lastName',
+                           'firstName', 'uniqueId', 'email', 'remember']
                 for cookie in cookies:
                     response.delete_cookie(cookie)
                 return response
@@ -337,11 +386,11 @@ def password_reset(request):
                 raise ObjectDoesNotExist()
         except ObjectDoesNotExist:
             return JsonResponse({"error": "User does not exist"}, status=400)
-        
-        #token_generator = default_token_generator
-        #token = token_generator.make_token(user)
+
+        # token_generator = default_token_generator
+        # token = token_generator.make_token(user)
         token = get_random_string(length=32)
-        #reset_url = request.build_absolute_uri(reverse("password_reset", args=[user.pk, token]))
+        # reset_url = request.build_absolute_uri(reverse("password_reset", args=[user.pk, token]))
         reset_url = request.build_absolute_uri(reverse("password_reset"))
 
         response = send_password_reset(email, reset_url)
@@ -381,7 +430,8 @@ def signup(request):
         # Create a new User object from the form data
         try:
             # Check if all required fields are present and not empty
-            required_fields = ["first_name", "last_name", "email", "password", "role_id", "sponsor_id"]
+            required_fields = ["first_name", "last_name",
+                               "email", "password", "role_id", "sponsor_id"]
             for field in required_fields:
                 if not data.get(field):
                     return JsonResponse({"Error": f"Missing or empty [{field}]"}, status=400)
@@ -439,12 +489,13 @@ def update(request):
         email = data["email"]
         if not validate_email(email):
             return JsonResponse({"Invalid email": email}, status=400)
-        
+
         try:
             user = Users.objects.filter(email=email).first()
             if user:
                 try:
-                    create_update_role(data, user.password, user.unique_id, user)
+                    create_update_role(data, user.password,
+                                       user.unique_id, user)
                 except Exception as e:
                     print(e)
                     return JsonResponse({"Error: ": str(e)}, status=400)

@@ -25,11 +25,9 @@ class Drivers(models.Model):
 class Sponsors(models.Model):
     """ Sponsor Model Schema """
     
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
+    sponsor_name = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
     password = models.BinaryField(max_length=255)
-    role_id = models.IntegerField()
     sponsor_id = models.IntegerField()
     address = models.CharField(max_length=255)
     unique_id = models.AutoField(primary_key=True)
