@@ -22,8 +22,10 @@ from points import views as points_views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("drivers", users_views.get_driver),
+    path("sponsors", users_views.get_sponsor),
     path("signup", users_views.signup),
     path("login", users_views.login),
+    path("logout", users_views.logout),
     path("password_reset", users_views.password_reset),
     path("update", users_views.update),
     path("catalog", catalog_views.get_products),

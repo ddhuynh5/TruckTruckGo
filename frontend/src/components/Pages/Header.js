@@ -4,14 +4,16 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { points } from './PagesHelper';
+import { logout } from '../Auth/AuthHelper';
 import CartModal from './cart/CartModal';
-import cartIcon from '../../assets/images/shopping-cart.png';
+import { AiOutlineHome, AiOutlineShoppingCart } from 'react-icons/ai';
+import { SiGithubsponsors } from 'react-icons/si';
+import { HiOutlineSparkles, HiOutlineCog } from 'react-icons/hi';
 
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 
 
@@ -67,12 +69,12 @@ function Header(props) {
         else return;
     };
 
-    const cartIconStyle = {
-        backgroundImage: `url(${cartIcon})`,
-        backgroundSize: 'cover',
-        width: '30px',
-        height: '30px',
-        cursor: 'pointer',
+    const handleLogout = async () => {
+        const response = await logout();
+        if (response.status >= 200 && response.status < 300) {
+            console.log("Logout successful");
+            navigate(`/`);
+        }
     }
 
     // Static Cart Info
@@ -139,23 +141,22 @@ function Header(props) {
                     </Offcanvas.Header>
                     <Offcanvas.Body>
                         <Nav className="justify-content-end flex-grow-1 pe-3">
-                            <Nav.Link href="/home">Home</Nav.Link>
-                            <Nav.Link href="/sponsors">Sponsors</Nav.Link>
-                            <Nav.Link href="/points">Points: {totalPoints}</Nav.Link>
-                            <NavDropdown
-                                title="Dropdown"
-                                id={`offcanvasNavbarDropdown-expand-${false}`}
-                            >
-                                <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
-                                <NavDropdown.Item href="#action4">
-                                    Another action
-                                </NavDropdown.Item>
-                                <NavDropdown.Divider />
-                                <NavDropdown.Item href="#action5">
-                                    Something else here
-                                </NavDropdown.Item>
-                            </NavDropdown>
+                            <Nav.Link href="/home" style={{ display: "flex", alignItems: "center", fontSize: "20px" }}>
+                                <AiOutlineHome style={{ marginRight: "8px" }} />Home
+                            </Nav.Link>
+                            <Nav.Link href="/sponsors" style={{ display: "flex", alignItems: "center", fontSize: "20px" }}>
+                                <SiGithubsponsors style={{ marginRight: "8px" }} />Sponsors
+                            </Nav.Link>
+                            <Nav.Link href="/points" style={{ display: "flex", alignItems: "center", fontSize: "20px" }}>
+                                <HiOutlineSparkles style={{ marginRight: "8px" }} />Points: {totalPoints}
+                            </Nav.Link>
+                            <Nav.Link href="/settings" style={{ display: "flex", alignItems: "center", fontSize: "20px" }}>
+                                <HiOutlineCog style={{ marginRight: "8px" }} />Settings
+                            </Nav.Link>
                         </Nav>
+                    </Offcanvas.Body>
+                    <Offcanvas.Body style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                        <button onClick={handleLogout}>Logout</button>
                     </Offcanvas.Body>
                 </Navbar.Offcanvas>
                 <Form className="d-flex" style={{ margin: '0 auto', marginRight: '200px', width: '50%' }} onSubmit={handleSearch}>
@@ -168,7 +169,7 @@ function Header(props) {
                         defaultValue={keywords ? keywords : ""}
                     />
                 </Form>
-                <button style={cartIconStyle} onClick={openModal} className='nav-button ms-auto me-2' />
+                <AiOutlineShoppingCart onClick={openModal} className='nav-button ms-auto me-2' style={{ fontSize: "2rem" }} />
                 {renderCartModal()}
             </Container>
         </Navbar>
