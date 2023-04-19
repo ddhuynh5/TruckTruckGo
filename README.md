@@ -9,6 +9,9 @@ local_repo/
 ├── venv
 ├── frontend
 ├── backend
+├──.dockerignore
+├──.gitignore
+├──docker-compose.yaml
 ├── README.md
 └── .gitignore
 ```
@@ -33,36 +36,29 @@ local_repo/
         git pull origin main
         ```
 2.	Dependencies & Packages
-    * Install Python Packages [Make sure to be in top-level directory]
+    * Install Python Packages [Make sure to be in /backend]
         ```
         pip install -r requirements.txt
         ```
     * Install Node Packages [Make sure to be in /frontend]
         ```
         npm install
+
+        or
+
+        npm ci
         ```
     * If installing Node packages
         ```
-        npm install --save new-dependency
+        npm install --save [new-dependency]
         ```
 
-
 # Build and Test
-1. Backend [Make sure to be in /backend]:
+1. Run Backend Server [Make sure to be in /backend]:
     ```
     python manage.py runserver
     ```
-    If you run into this or a similar message:
-    ```
-    You have 18 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): admin, auth, contenttypes, sessions.
-    Run 'python manage.py migrate' to apply them.
-    ```
-    Run the following to initialize a local test database:
-    ```
-    python manage.py makemigrations
-    python manage.py migrate
-    ```
-2. Frontend [Make sure to be in /frontend]:
+2. Run Frontend Server [Make sure to be in /frontend]:
     ```
     npm start
     ```

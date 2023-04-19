@@ -26,7 +26,6 @@ function clearCookies() {
     }
 }
 
-
 export function useInterceptor() {
     useEffect(() => {
         axios.interceptors.response.use(
@@ -96,9 +95,11 @@ export const logout = async () => {
 }
 
 export const signup = async (
-    first_name,
-    last_name,
-    address,
+    address = null,
+    first_name = null,
+    last_name = null,
+    sponsor_name = null,
+    admin_name = null,
     role_id,
     sponsor_id,
     email,
@@ -106,9 +107,11 @@ export const signup = async (
 ) => {
     try {
         const response = await axios.post('http://localhost:8000/signup', {
+            address,
             first_name,
             last_name,
-            address,
+            sponsor_name,
+            admin_name,
             role_id,
             sponsor_id,
             email,

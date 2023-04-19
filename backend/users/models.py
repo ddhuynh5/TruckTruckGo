@@ -19,7 +19,7 @@ class Drivers(models.Model):
         managed = False
 
     def __str__(self):
-        return f"{self.first_name} {str(self.role_id)}"
+        return f"{str(self.first_name)} {str(self.role_id)}"
 
 
 class Sponsors(models.Model):
@@ -29,6 +29,7 @@ class Sponsors(models.Model):
     email = models.CharField(max_length=255)
     password = models.BinaryField(max_length=255)
     sponsor_id = models.IntegerField()
+    role_id = models.IntegerField()
     address = models.CharField(max_length=255)
     unique_id = models.AutoField(primary_key=True)
 
@@ -37,18 +38,16 @@ class Sponsors(models.Model):
         managed = False
 
     def __str__(self):
-        return f"{self.first_name} {str(self.role_id)}"
+        return f"{str(self.sponsor_name)} {str(self.role_id)}"
 
 
 class Admins(models.Model):
     """ Admin Model Schema """
     
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
+    admin_name = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
     password = models.BinaryField(max_length=255)
     role_id = models.IntegerField()
-    address = models.CharField(max_length=255)
     unique_id = models.AutoField(primary_key=True)
 
     class Meta:
@@ -56,19 +55,16 @@ class Admins(models.Model):
         managed = False
 
     def __str__(self):
-        return f"{self.first_name} {str(self.role_id)}"
+        return f"{str(self.admin_name)} {str(self.role_id)}"
 
 
 class Users(models.Model):
     """ User Model Schema """
 
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
     password = models.BinaryField(max_length=255)
     role_id = models.IntegerField()
     sponsor_id = models.IntegerField()
-    address = models.CharField(max_length=255)
     login_attempts = models.IntegerField(default=0)
     unique_id = models.AutoField(primary_key=True)
     session_id = models.CharField(max_length=255)
@@ -79,11 +75,12 @@ class Users(models.Model):
         managed = False
 
     def __str__(self):
-        return f"{self.first_name} {str(self.role_id)}"
+        return f"{str(self.email)} {str(self.role_id)}"
     
     def create_session(self, session_id):
-        expiration_time = timezone.now() + timezone.timedelta(hours=1)
-        print(expiration_time)
+        expiration_time_utc = timezone.now() + timezone.timedelta(hours=1)
+        est_tz = timezone.get_fixed_timezone(-300)  # -5 hours from UTC
+        expiration_time = expiration_time_utc.astimezone(est_tz)
         self.session_id = session_id
         self.expiration_time = expiration_time
         self.save()

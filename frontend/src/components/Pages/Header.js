@@ -24,18 +24,23 @@ function Header(props) {
     const [totalPoints, setTotalPoints] = useState("");
     const [fullName, setFullName] = useState("");
     const [id, setId] = useState("");
+    const [roleId, setRoleId] = useState("");
     const location = useLocation();
     const navigate = useNavigate();
 
     useEffect(() => {
-        const firstName = Cookies.get('firstName');
-        const lastName = Cookies.get('lastName');
+        const name = Cookies.get('name');
         const id = Cookies.get('uniqueId');
+        const role = Cookies.get('role');
         setId(id);
-        setFullName(firstName + ' ' + lastName);
+        setRoleId(role);
+        setFullName(name);
     }, []);
 
     useEffect(() => {
+        if (roleId !== "Driver")
+            return;
+
         const getPoints = async () => {
             const pointData = await points(id);
             setTotalPoints(pointData[0].total_points);
@@ -147,9 +152,13 @@ function Header(props) {
                             <Nav.Link href="/sponsors" style={{ display: "flex", alignItems: "center", fontSize: "20px" }}>
                                 <SiGithubsponsors style={{ marginRight: "8px" }} />Sponsors
                             </Nav.Link>
-                            <Nav.Link href="/points" style={{ display: "flex", alignItems: "center", fontSize: "20px" }}>
-                                <HiOutlineSparkles style={{ marginRight: "8px" }} />Points: {totalPoints}
-                            </Nav.Link>
+                            {roleId === "Driver" && (
+                                <>
+                                    <Nav.Link href="/points" style={{ display: "flex", alignItems: "center", fontSize: "20px" }}>
+                                        <HiOutlineSparkles style={{ marginRight: "8px" }} />Points: {totalPoints}
+                                    </Nav.Link>
+                                </>
+                            )}
                             <Nav.Link href="/settings" style={{ display: "flex", alignItems: "center", fontSize: "20px" }}>
                                 <HiOutlineCog style={{ marginRight: "8px" }} />Settings
                             </Nav.Link>
