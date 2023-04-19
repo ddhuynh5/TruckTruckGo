@@ -3,8 +3,8 @@ import Select from 'react-select';
 import { signup, saveCookies, getRoleName } from './AuthHelper';
 
 export default function SignUp() {
-  const [first_name, setFirstName] = useState('');
-  const [last_name, setLastName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [address, setAddress] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -105,43 +105,47 @@ export default function SignUp() {
   };
 
   const handleSubmit = async (e) => {
-    // check role - not currently taking Sponsor/Admin, so reject those
-    if (selectedRole && selectedRole.label !== "Driver") {
-      setSelectedRole(null);
-      alert("We are not currently taking applications for Sponsors or Admins at the moment.");
+    e.preventDefault();
+    if ((address === '' && selectedRole.label !== "Admin") || !selectedRole || email === '' || password === '') {
+      setError(true);
+      console.log("O")
       return;
     }
-
-    e.preventDefault();
-    if (address === '' || !selectedRole || email === '' || password === '')
+    else if (nameError || emailError || passwordError || (addressError && selectedRole.label !== "Admin")) {
       setError(true);
-    else if (nameError || emailError || passwordError || addressError)
+      console.log("HEYOOO")
+      return;
+    }
+    else if (selectedRole.label === "Driver" && !selectedSponsor) {
       setError(true);
-    else if (selectedRole.label === "Driver" && !selectedSponsor)
-      setError(true);
+      return;
+    }
     else {
       try {
         const response = await signup(
-          first_name,
-          last_name,
           address,
+          firstName,
+          lastName,
+          sponsorName,
+          admin,
           selectedRole.value,
-          selectedSponsor.value,
+          selectedSponsor ? selectedSponsor.value : parseInt(sponsorCode),
           email,
           password
         );
 
         setSubmitted(true);
         setError(false);
+
         saveCookies({
           email: response[0].fields.email,
+          name: response[0].name,
           role: getRoleName(response[0].fields.role_id),
-          firstName: response[0].fields.first_name,
-          lastName: response[0].fields.last_name,
           sessionId: response[0].fields.session_id,
           expiration: response[0].fields.expiration_time,
           uniqueId: response[0].pk
-        })
+        });
+
         window.location = '/home';
       }
       catch (error) {
@@ -164,7 +168,7 @@ export default function SignUp() {
           display: submitted ? '' : 'none',
         }}
       >
-        <p>User {first_name} {last_name} successfully registered!!</p>
+        <p>User {firstName} {lastName} successfully registered!!</p>
       </div>
 
     );
@@ -182,6 +186,16 @@ export default function SignUp() {
       </div>
     );
   };
+
+  const hidePass = () => {
+    var x = document.getElementById("InputPassword");
+    if (x.type === "password") {
+      x.type = "text";
+    }
+    else {
+      x.type = "password";
+    }
+  }
 
   return (
     <div className="wrapper">
@@ -218,7 +232,7 @@ export default function SignUp() {
               <input
                 onChange={handleFirstName}
                 className="input"
-                value={first_name}
+                value={firstName}
                 type="text"
               />
 
@@ -226,7 +240,7 @@ export default function SignUp() {
               <input
                 onChange={handleLastName}
                 className="input"
-                value={last_name}
+                value={lastName}
                 type="text"
               />
             </>
@@ -235,7 +249,7 @@ export default function SignUp() {
 
           {selectedRole && selectedRole.value === 2 && (
             <>
-              <label htmlFor="sponsor_name"><b>Enter Sponsor Name</b></label>
+              <label htmlFor="sponsor name"><b>Sponsor Name</b></label>
               <input
                 onChange={handleSponsorName}
                 className="input"
@@ -243,7 +257,7 @@ export default function SignUp() {
                 type="text"
               />
               <br />
-              <label htmlFor="sponsor_code"><b>Enter Sponsor Code</b></label>
+              <label htmlFor="sponsor code"><b>Sponsor Code</b></label>
               <input
                 onChange={handleSponsorCode}
                 className="input"
@@ -256,7 +270,7 @@ export default function SignUp() {
 
           {selectedRole && selectedRole.value === 1 && (
             <>
-              <label htmlFor="admin"><b>Enter Administrator Code</b></label>
+              <label htmlFor="admin"><b>Administrator Name</b></label>
               <input
                 onChange={handleAdmin}
                 className="input"
@@ -267,13 +281,17 @@ export default function SignUp() {
             </>
           )}
 
-          <label htmlFor="address"><b>Address</b></label>
-          <input
-            onChange={handleAddress}
-            className="input"
-            value={address}
-            type="text"
-          />
+          {selectedRole && selectedRole.value !== 1 && (
+            <>
+              <label htmlFor="address"><b>Address</b></label>
+              <input
+                onChange={handleAddress}
+                className="input"
+                value={address}
+                type="text"
+              />
+            </>
+          )}
 
           <label htmlFor="email"><b>Email</b></label>
           <input
@@ -281,15 +299,22 @@ export default function SignUp() {
             className="input"
             value={email}
             type="text"
+            placeholder="Enter Email"
           /> {emailError && (<div className="error">Please enter a valid email address</div>)}
-          <label htmlFor="password"><b>Password</b></label>
+          <label htmlFor="InputPassword"><b>Password</b></label>
           <input
             onChange={handlePassword}
-            className="input"
+            className="form-control"
             value={password}
             type="password"
+            id="InputPassword"
+            placeholder="Enter Password"
           /> {passwordError && (<div className="error">Password must be at least 8 characters long, contain at least
             one capital letter, one number, and a special character</div>)}
+
+          <div>
+            <input type="checkbox" onClick={hidePass} /> Show Password
+          </div>
 
           <p><a href="SignIn">Already have an account?</a></p>
 

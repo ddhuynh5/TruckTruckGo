@@ -103,17 +103,25 @@ def create_update_role(data, password, new_id, user=None):
         raise ValueError("Invalid role ID")
 
     defaults = {
-        "first_name": data["first_name"] if "first_name" in data else user.first_name,
-        "last_name": data["last_name"] if "last_name" in data else user.last_name,
+        "first_name": data.get("first_name", ""),
+        "last_name": data.get("last_name", ""),
+        "sponsor_name": data.get("sponsor_name", ""),
+        "admin_name": data.get("admin_name", ""),
+        "sponsor_id": data.get("sponsor_id", None),
+        "address": data.get("address", ""),
         "password": password if password else user.password,
         "role_id": current_role,
-        "sponsor_id": data["sponsor_id"] if "sponsor_id" in data else user.sponsor_id,
-        "address": data["address"] if "address" in data else user.address,
-        "unique_id": new_id,
+        "unique_id": new_id
     }
 
-    if model_class == Admins:
-        del defaults["sponsor_id"]
+    remove_lists = {
+        Admins: ["sponsor_id", "first_name", "last_name", "address", "sponsor_name"],
+        Sponsors: ["admin_name", "first_name", "last_name"],
+        Drivers: ["admin_name", "sponsor_name"]
+    }
+
+    remove = remove_lists.get(model_class, [])
+    defaults = {key: value for key, value in defaults.items() if key not in remove}
 
     obj, created = model_class.objects.get_or_create(
         email=data["email"] if "email" in data else user.email, defaults=defaults
@@ -121,11 +129,8 @@ def create_update_role(data, password, new_id, user=None):
 
     # Updating current record if exists
     if not created:
-        obj.first_name = defaults["first_name"]
-        obj.last_name = defaults["last_name"]
+        obj.__dict__.update(**defaults)
         obj.password = password
-        obj.role_id = defaults["role_id"]
-        obj.address = defaults["address"]
         obj.save()
 
     if obj.role_id == 3:
@@ -143,25 +148,65 @@ def create_update_role(data, password, new_id, user=None):
     # Updating Users Table
     if related_model_class:
         related_obj = related_model_class.objects.get(email=data["email"])
-        related_obj.first_name = defaults["first_name"]
-        related_obj.last_name = defaults["last_name"]
+        related_obj.__dict__.update(**defaults)
         related_obj.password = password
-        related_obj.role_id = defaults["role_id"]
-        related_obj.address = defaults["address"]
         related_obj.save()
+    
+    return obj
 
 
 @api_view(["POST"])
-# @check_session
+@check_session
 def get_driver(request):
-    """ Pulls Drivers from Driver Table """
+    """ Pulls Driver from Drivers Table """
 
     if request.method == "POST":
         data = json.loads(request.body)
 
-        current = list(Users.objects.filter(
+        current = list(Drivers.objects.filter(
             unique_id=data["unique_id"]).values("first_name", "last_name", "email", "sponsor_id", "address"))
         json_data = json.dumps(current)
+
+        return HttpResponse(json_data, content_type="application/json")
+
+
+@api_view(["POST"])
+@check_session
+def get_all_drivers(request):
+    """ Pulls All Drivers for [Sponsor] from Drivers Table """
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+
+        user = Sponsors.objects.filter(unique_id=data["unique_id"]).first()
+        sponsor_id = user.sponsor_id
+
+        current = list(Drivers.objects.filter(sponsor_id=sponsor_id).values("first_name", "last_name", "email", "address"))
+        json_data = json.dumps(current)
+
+        return HttpResponse(json_data, content_type="application/json")
+
+
+@api_view(["POST"])
+def get_specific_user(request):
+    """ Pulls data from user's corresponding table """
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+        current_role = str(data["role_id"])
+        unique_id = int(data["unique_id"])
+
+        if current_role == "Admin":
+            model_class = Admins
+        elif current_role == "Sponsor":
+            model_class = Sponsors
+        elif current_role == "Driver":
+            model_class = Drivers
+        else:
+            raise ValueError("Invalid role ID")
+        
+        current_user = model_class.objects.filter(unique_id=unique_id)
+        json_data = serializers.serialize("json", current_user)
 
         return HttpResponse(json_data, content_type="application/json")
 
@@ -286,6 +331,16 @@ def login(request):
             password = data["password"].encode("utf-8")
             user = Users.objects.get(email=data["email"])
 
+            if user.role_id == 1:
+                user_obj = Admins.objects.get(email=user.email)
+                name = user_obj.admin_name
+            elif user.role_id == 2:
+                user_obj = Sponsors.objects.get(email=user.email)
+                name = user_obj.sponsor_name
+            else:
+                user_obj = Drivers.objects.get(email=user.email)
+                name = user_obj.first_name
+
             # Checking for login attempt timeout
             if "lockout_time" in request.COOKIES and request.COOKIES["lockout_time"] != "undefined":
                 locked_until = datetime.fromisoformat(
@@ -329,6 +384,9 @@ def login(request):
                 session_id = generate_unique_session_id()
                 user.create_session(session_id=session_id)
                 json_data = serializers.serialize("json", [user])
+                json_dict = json.loads(json_data)
+                json_dict[0]['name'] = name
+                json_data = json.dumps(json_dict)
                 user.login_attempts = 0
                 user.save()
                 return HttpResponse(json_data, content_type="application/json")
@@ -404,9 +462,11 @@ def signup(request):
         Creates new record from data gathered on frontend
 
         parameter - request:
-            first name
-            last name
-            address
+            address [optional]
+            first name [optional]
+            last name [optional]
+            sponsor name [optional]
+            admin name [optional]
             role id
             sponsor id
             email
@@ -430,17 +490,17 @@ def signup(request):
         # Create a new User object from the form data
         try:
             # Check if all required fields are present and not empty
-            required_fields = ["first_name", "last_name",
-                               "email", "password", "role_id", "sponsor_id"]
+            required_fields = ["email", "password", "role_id", "sponsor_id"]
+            
+            if data["role_id"] and data["role_id"] == 1: # if admin ignore sponsor id
+                required_fields.remove("sponsor_id")
+
             for field in required_fields:
                 if not data.get(field):
                     return JsonResponse({"Error": f"Missing or empty [{field}]"}, status=400)
 
             if not Users.objects.filter(email=email).exists():
                 user = Users.objects.create(
-                    first_name=data["first_name"],
-                    last_name=data["last_name"],
-                    address=data["address"],
                     role_id=data["role_id"],
                     sponsor_id=data["sponsor_id"],
                     email=email,
@@ -451,7 +511,7 @@ def signup(request):
                 user.save()
                 new_id = user.unique_id
                 try:
-                    create_update_role(data, password, new_id)
+                    obj = create_update_role(data, password, new_id)
                 except Exception as e:
                     print(e)
                     return JsonResponse({"Error: ": str(e)}, status=400)
@@ -461,10 +521,22 @@ def signup(request):
             print(error)
             return JsonResponse({"Error": error}, status=400)
 
+        # Get new user's name
+        if hasattr(obj, 'first_name') and obj.first_name:
+            name = obj.first_name
+        elif hasattr(obj, 'sponsor_name') and obj.sponsor_name:
+            name = obj.sponsor_name
+        else:
+            name = obj.admin_name
+
         # Send a welcome email to the new user
-        response = send_welcome_email(user.email, user.first_name)
+        response = send_welcome_email(user.email, name)
         new_user = Users.objects.filter(email=email)
         json_data = serializers.serialize("json", new_user)
+
+        json_dict = json.loads(json_data)
+        json_dict[0]['name'] = name
+        json_data = json.dumps(json_dict)
 
         return HttpResponse(json_data, content_type="application/json", status=response)
 

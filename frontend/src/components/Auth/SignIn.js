@@ -24,8 +24,7 @@ export default function SignIn() {
       saveCookies({
         email: response[0].fields.email,
         role: getRoleName(response[0].fields.role_id),
-        firstName: response[0].fields.first_name,
-        lastName: response[0].fields.last_name,
+        name: response[0].name,
         sessionId: response[0].fields.session_id,
         expiration: response[0].fields.expiration_time,
         uniqueId: response[0].pk,
