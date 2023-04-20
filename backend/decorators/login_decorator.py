@@ -14,7 +14,8 @@ def check_session(func):
         if session_id_from_cookie:
             user = Users.objects.filter(session_id=session_id_from_cookie).first()
             if user:
-                if user.expiration_time > timezone.now():
+                expiration_time = user.expiration_time.astimezone(timezone.get_fixed_timezone(-240))
+                if expiration_time > timezone.now().astimezone(timezone.get_fixed_timezone(-240)):
                     # session is valid, proceed with the view function
                     return func(request, *args, **kwargs)
                 else:
