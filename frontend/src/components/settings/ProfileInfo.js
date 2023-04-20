@@ -1,53 +1,81 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Select from 'react-select';
-import { sponsor, driversList, specific } from './SettingsHelper';
+import { sponsor, driversList, specific, update } from './SettingsHelper';
 import Cookies from 'js-cookie';
 
 export default function ProfileInfo() {
-  const [currentSponsor, setCurrentSponsor] = useState('');
   const [allSponsors, setAllSponsors] = useState([]);
   const [allDrivers, setAllDrivers] = useState([]);
-  const [full_name, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [address, setAddress] = useState('');
+
   const [roleId, setRoleId] = useState('');
   const [uniqueId, setUniqueId] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-  const [isEditable, setIsEditable] = useState(false);
 
-  /*   const [selectedSponsor, setSelectedSponsor] = useState(null);*/
-  async function getSponsors(data) {
+  const [currentSponsor, setCurrentSponsor] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [address, setAddress] = useState('');
+
+  const [isEditable, setIsEditable] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [initialSponsor, setInitialSponsor] = useState('');
+  const [initialFirst, setInitialFirst] = useState('');
+  const [initialLast, setInitialLast] = useState('');
+  const [initialName, setInitialName] = useState('');
+  const [initialEmail, setInitialEmail] = useState('');
+  const [initialAddress, setInitialAddress] = useState('');
+
+
+  const getSponsors = useCallback(async (data) => {
     if (data) {
       const items = await sponsor(data);
       const current = items.current_sponsor[0]["sponsor_name"].toString();
       const all = items.all_sponsors.map(sponsor => sponsor.sponsor_name);
       setCurrentSponsor(current);
+      setInitialSponsor(current);
       setAllSponsors(all);
     }
-  }
+  }, []);
 
-  async function getAllDrivers() {
+  const getAllDrivers = useCallback(async () => {
     const all = await driversList(uniqueId);
     setAllDrivers(all);
-  }
+  }, [uniqueId]);
 
-  async function getCurrentUser() {
+  const getCurrentUser = useCallback(async () => {
     const user = await specific(roleId, uniqueId);
-    if (roleId == "Driver") {
+    if (roleId === "Driver") {
+      setFirstName(user[0].fields.first_name);
+      setInitialFirst(user[0].fields.first_name);
+
+      setLastName(user[0].fields.last_name);
+      setInitialLast(user[0].fields.last_name)
+
       setFullName(user[0].fields.first_name + ' ' + user[0].fields.last_name);
-      setEmail(user[0].fields.email);
+
       setAddress(user[0].fields.address);
+      setInitialAddress(user[0].fields.address);
     }
-    if (roleId == "Sponsor") {
-      setFullName(user[0].fields.sponsor_name);
-      setEmail(user[0].fields.email);
+
+    if (roleId === "Sponsor") {
+      setName(user[0].fields.sponsor_name);
+      setInitialName(user[0].fields.sponsor_name);
+
       setAddress(user[0].fields.address);
+      setInitialAddress(user[0].fields.address);
     }
-    if (roleId == "Admin") {
-      setFullName(user[0].fields.admin_name);
-      setEmail(user[0].fields.email);
+
+    if (roleId === "Admin") {
+      setName(user[0].fields.admin_name);
+      setInitialName(user[0].fields.admin_name);
     }
-  }
+
+    setEmail(user[0].fields.email);
+    setInitialEmail(user[0].fields.email);
+  }, [roleId, uniqueId]);
 
   useEffect(() => {
     const uniqueId = Cookies.get("uniqueId");
@@ -66,32 +94,65 @@ export default function ProfileInfo() {
 
       getCurrentUser();
     }
-  }, [roleId, uniqueId]);
+  }, [roleId, uniqueId, getAllDrivers, getSponsors, getCurrentUser]);
 
   const handleFullName = (e) => {
-    setFullName(e.target.value);
-    setSubmitted(false);
+    const fullName = e.target.value;
+    setFullName(fullName);
+    const [firstName, lastName] = fullName.split(' ');
+    setFirstName(firstName);
+    setLastName(lastName);
+  };
+
+  const handleName = (e) => {
+    setName(e.target.value);
   };
 
   const handleEmail = (e) => {
     const emailValue = e.target.value;
     setEmail(emailValue);
-    setSubmitted(false);
   };
 
   const handleAddress = (e) => {
     const addressValue = e.target.value;
     setAddress(addressValue);
-    setSubmitted(false);
   };
 
   const handleCancel = () => {
     // Reset form data
     setIsEditable(false);
+    setCurrentSponsor(initialSponsor);
+    setFullName(initialFirst + ' ' + initialLast);
+    setName(initialName);
+    setEmail(initialEmail);
+    setAddress(initialAddress);
   };
 
   const handleEditClick = () => {
     setIsEditable(true);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const updateParams = {
+      "address": address ? address : null,
+      "first_name": firstName ? firstName : null,
+      "last_name": lastName ? lastName : null,
+      "sponsor_name": name ? name : null,
+      "admin_name": name ? name : null,
+      "email": email ? email : null,
+    }
+    const confirmed = window.confirm("Are you sure you want to proceed with these changes?");
+    if (confirmed) {
+      setIsLoading(true);
+      const response = await update(uniqueId, updateParams);
+      if (response["success"])
+        window.location.reload();
+    }
+    else {
+      handleCancel();
+      return;
+    }
   };
 
   return (
@@ -103,73 +164,100 @@ export default function ProfileInfo() {
         <form name="Sign Up">
           <h2>Profile Information</h2>
 
-          <label htmlFor="name"><b>Name</b></label>
-          <input
-            onChange={handleFullName}
-            className="input"
-            value={full_name}
-            type="text"
-            readOnly={!isEditable}
-          />
+          {isLoading && (
+            <div className="loading-spinner">
+              <div className="spinner"></div>
+              <p>Loading...</p>
+            </div>
+          )}
 
-          <label htmlFor="email"><b>Email</b></label>
-          <input
-            onChange={handleEmail}
-            className="input"
-            value={email}
-            type="text"
-            readOnly={!isEditable}
-          />
-
-          {roleId !== "Admin" && (
+          {!isLoading && (
             <>
-              <label htmlFor="address"><b>Address</b></label>
+              {roleId !== "Driver" && (
+                <>
+                  <label htmlFor="name"><b>Name</b></label>
+                  <input
+                    onChange={handleName}
+                    className="input"
+                    value={name}
+                    type="text"
+                    readOnly={!isEditable}
+                  />
+                </>
+              )}
+
+              {roleId === "Driver" && (
+                <>
+                  <label htmlFor="name"><b>Name</b></label>
+                  <input
+                    onChange={handleFullName}
+                    className="input"
+                    value={fullName}
+                    type="text"
+                    readOnly={!isEditable}
+                  />
+                </>
+              )}
+
+              <label htmlFor="email"><b>Email</b></label>
               <input
-                onChange={handleAddress}
+                onChange={handleEmail}
                 className="input"
-                value={address}
+                value={email}
                 type="text"
                 readOnly={!isEditable}
               />
 
-              <label htmlFor="sponsor"><b>Sponsor</b></label>
-              <Select
-                options={allSponsors.map((sponsor) => ({
-                  value: sponsor,
-                  label: sponsor,
-                }))}
-                value={{ value: currentSponsor, label: currentSponsor }}
-                onChange={(selectedOption) => {
-                  setCurrentSponsor(selectedOption.value);
-                  setSubmitted(false);
-                }}
-                isDisabled={!isEditable || roleId === "Sponsor"}
-              />
-              <br />
-            </>
-          )}
+              {roleId !== "Admin" && (
+                <>
+                  <label htmlFor="address"><b>Address</b></label>
+                  <input
+                    onChange={handleAddress}
+                    className="input"
+                    value={address}
+                    type="text"
+                    readOnly={!isEditable}
+                  />
 
-          {roleId === "Sponsor" && (
-            <>
-              <label htmlFor="myDrivers"><b>Drivers</b></label>
-              <Select
-                options={allDrivers.map((item, index) => ({
-                  value: index,
-                  label: `${item.first_name} ${item.last_name}`
-                }))}
-                placeholder="My Drivers"
-              />
-              <br />
-            </>
-          )}
+                  <label htmlFor="sponsor"><b>Sponsor</b></label>
+                  <Select
+                    options={allSponsors.map((sponsor) => ({
+                      value: sponsor,
+                      label: sponsor,
+                    }))}
+                    value={{ value: currentSponsor, label: currentSponsor }}
+                    onChange={(selectedOption) => {
+                      setCurrentSponsor(selectedOption.value);
+                    }}
+                    isDisabled={!isEditable || roleId === "Sponsor"}
+                  />
+                  <br />
+                </>
+              )}
 
-          {isEditable ? (
-            <>
-              <button type="submit">Save</button>
-              <button onClick={handleCancel}>Cancel</button>
+              {roleId === "Sponsor" && (
+                <>
+                  <label htmlFor="myDrivers"><b>Drivers</b></label>
+                  <Select
+                    options={allDrivers.map((item, index) => ({
+                      value: index,
+                      label: `${item.first_name} ${item.last_name}`
+                    }))}
+                    placeholder="My Drivers"
+                  />
+                  <br />
+                </>
+              )}
+
+              {isEditable ? (
+                <>
+                  <button onClick={handleSubmit}>Save</button>
+                  <button onClick={handleCancel}>Cancel</button>
+                </>
+              ) : (
+                <button onClick={handleEditClick}>Edit</button>
+              )}
             </>
-          ) : (
-            <button onClick={handleEditClick}>Edit</button>
           )}
 
         </form>

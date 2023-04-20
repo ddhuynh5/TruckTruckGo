@@ -7,6 +7,7 @@ export default function SignIn() {
   const [password, setPassword] = useState('');
   const [stored, setStored] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const changePage = () => {
     window.location = '/home';
@@ -20,6 +21,7 @@ export default function SignIn() {
 
     try {
       const response = await login(username, password);
+      setIsLoading(true);
 
       saveCookies({
         email: response[0].fields.email,
@@ -79,31 +81,42 @@ export default function SignIn() {
       <div className="container">
         <form>
           <h2>Sign In</h2>
-          <div className="form-group">
-            <label htmlFor="InputUsername">Email</label>
-            <input
-              type="username"
-              className="form-control"
-              id="InputUsername"
-              placeholder="Enter Email"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="InputPassword">Password</label>
-            <input
-              type="password"
-              className="form-control"
-              id="InputPassword"
-              placeholder="Enter Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <button type="submit" className="button" onClick={handleLogin}>
-            Login
-          </button>
+          {isLoading && (
+            <div className="loading-spinner">
+              <div className="spinner"></div>
+              <p>Loading...</p>
+            </div>
+          )}
+
+          {!isLoading && (
+            <>
+              <div className="form-group">
+                <label htmlFor="InputUsername">Email</label>
+                <input
+                  type="username"
+                  className="form-control"
+                  id="InputUsername"
+                  placeholder="Enter Email"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="InputPassword">Password</label>
+                <input
+                  type="password"
+                  className="form-control"
+                  id="InputPassword"
+                  placeholder="Enter Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+              <button type="submit" className="button" onClick={handleLogin}>
+                Login
+              </button>
+            </>
+          )}
           <div>
             <input type="checkbox" onClick={hidePass} /> Show Password
           </div>

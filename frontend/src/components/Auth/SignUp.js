@@ -18,6 +18,7 @@ export default function SignUp() {
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [error, setError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [AllSponsors, setAllSponsors] = useState([]);
 
   const [selectedRole, setSelectedRole] = useState(null);
@@ -107,12 +108,10 @@ export default function SignUp() {
     e.preventDefault();
     if ((address === '' && selectedRole.label !== "Admin") || !selectedRole || email === '' || password === '') {
       setError(true);
-      console.log("O")
       return;
     }
     else if (nameError || emailError || passwordError || (addressError && selectedRole.label !== "Admin")) {
       setError(true);
-      console.log("HEYOOO")
       return;
     }
     else if (selectedRole.label === "Driver" && !selectedSponsor) {
@@ -133,6 +132,7 @@ export default function SignUp() {
           password
         );
 
+        setIsLoading(true);
         setSubmitted(true);
         setError(false);
 
@@ -214,120 +214,131 @@ export default function SignUp() {
             {successMessage()}
           </div>
 
-          <label htmlFor="role"><b>Role</b></label>
-          <Select
-            options={roleOptions}
-            value={selectedRole}
-            onChange={handleRoleChange}
-          />
-          <br />
+          {isLoading && (
+            <div className="loading-spinner">
+              <div className="spinner"></div>
+              <p>Loading...</p>
+            </div>
+          )}
 
-          {selectedRole && selectedRole.value === 3 && (
+          {!isLoading && (
             <>
-              <label htmlFor="getAllSponsors"><b>Sponsor</b></label>
+              <label htmlFor="role"><b>Role</b></label>
               <Select
-                options={AllSponsors.map((sponsor) => ({
-                  value: sponsor,
-                  label: sponsor,
-                }))}
-                value={selectedSponsor}
-                onChange={handleSponsorChange}
-                placeholder="Select Sponsor"
-              />
-
-              <br />
-
-              <label htmlFor="first name"><b>First Name</b></label>
-              <input
-                onChange={handleFirstName}
-                className="input"
-                value={firstName}
-                type="text"
-              />
-
-              <label htmlFor="last name"><b>Last Name</b></label>
-              <input
-                onChange={handleLastName}
-                className="input"
-                value={lastName}
-                type="text"
-              />
-            </>
-          )}
-
-
-          {selectedRole && selectedRole.value === 2 && (
-            <>
-              <label htmlFor="sponsor name"><b>Sponsor Name</b></label>
-              <input
-                onChange={handleSponsorName}
-                className="input"
-                value={sponsorName}
-                type="text"
+                options={roleOptions}
+                value={selectedRole}
+                onChange={handleRoleChange}
               />
               <br />
-              <label htmlFor="sponsor code"><b>Sponsor Code</b></label>
+
+              {selectedRole && selectedRole.value === 3 && (
+                <>
+                  <label htmlFor="getAllSponsors"><b>Sponsor</b></label>
+                  <Select
+                    options={AllSponsors.map((sponsor) => ({
+                      value: sponsor,
+                      label: sponsor,
+                    }))}
+                    value={selectedSponsor}
+                    onChange={handleSponsorChange}
+                    placeholder="Select Sponsor"
+                  />
+
+                  <br />
+
+                  <label htmlFor="first name"><b>First Name</b></label>
+                  <input
+                    onChange={handleFirstName}
+                    className="input"
+                    value={firstName}
+                    type="text"
+                  />
+
+                  <label htmlFor="last name"><b>Last Name</b></label>
+                  <input
+                    onChange={handleLastName}
+                    className="input"
+                    value={lastName}
+                    type="text"
+                  />
+                </>
+              )}
+
+
+              {selectedRole && selectedRole.value === 2 && (
+                <>
+                  <label htmlFor="sponsor name"><b>Sponsor Name</b></label>
+                  <input
+                    onChange={handleSponsorName}
+                    className="input"
+                    value={sponsorName}
+                    type="text"
+                  />
+                  <br />
+                  <label htmlFor="sponsor code"><b>Sponsor Code</b></label>
+                  <input
+                    onChange={handleSponsorCode}
+                    className="input"
+                    value={sponsorCode}
+                    type="text"
+                  />
+                  <br />
+                </>
+              )}
+
+              {selectedRole && selectedRole.value === 1 && (
+                <>
+                  <label htmlFor="admin"><b>Administrator Name</b></label>
+                  <input
+                    onChange={handleAdmin}
+                    className="input"
+                    value={admin}
+                    type="text"
+                  />
+                  <br />
+                </>
+              )}
+
+              {selectedRole && selectedRole.value !== 1 && (
+                <>
+                  <label htmlFor="address"><b>Address</b></label>
+                  <input
+                    onChange={handleAddress}
+                    className="input"
+                    value={address}
+                    type="text"
+                  />
+                </>
+              )}
+
+              <label htmlFor="email"><b>Email</b></label>
               <input
-                onChange={handleSponsorCode}
+                onChange={handleEmail}
                 className="input"
-                value={sponsorCode}
+                value={email}
                 type="text"
-              />
-              <br />
+                placeholder="Enter Email"
+              /> {emailError && (<div className="error">Please enter a valid email address</div>)}
+              <label htmlFor="InputPassword"><b>Password</b></label>
+              <input
+                onChange={handlePassword}
+                className="form-control"
+                value={password}
+                type="password"
+                id="InputPassword"
+                placeholder="Enter Password"
+              /> {passwordError && (<div className="error">Password must be at least 8 characters long, contain at least
+                one capital letter, one number, and a special character</div>)}
+
+              <div>
+                <input type="checkbox" onClick={hidePass} /> Show Password
+              </div>
+
+              <p><a href="SignIn">Already have an account?</a></p>
+
+              <button onClick={handleSubmit} className="signupbtn" type="button"> Sign Up </button>
             </>
           )}
-
-          {selectedRole && selectedRole.value === 1 && (
-            <>
-              <label htmlFor="admin"><b>Administrator Name</b></label>
-              <input
-                onChange={handleAdmin}
-                className="input"
-                value={admin}
-                type="text"
-              />
-              <br />
-            </>
-          )}
-
-          {selectedRole && selectedRole.value !== 1 && (
-            <>
-              <label htmlFor="address"><b>Address</b></label>
-              <input
-                onChange={handleAddress}
-                className="input"
-                value={address}
-                type="text"
-              />
-            </>
-          )}
-
-          <label htmlFor="email"><b>Email</b></label>
-          <input
-            onChange={handleEmail}
-            className="input"
-            value={email}
-            type="text"
-            placeholder="Enter Email"
-          /> {emailError && (<div className="error">Please enter a valid email address</div>)}
-          <label htmlFor="InputPassword"><b>Password</b></label>
-          <input
-            onChange={handlePassword}
-            className="form-control"
-            value={password}
-            type="password"
-            id="InputPassword"
-            placeholder="Enter Password"
-          /> {passwordError && (<div className="error">Password must be at least 8 characters long, contain at least
-            one capital letter, one number, and a special character</div>)}
-
-          <div>
-            <input type="checkbox" onClick={hidePass} /> Show Password
-          </div>
-
-          <p><a href="SignIn">Already have an account?</a></p>
-
-          <button onClick={handleSubmit} className="signupbtn" type="button"> Sign Up </button>
         </form>
       </div>
     </div>

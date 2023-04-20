@@ -5,19 +5,29 @@ import axios from 'axios';
 export default function ForgotPass() {
     const [email, setEmail] = useState('');
 
-    const handleReset = () => {
+    const handleReset = async (e) => {
+        e.preventDefault();
         const email = document.getElementById("InputEmail").value;
         if (email === "") {
             document.getElementById("msg").innerHTML = "<center class='text'>Please enter an email</center>";
         } else {
             setEmail(email);
-            axios.post('http://localhost:8000/password_reset', { email })
-                .then(() => {
-                    document.getElementById("msg").innerHTML = "<center class='text'>Check your email for a link to reset your password</center>";
-                })
-                .catch(err => {
-                    console.error(err);
+
+            try {
+                const response = await axios.post('http://localhost:8000/password_reset', { email }, {
+                    withCredentials: true
                 });
+                if (response.data["success"]) {
+                    document.getElementById("msg").innerHTML = "<center class='text'>Check your email for a link to reset your password</center>";
+                }
+            } catch (error) {
+                if ((error.response && error.response.status === 400) || error.response.status === 401) {
+                    throw error.response.data;
+                } else {
+                    console.error(error);
+                    throw new Error("An error occurred while looking up item(s).");
+                }
+            }
         }
     }
 
@@ -38,7 +48,7 @@ export default function ForgotPass() {
                             onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
-                    <button type="reset" className="btn-reset" onClick={handleReset}>Reset Password</button>
+                    <button type="button" className="btn-reset" onClick={handleReset}>Reset Password</button>
                     <p><a href="SignUp">Don't have an account?</a></p>
                 </form>
                 <div className="msg">

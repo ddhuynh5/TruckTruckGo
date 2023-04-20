@@ -62,7 +62,7 @@ def validate_email(email):
     return True
 
 
-def set_points(driver_id, points=0):
+def set_points(driver_id, points):
     """Creates or updates points model for new drivers"""
 
     try:
@@ -101,18 +101,26 @@ def create_update_role(data, password, new_id, user=None):
         related_model_class = Users
     else:
         raise ValueError("Invalid role ID")
+    
+    if password is not None and isinstance(password, str):
+        password = password.encode("utf-8")
 
     defaults = {
-        "first_name": data.get("first_name", ""),
-        "last_name": data.get("last_name", ""),
-        "sponsor_name": data.get("sponsor_name", ""),
-        "admin_name": data.get("admin_name", ""),
-        "sponsor_id": data.get("sponsor_id", None),
-        "address": data.get("address", ""),
-        "password": password if password else user.password,
-        "role_id": current_role,
+        "first_name": data.get("first_name"),
+        "last_name": data.get("last_name"),
+        "sponsor_name": data.get("sponsor_name"),
+        "admin_name": data.get("admin_name"),
+        "sponsor_id": data.get("sponsor_id"),
+        "email": data.get("email"),
+        "address": data.get("address"),
+        "password": password,
+        "role_id": data.get("role_id"),
         "unique_id": new_id
     }
+
+    for key in list(defaults.keys()):
+        if defaults[key] is None or defaults[key] == "":
+            del defaults[key]
 
     remove_lists = {
         Admins: ["sponsor_id", "first_name", "last_name", "address", "sponsor_name"],
@@ -123,33 +131,43 @@ def create_update_role(data, password, new_id, user=None):
     remove = remove_lists.get(model_class, [])
     defaults = {key: value for key, value in defaults.items() if key not in remove}
 
-    obj, created = model_class.objects.get_or_create(
-        email=data["email"] if "email" in data else user.email, defaults=defaults
-    )
+    try:
+        obj = model_class.objects.get(unique_id=defaults["unique_id"])
+        created = False
+    except model_class.MultipleObjectsReturned:
+        obj = model_class.objects.filter(unique_id=defaults["unique_id"]).first()
+        created = False
+    except model_class.DoesNotExist:
+        obj = model_class.objects.create(**defaults)
+        created = True
 
     # Updating current record if exists
     if not created:
         obj.__dict__.update(**defaults)
-        obj.password = password
         obj.save()
 
-    if obj.role_id == 3:
-        set_points(new_id, data["total_points"]
-                   if "total_points" in data else 0)
+    # new drivers start at 0 points
+    if created and obj.role_id == 3:
+        set_points(new_id, 0)
+    # if updating driver, check if points are passed in (if so update)
+    elif obj.role_id == 3:
+        if "total_points" not in data: # if points aren't passed in, use current points in DB
+            points_obj = Points.objects.get(driver_id=new_id)
+            set_points(new_id, points_obj.total_points)
 
     # Updating tables where previous role_id existed
     non_new_roles = [role for role in roles.values() if role !=
                      roles[current_role]]
+
     for role in non_new_roles:
         if role == Drivers:
             Points.objects.filter(driver_id=new_id).delete()
-        role.objects.filter(email=data["email"]).delete()
+        role.objects.filter(unique_id=new_id).delete()
 
     # Updating Users Table
     if related_model_class:
-        related_obj = related_model_class.objects.get(email=data["email"])
+        related_obj = related_model_class.objects.get(unique_id=new_id)
         related_obj.__dict__.update(**defaults)
-        related_obj.password = password
         related_obj.save()
     
     return obj
@@ -423,7 +441,7 @@ def logout(request):
                 response = HttpResponse(
                     {'message': 'Logged out successfully'}, status=200)
                 cookies = ['sessionId', 'expiration', 'role', 'lastName',
-                           'firstName', 'uniqueId', 'email', 'remember']
+                           'firstName', 'uniqueId', 'email', 'remember', 'name']
                 for cookie in cookies:
                     response.delete_cookie(cookie)
                 return response
@@ -460,7 +478,7 @@ def password_reset(request):
         # token = token_generator.make_token(user)
         token = get_random_string(length=32)
         # reset_url = request.build_absolute_uri(reverse("password_reset", args=[user.pk, token]))
-        reset_url = request.build_absolute_uri(reverse("password_reset"))
+        reset_url = request.build_absolute_uri("password_reset")
 
         response = send_password_reset(email, reset_url)
 
@@ -559,7 +577,7 @@ def update(request):
         Updates user in database
 
         Parameter:
-            email - User"s email, used to locate in db
+            unique_id - User's unique id, used to locate in db
             [parameter to update here]
         Returns:
             Success msg if record updated
@@ -569,12 +587,8 @@ def update(request):
     if request.method == "POST":
         data = json.loads(request.body)
 
-        email = data["email"]
-        if not validate_email(email):
-            return JsonResponse({"Invalid email": email}, status=400)
-
         try:
-            user = Users.objects.filter(email=email).first()
+            user = Users.objects.filter(unique_id=data["unique_id"]).first()
             if user:
                 try:
                     create_update_role(data, user.password,
@@ -583,7 +597,7 @@ def update(request):
                     print(e)
                     return JsonResponse({"Error: ": str(e)}, status=400)
             else:
-                return JsonResponse({"Could not find user with email: ": email}, status=400)
+                return JsonResponse({"Could not find user": data["unique_id"]}, status=400)
         except ConnectionRefusedError as error:
             print(error)
             return JsonResponse({"Connection Error": error}, status=400)

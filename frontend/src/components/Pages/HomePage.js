@@ -64,7 +64,7 @@ export default function HomePage() {
                         <p>Loading...</p>
                     </div>
                 )}
-                {catalogData && (
+                {!isLoading && catalogData && (
                     <ul className="image-gallery">
                         {catalogData.map((item) => (
                             <li key={item.id}>
