@@ -24,6 +24,7 @@ urlpatterns = [
     path("current_driver", users_views.get_driver),
     path("drivers", users_views.get_all_drivers),
     path("sponsors", users_views.get_sponsor),
+    path("all_sponsors", users_views.get_all_sponsors),
     path("signup", users_views.signup),
     path("login", users_views.login),
     path("logout", users_views.logout),

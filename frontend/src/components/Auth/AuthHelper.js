@@ -3,6 +3,23 @@ import { toast } from 'react-toastify';
 import { useEffect } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 
+export const getAllSponsors = async () => {
+    try {
+        const response = await axios.get('http://localhost:8000/all_sponsors');
+        const data = response.data;
+        return data;
+    } catch (error) {
+        if ((error.response && error.response.status === 400) || error.response.status === 401) {
+            throw error.response.data;
+        } else {
+            console.error(error);
+            throw new Error("An error occurred while looking up item(s).");
+        }
+    }
+};
+
+
+
 function showNotification(message) {
     toast.error(message, {
         position: toast.POSITION.TOP_RIGHT,

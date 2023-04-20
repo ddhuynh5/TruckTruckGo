@@ -49,7 +49,7 @@ function Header(props) {
         if (id) {
             getPoints();
         }
-    }, [id]);
+    }, [id, roleId]);
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
