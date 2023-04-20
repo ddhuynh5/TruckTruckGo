@@ -230,6 +230,17 @@ def get_sponsor(request):
 
         return HttpResponse(json_data, content_type="application/json")
 
+@api_view(["GET"])
+def get_all_sponsors(request):
+    """ Returns all sponsors """
+
+    if request.method == "GET":
+        all_sponsors = Sponsors.objects.values("sponsor_name")
+        sponsor_dict = {"all_sponsors": list(all_sponsors)}
+        json_data = json.dumps(sponsor_dict)
+
+        return HttpResponse(json_data, content_type="application/json")
+
 
 @api_view(["GET"])
 @check_session

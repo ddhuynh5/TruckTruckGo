@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
-import { signup, saveCookies, getRoleName } from './AuthHelper';
+import { signup, saveCookies, getRoleName, getAllSponsors } from './AuthHelper';
 
 export default function SignUp() {
   const [firstName, setFirstName] = useState('');
@@ -18,6 +18,7 @@ export default function SignUp() {
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [error, setError] = useState(false);
+  const [AllSponsors, setAllSponsors] = useState([]);
 
   const [selectedRole, setSelectedRole] = useState(null);
   const roleOptions = [
@@ -26,15 +27,13 @@ export default function SignUp() {
     { value: 1, label: 'Admin' }
   ];
 
+  async function getSponsors() {
+    const items = await getAllSponsors();
+    const all = items.all_sponsors.map(sponsor => sponsor.sponsor_name);
+    setAllSponsors(all);
+  }
+
   const [selectedSponsor, setSelectedSponsor] = useState(null);
-  const sponsorOptions = [
-    { value: 5, label: 'Nike' },
-    { value: 6, label: 'Apple' },
-    { value: 7, label: 'Goodwill' },
-    { value: 8, label: 'Lowe\'s' },
-    { value: 9, label: 'Bass Pro Shop' },
-    { value: 10, label: 'Doofenshmirtz Evil Inc.' },
-  ];
 
   const handleRoleChange = (selectedRole) => {
     setSelectedRole(selectedRole);
@@ -197,6 +196,11 @@ export default function SignUp() {
     }
   }
 
+  useEffect(() => {
+    getSponsors();
+
+  }, []);
+
   return (
     <div className="wrapper">
       <div className="banner">
@@ -220,12 +224,17 @@ export default function SignUp() {
 
           {selectedRole && selectedRole.value === 3 && (
             <>
-              <label htmlFor="sponsor"><b>Sponsor</b></label>
+              <label htmlFor="getAllSponsors"><b>Sponsor</b></label>
               <Select
-                options={sponsorOptions}
+                options={AllSponsors.map((sponsor) => ({
+                  value: sponsor,
+                  label: sponsor,
+                }))}
                 value={selectedSponsor}
                 onChange={handleSponsorChange}
+                placeholder="Select Sponsor"
               />
+
               <br />
 
               <label htmlFor="first name"><b>First Name</b></label>
