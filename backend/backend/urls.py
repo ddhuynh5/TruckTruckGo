@@ -18,6 +18,7 @@ from django.urls import path
 from users import views as users_views
 from catalog import views as catalog_views
 from points import views as points_views
+from cart import views as cart_views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -32,5 +33,7 @@ urlpatterns = [
     path("update", users_views.update),
     path("specific", users_views.get_specific_user),
     path("catalog", catalog_views.get_products),
-    path("points", points_views.get_points)
+    path("points", points_views.get_points),
+    path("cartAdd", cart_views.add_to_cart),
+    path("cartRemove", cart_views.remove_from_cart)
 ]
