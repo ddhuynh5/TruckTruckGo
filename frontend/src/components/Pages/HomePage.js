@@ -4,11 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from "react-router-dom";
 import Header from './Header';
 import { catalog } from './PagesHelper';
+import ItemModal from './ItemModal';
 
 export default function HomePage() {
     const location = useLocation();
     const [catalogData, setCatalogData] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
@@ -54,6 +56,14 @@ export default function HomePage() {
         }
     }
 
+    const openItemModal = (item) => {
+        setSelectedItem(item);
+    };
+
+    const closeItemModal = () => {
+        setSelectedItem(null);
+    };
+
     return (
         <>
             <Header SearchCatalog={SearchCatalog} />
@@ -64,16 +74,26 @@ export default function HomePage() {
                         <p>Loading...</p>
                     </div>
                 )}
-                {catalogData && (
+                {!isLoading && catalogData && (
                     <ul className="image-gallery">
                         {catalogData.map((item) => (
                             <li key={item.id}>
-                                <img src={item.galleryURL} alt={item.title} />
+                                <img onClick={() => openItemModal(item)} src={item.galleryURL} alt={item.title} />
                                 <p>{item.title}</p>
                                 <p>{currencySymbolMap[item.sellingStatus.currentPrice._currencyId]}{item.sellingStatus.currentPrice.value}</p>
+                                <p>{item.stock}</p>
                             </li>
                         ))}
                     </ul>
+                )}
+                {selectedItem && (
+                    <ItemModal
+                        isOpen={true}
+                        closeItemModal={closeItemModal}
+                        itemImage={selectedItem.galleryURL}
+                        itemTitle={selectedItem.title}
+                        item={selectedItem}
+                    />
                 )}
             </div>
         </>

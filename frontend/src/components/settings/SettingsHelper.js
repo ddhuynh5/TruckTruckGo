@@ -76,3 +76,23 @@ export const specific = async (role, id) => {
         }
     }
 };
+
+export const update = async (id, updateParams) => {
+    try {
+        const response = await axios.post('http://localhost:8000/update', {
+            unique_id: id,
+            ...updateParams
+        }, {
+            withCredentials: true
+        });
+        const data = response.data;
+        return data;
+    } catch (error) {
+        if ((error.response && error.response.status === 400) || error.response.status === 401) {
+            throw error.response.data;
+        } else {
+            console.error(error);
+            throw new Error("An error occurred while looking up item(s).");
+        }
+    }
+};
