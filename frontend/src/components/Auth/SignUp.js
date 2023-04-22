@@ -105,6 +105,7 @@ export default function SignUp() {
   };
 
   const handleSubmit = async (e) => {
+    setIsLoading(true);
     e.preventDefault();
     if ((address === '' && selectedRole.label !== "Admin") || !selectedRole || email === '' || password === '') {
       setError(true);
@@ -132,7 +133,6 @@ export default function SignUp() {
           password
         );
 
-        setIsLoading(true);
         setSubmitted(true);
         setError(false);
 
@@ -148,6 +148,7 @@ export default function SignUp() {
         window.location = '/home';
       }
       catch (error) {
+        setIsLoading(false);
         setError(true);
         if (error && error["Error"]) {
           alert(error["Error"]);

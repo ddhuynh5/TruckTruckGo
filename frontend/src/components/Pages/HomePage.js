@@ -11,12 +11,13 @@ export default function HomePage() {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const [roleId, setRoleId] = useState('');
+    const [roleName, setRoleId] = useState('');
     const [uniqueId, setUniqueId] = useState('');
 
     const [catalogData, setCatalogData] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
+    const [pageLoading, setPageLoading] = useState(true);
 
 
     useEffect(() => {
@@ -32,10 +33,13 @@ export default function HomePage() {
         const role = Cookies.get("role");
         setRoleId(role);
         setUniqueId(unique);
-
-        if (!role || !uniqueId)
-            navigate("/signin");
+        setPageLoading(false);
     }, [location]);
+
+    useEffect(() => {
+        if (!pageLoading && (!roleName || !uniqueId))
+            navigate("/signin");
+    }, [pageLoading, roleName, uniqueId]);
 
     const currencySymbolMap = {
         // Most widely used currencies atm, add more as needed

@@ -10,7 +10,7 @@ export default function ProfileInfo() {
   const [allSponsors, setAllSponsors] = useState([]);
   const [allDrivers, setAllDrivers] = useState([]);
 
-  const [roleId, setRoleId] = useState('');
+  const [roleName, setRoleId] = useState('');
   const [uniqueId, setUniqueId] = useState('');
 
   const [currentSponsor, setCurrentSponsor] = useState('');
@@ -23,6 +23,7 @@ export default function ProfileInfo() {
 
   const [isEditable, setIsEditable] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
 
   const [initialSponsor, setInitialSponsor] = useState('');
   const [initialFirst, setInitialFirst] = useState('');
@@ -49,8 +50,8 @@ export default function ProfileInfo() {
   }, [uniqueId]);
 
   const getCurrentUser = useCallback(async () => {
-    const user = await specific(roleId, uniqueId);
-    if (roleId === "Driver") {
+    const user = await specific(roleName, uniqueId);
+    if (roleName === "Driver") {
       setFirstName(user[0].fields.first_name);
       setInitialFirst(user[0].fields.first_name);
 
@@ -63,7 +64,7 @@ export default function ProfileInfo() {
       setInitialAddress(user[0].fields.address);
     }
 
-    if (roleId === "Sponsor") {
+    if (roleName === "Sponsor") {
       setName(user[0].fields.sponsor_name);
       setInitialName(user[0].fields.sponsor_name);
 
@@ -71,36 +72,39 @@ export default function ProfileInfo() {
       setInitialAddress(user[0].fields.address);
     }
 
-    if (roleId === "Admin") {
+    if (roleName === "Admin") {
       setName(user[0].fields.admin_name);
       setInitialName(user[0].fields.admin_name);
     }
 
     setEmail(user[0].fields.email);
     setInitialEmail(user[0].fields.email);
-  }, [roleId, uniqueId]);
+  }, [roleName, uniqueId]);
 
   useEffect(() => {
     const unique = Cookies.get("uniqueId");
     const role = Cookies.get("role");
     setRoleId(role);
     setUniqueId(unique);
-
-    if (!roleId || !uniqueId)
-      navigate("/signin");
+    setPageLoading(false);
   }, []);
 
   useEffect(() => {
-    if (roleId && uniqueId) {
-      if (roleId === "Sponsor")
+    if (!pageLoading && (!roleName || !uniqueId))
+      navigate("/signin");
+  }, [pageLoading, roleName, uniqueId]);
+
+  useEffect(() => {
+    if (roleName && uniqueId) {
+      if (roleName === "Sponsor")
         getAllDrivers();
 
-      if (roleId !== "Admin")
+      if (roleName !== "Admin")
         getSponsors(uniqueId);
 
       getCurrentUser();
     }
-  }, [roleId, uniqueId, getAllDrivers, getSponsors, getCurrentUser]);
+  }, [roleName, uniqueId, getAllDrivers, getSponsors, getCurrentUser]);
 
   const handleFullName = (e) => {
     const fullName = e.target.value;
@@ -168,6 +172,9 @@ export default function ProfileInfo() {
           <header className="section-header">
             <h1>Settings</h1>
           </header>
+          <header className="section-header">
+            <h1>Settings</h1>
+          </header>
 
           {isLoading && (
             <div className="loading-spinner">
@@ -178,7 +185,7 @@ export default function ProfileInfo() {
 
           {!isLoading && (
             <>
-              {roleId !== "Driver" && (
+              {roleName !== "Driver" && (
                 <>
                   <label htmlFor="name"><b>Name</b></label>
                   <input
@@ -191,7 +198,7 @@ export default function ProfileInfo() {
                 </>
               )}
 
-              {roleId === "Driver" && (
+              {roleName === "Driver" && (
                 <>
                   <label htmlFor="name"><b>Name</b></label>
                   <input
@@ -213,7 +220,7 @@ export default function ProfileInfo() {
                 readOnly={!isEditable}
               />
 
-              {roleId !== "Admin" && (
+              {roleName !== "Admin" && (
                 <>
                   <label htmlFor="address"><b>Address</b></label>
                   <input
@@ -234,13 +241,13 @@ export default function ProfileInfo() {
                     onChange={(selectedOption) => {
                       setCurrentSponsor(selectedOption.value);
                     }}
-                    isDisabled={!isEditable || roleId === "Sponsor"}
+                    isDisabled={!isEditable || roleName === "Sponsor"}
                   />
                   <br />
                 </>
               )}
 
-              {roleId === "Sponsor" && (
+              {roleName === "Sponsor" && (
                 <>
                   <label htmlFor="myDrivers"><b>Drivers</b></label>
                   <Select
