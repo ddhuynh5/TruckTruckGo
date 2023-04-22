@@ -75,10 +75,15 @@ function Header(props) {
     };
 
     const handleLogout = async () => {
-        const response = await logout();
-        if (response.status >= 200 && response.status < 300) {
-            console.log("Logout successful");
-            navigate(`/`);
+        const confirmed = window.confirm("Are you sure you want to logout?");
+        if (confirmed) {
+            const response = await logout();
+            if (response.status >= 200 && response.status < 300) {
+                console.log("Logout successful");
+                navigate(`/`);
+                if (location.pathname === "/")
+                    window.location.reload(true);
+            }
         }
     }
 
@@ -130,6 +135,10 @@ function Header(props) {
         }
     };
 
+    const handleLogin = () => {
+        navigate("/signin");
+    }
+
     return (
         <Navbar key={false} bg="light" expand={false} sticky="top">
             <Container fluid>
@@ -164,9 +173,20 @@ function Header(props) {
                             </Nav.Link>
                         </Nav>
                     </Offcanvas.Body>
-                    <Offcanvas.Body style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                        <button onClick={handleLogout}>Logout</button>
-                    </Offcanvas.Body>
+                    {roleId && id && (
+                        <>
+                            <Offcanvas.Body style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                <button onClick={handleLogout}>Logout</button>
+                            </Offcanvas.Body>
+                        </>
+                    )}
+                    {!roleId && !id && (
+                        <>
+                            <Offcanvas.Body style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                <button onClick={handleLogin}>Log in</button>
+                            </Offcanvas.Body>
+                        </>
+                    )}
                 </Navbar.Offcanvas>
                 <Form className="d-flex" style={{ margin: '0 auto', marginRight: '200px', width: '50%' }} onSubmit={handleSearch}>
                     <Form.Control
@@ -178,8 +198,25 @@ function Header(props) {
                         defaultValue={keywords ? keywords : ""}
                     />
                 </Form>
-                <AiOutlineShoppingCart onClick={openModal} className='nav-button ms-auto me-2' style={{ fontSize: "2rem" }} />
-                {renderCartModal()}
+                {roleId === "Driver" && (
+                    <>
+                        <AiOutlineShoppingCart onClick={openModal} className='nav-button ms-auto me-2' style={{ fontSize: "2rem" }} />
+                        {renderCartModal()}
+                    </>
+                )}
+                {!roleId && !id && (
+                    <button
+                        onClick={handleLogin}
+                        style={{
+                            marginLeft: 'auto',
+                            marginRight: '2rem',
+                            width: '100px',
+                            height: '50px'
+                        }}
+                    >
+                        Log in
+                    </button>
+                )}
             </Container>
         </Navbar>
     );

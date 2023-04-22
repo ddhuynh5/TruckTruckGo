@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { sponsor, driversList, specific, update } from './SettingsHelper';
 import Cookies from 'js-cookie';
 
 export default function ProfileInfo() {
+  const navigate = useNavigate();
+
   const [allSponsors, setAllSponsors] = useState([]);
   const [allDrivers, setAllDrivers] = useState([]);
 
-  const [roleId, setRoleId] = useState('');
+  const [roleName, setRoleId] = useState('');
   const [uniqueId, setUniqueId] = useState('');
 
   const [currentSponsor, setCurrentSponsor] = useState('');
@@ -20,6 +23,7 @@ export default function ProfileInfo() {
 
   const [isEditable, setIsEditable] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
 
   const [initialSponsor, setInitialSponsor] = useState('');
   const [initialFirst, setInitialFirst] = useState('');
@@ -46,8 +50,8 @@ export default function ProfileInfo() {
   }, [uniqueId]);
 
   const getCurrentUser = useCallback(async () => {
-    const user = await specific(roleId, uniqueId);
-    if (roleId === "Driver") {
+    const user = await specific(roleName, uniqueId);
+    if (roleName === "Driver") {
       setFirstName(user[0].fields.first_name);
       setInitialFirst(user[0].fields.first_name);
 
@@ -60,7 +64,7 @@ export default function ProfileInfo() {
       setInitialAddress(user[0].fields.address);
     }
 
-    if (roleId === "Sponsor") {
+    if (roleName === "Sponsor") {
       setName(user[0].fields.sponsor_name);
       setInitialName(user[0].fields.sponsor_name);
 
@@ -68,33 +72,39 @@ export default function ProfileInfo() {
       setInitialAddress(user[0].fields.address);
     }
 
-    if (roleId === "Admin") {
+    if (roleName === "Admin") {
       setName(user[0].fields.admin_name);
       setInitialName(user[0].fields.admin_name);
     }
 
     setEmail(user[0].fields.email);
     setInitialEmail(user[0].fields.email);
-  }, [roleId, uniqueId]);
+  }, [roleName, uniqueId]);
 
   useEffect(() => {
-    const uniqueId = Cookies.get("uniqueId");
+    const unique = Cookies.get("uniqueId");
     const role = Cookies.get("role");
     setRoleId(role);
-    setUniqueId(uniqueId);
+    setUniqueId(unique);
+    setPageLoading(false);
   }, []);
 
   useEffect(() => {
-    if (roleId && uniqueId) {
-      if (roleId === "Sponsor")
+    if (!pageLoading && (!roleName || !uniqueId))
+      navigate("/signin");
+  }, [pageLoading, roleName, uniqueId]);
+
+  useEffect(() => {
+    if (roleName && uniqueId) {
+      if (roleName === "Sponsor")
         getAllDrivers();
 
-      if (roleId !== "Admin")
+      if (roleName !== "Admin")
         getSponsors(uniqueId);
 
       getCurrentUser();
     }
-  }, [roleId, uniqueId, getAllDrivers, getSponsors, getCurrentUser]);
+  }, [roleName, uniqueId, getAllDrivers, getSponsors, getCurrentUser]);
 
   const handleFullName = (e) => {
     const fullName = e.target.value;
@@ -157,12 +167,11 @@ export default function ProfileInfo() {
 
   return (
     <div className="wrapper">
-      <div className="banner">
-        <h1>Settings</h1>
-      </div>
       <div className="container" style={{ backgroundColor: "#f2f2f2" }}>
         <form name="Sign Up">
-          <h2>Profile Information</h2>
+          <header className="section-header">
+            <h1>Settings</h1>
+          </header>
 
           {isLoading && (
             <div className="loading-spinner">
@@ -173,7 +182,7 @@ export default function ProfileInfo() {
 
           {!isLoading && (
             <>
-              {roleId !== "Driver" && (
+              {roleName !== "Driver" && (
                 <>
                   <label htmlFor="name"><b>Name</b></label>
                   <input
@@ -186,7 +195,7 @@ export default function ProfileInfo() {
                 </>
               )}
 
-              {roleId === "Driver" && (
+              {roleName === "Driver" && (
                 <>
                   <label htmlFor="name"><b>Name</b></label>
                   <input
@@ -208,7 +217,7 @@ export default function ProfileInfo() {
                 readOnly={!isEditable}
               />
 
-              {roleId !== "Admin" && (
+              {roleName !== "Admin" && (
                 <>
                   <label htmlFor="address"><b>Address</b></label>
                   <input
@@ -229,13 +238,13 @@ export default function ProfileInfo() {
                     onChange={(selectedOption) => {
                       setCurrentSponsor(selectedOption.value);
                     }}
-                    isDisabled={!isEditable || roleId === "Sponsor"}
+                    isDisabled={!isEditable || roleName === "Sponsor"}
                   />
                   <br />
                 </>
               )}
 
-              {roleId === "Sponsor" && (
+              {roleName === "Sponsor" && (
                 <>
                   <label htmlFor="myDrivers"><b>Drivers</b></label>
                   <Select

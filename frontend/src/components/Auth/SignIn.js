@@ -76,8 +76,7 @@ export default function SignIn() {
   }, [stored]);
 
   return (
-    <div className='wrapper'>
-      <div className="banner"><h1>Scrummy Bears Driving</h1></div>
+    <div className="wrapper py-5">
       <div className="container">
         <form>
           <h2>Sign In</h2>
@@ -113,22 +112,20 @@ export default function SignIn() {
                 />
               </div>
               <button type="submit" className="button" onClick={handleLogin}>
-                Login
+                Log in
               </button>
+              <div>
+                <input type="checkbox" onClick={hidePass} /> Show Password
+              </div>
+              <div className='mb-4'>
+                <input type="checkbox" id="rememberMeCheck" checked={rememberMe} onChange={handleRememberMeChange} /> Remember Me?
+              </div>
+              <p style={{
+                marginBottom: "0"
+              }}><a href="ForgotPass">Forgot Password?</a></p>
+              <p><a href="signup">Don't have an account?</a></p>
             </>
           )}
-          <div>
-            <input type="checkbox" onClick={hidePass} /> Show Password
-          </div>
-          <div>
-            <input type="checkbox" id="rememberMeCheck" checked={rememberMe} onChange={handleRememberMeChange} /> Remember Me?
-          </div>
-          <div className="msg">
-            <span id="msg"></span>
-            <br />
-          </div>
-          <p><a href="ForgotPass">Forgot Password?</a></p>
-          <p><a href="signup">Don't have an account?</a></p>
         </form>
       </div>
     </div>
