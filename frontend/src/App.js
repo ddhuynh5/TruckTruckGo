@@ -2,18 +2,17 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import React from "react";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { useInterceptor } from './components/Auth/AuthHelper';
+import { ToastContainer } from 'react-toastify';
 
 import SignUp from './components/Auth/SignUp';
 import SignIn from './components/Auth/SignIn';
-import LandingPage from './components/Auth/LandingPage';
 import ForgotPass from './components/Auth/ForgotPass';
 import SettingsPage from './components/settings/SettingsPage';
 import HomePage from './components/Pages/HomePage';
 import Sponsors from './components/Pages/Sponsors';
 import Points from './components/Pages/Points';
-import { useInterceptor } from './components/Auth/AuthHelper';
-import { ToastContainer } from 'react-toastify';
-
+import LandingPage from './components/Pages/LandingPage';
 
 function App() {
   useInterceptor();
@@ -30,6 +29,7 @@ function App() {
           <Route path='/home' element={<HomePage />} />
           <Route path='/sponsors' element={<Sponsors />} />
           <Route path='/points' element={<Points />} />
+          <Route path='/LandingPage' element={<LandingPage />} />
         </Routes>
       </BrowserRouter>
       <ToastContainer />
