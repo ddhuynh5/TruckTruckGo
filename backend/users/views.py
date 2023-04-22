@@ -253,7 +253,7 @@ def get_all_sponsors(request):
     """ Returns all sponsors """
 
     if request.method == "GET":
-        all_sponsors = Sponsors.objects.values("sponsor_name")
+        all_sponsors = Sponsors.objects.values("sponsor_name", "sponsor_id")
         sponsor_dict = {"all_sponsors": list(all_sponsors)}
         json_data = json.dumps(sponsor_dict)
 

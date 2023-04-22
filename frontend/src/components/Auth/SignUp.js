@@ -22,6 +22,8 @@ export default function SignUp() {
   const [AllSponsors, setAllSponsors] = useState([]);
 
   const [selectedRole, setSelectedRole] = useState(null);
+  const [selectedSponsor, setSelectedSponsor] = useState(null);
+
   const roleOptions = [
     { value: 3, label: 'Driver' },
     { value: 2, label: 'Sponsor' },
@@ -30,11 +32,9 @@ export default function SignUp() {
 
   async function getSponsors() {
     const items = await getAllSponsors();
-    const all = items.all_sponsors.map(sponsor => sponsor.sponsor_name);
+    const all = items.all_sponsors;
     setAllSponsors(all);
   }
-
-  const [selectedSponsor, setSelectedSponsor] = useState(null);
 
   const handleRoleChange = (selectedRole) => {
     setSelectedRole(selectedRole);
@@ -236,8 +236,8 @@ export default function SignUp() {
                   <label htmlFor="getAllSponsors"><b>Sponsor</b></label>
                   <Select
                     options={AllSponsors.map((sponsor) => ({
-                      value: sponsor,
-                      label: sponsor,
+                      value: sponsor.sponsor_id,
+                      label: sponsor.sponsor_name,
                     }))}
                     value={selectedSponsor}
                     onChange={handleSponsorChange}
