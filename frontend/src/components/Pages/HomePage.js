@@ -1,16 +1,23 @@
 import '../../App.css';
 
 import React, { useState, useEffect } from 'react';
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Header from './Header';
 import { catalog } from './PagesHelper';
 import ItemModal from './ItemModal';
+import Cookies from 'js-cookie';
 
 export default function HomePage() {
     const location = useLocation();
+    const navigate = useNavigate();
+
+    const [roleId, setRoleId] = useState('');
+    const [uniqueId, setUniqueId] = useState('');
+
     const [catalogData, setCatalogData] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
+
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
@@ -20,6 +27,14 @@ export default function HomePage() {
             SearchCatalog(searchTerm);
         else
             SearchCatalog("apple");
+
+        const unique = Cookies.get("uniqueId");
+        const role = Cookies.get("role");
+        setRoleId(role);
+        setUniqueId(unique);
+
+        if (!role || !uniqueId)
+            navigate("/signin");
     }, [location]);
 
     const currencySymbolMap = {

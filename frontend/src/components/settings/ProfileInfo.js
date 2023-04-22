@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { sponsor, driversList, specific, update } from './SettingsHelper';
 import Cookies from 'js-cookie';
 
 export default function ProfileInfo() {
+  const navigate = useNavigate();
+
   const [allSponsors, setAllSponsors] = useState([]);
   const [allDrivers, setAllDrivers] = useState([]);
 
@@ -78,10 +81,13 @@ export default function ProfileInfo() {
   }, [roleId, uniqueId]);
 
   useEffect(() => {
-    const uniqueId = Cookies.get("uniqueId");
+    const unique = Cookies.get("uniqueId");
     const role = Cookies.get("role");
     setRoleId(role);
-    setUniqueId(uniqueId);
+    setUniqueId(unique);
+
+    if (!roleId || !uniqueId)
+      navigate("/signin");
   }, []);
 
   useEffect(() => {
@@ -157,12 +163,11 @@ export default function ProfileInfo() {
 
   return (
     <div className="wrapper">
-      <div className="banner">
-        <h1>Settings</h1>
-      </div>
       <div className="container" style={{ backgroundColor: "#f2f2f2" }}>
         <form name="Sign Up">
-          <h2>Profile Information</h2>
+          <header className="section-header">
+            <h1>Settings</h1>
+          </header>
 
           {isLoading && (
             <div className="loading-spinner">

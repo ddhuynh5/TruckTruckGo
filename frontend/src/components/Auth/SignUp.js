@@ -202,10 +202,7 @@ export default function SignUp() {
   }, []);
 
   return (
-    <div className="wrapper">
-      <div className="banner">
-        <h1>Scrummy Bears Driving</h1>
-      </div>
+    <div className="wrapper py-5">
       <div className="container">
         <form name="Sign Up">
           <h2>User Registration</h2>
@@ -329,14 +326,13 @@ export default function SignUp() {
                 placeholder="Enter Password"
               /> {passwordError && (<div className="error">Password must be at least 8 characters long, contain at least
                 one capital letter, one number, and a special character</div>)}
-
-              <div>
+              <button onClick={handleSubmit} className="button" type="submit">
+                Sign Up
+              </button>
+              <div className='mb-4'>
                 <input type="checkbox" onClick={hidePass} /> Show Password
               </div>
-
               <p><a href="SignIn">Already have an account?</a></p>
-
-              <button onClick={handleSubmit} className="signupbtn" type="button"> Sign Up </button>
             </>
           )}
         </form>
