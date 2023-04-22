@@ -12,7 +12,6 @@ from decorators.login_decorator import check_session
 load_dotenv()
 
 @api_view(["POST"])
-@check_session
 def get_products(request):
     """
         Returns a list of items from eBay API in JSON format
