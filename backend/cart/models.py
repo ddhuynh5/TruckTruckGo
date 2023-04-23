@@ -8,6 +8,7 @@ class Cart(models.Model):
     Price = models.DecimalField(max_digits=7, decimal_places=2)
     Quantity = models.IntegerField()
     ItemID = models.BigIntegerField()
+    ImageURL = models.CharField(max_length=255)
     
     class Meta:
         db_table = "Cart"

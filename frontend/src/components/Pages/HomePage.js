@@ -3,7 +3,7 @@ import '../../App.css';
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import Header from './Header';
-import { catalog } from './PagesHelper';
+import { catalog, currencySymbolMap } from './PagesHelper';
 import ItemModal from './ItemModal';
 import Cookies from 'js-cookie';
 
@@ -18,6 +18,7 @@ export default function HomePage() {
     const [isLoading, setIsLoading] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [pageLoading, setPageLoading] = useState(true);
+
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
@@ -38,32 +39,7 @@ export default function HomePage() {
     useEffect(() => {
         if (!pageLoading && (!roleName || !uniqueId))
             navigate("/signin");
-    }, [pageLoading, roleName, uniqueId]);
-
-    const currencySymbolMap = {
-        // Most widely used currencies atm, add more as needed
-        USD: '$',
-        EUR: '€',
-        GBP: '£',
-        JPY: '¥',
-        CHF: 'Fr.',
-        CAD: 'C$',
-        AUD: 'A$',
-        NZD: 'NZ$',
-        HKD: 'HK$',
-        SGD: 'S$',
-        CNY: '¥',
-        KRW: '₩',
-        INR: '₹',
-        MXN: '$',
-        BRL: 'R$',
-        RUB: '₽',
-        TRY: '₺',
-        ZAR: 'R',
-        AED: 'د.إ',
-        SAR: '﷼',
-        QAR: '﷼',
-    };
+    }, [navigate, pageLoading, roleName, uniqueId]);
 
     async function SearchCatalog(data) {
         if (data) {
@@ -95,11 +71,20 @@ export default function HomePage() {
                 {!isLoading && catalogData && (
                     <ul className="image-gallery">
                         {catalogData.map((item) => (
-                            <li key={item.id}>
-                                <img onClick={() => openItemModal(item)} src={item.galleryURL} alt={item.title} />
+                            <li
+                                key={item.id}
+                                className="list-item"
+                                onMouseOver={e => {
+                                    e.currentTarget.classList.add("hovered");
+                                }}
+                                onMouseOut={e => {
+                                    e.currentTarget.classList.remove("hovered");
+                                }}
+                                onClick={() => openItemModal(item)}
+                            >
+                                <img src={item.galleryURL} alt={item.title} />
                                 <p>{item.title}</p>
-                                <p>{currencySymbolMap[item.sellingStatus.currentPrice._currencyId]}{item.sellingStatus.currentPrice.value}</p>
-                                <p>{item.stock}</p>
+                                <p>{currencySymbolMap[item.sellingStatus.currentPrice._currencyId]}{Number(item.sellingStatus.currentPrice.value).toFixed(2)}</p>
                             </li>
                         ))}
                     </ul>
