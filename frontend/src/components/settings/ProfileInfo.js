@@ -92,7 +92,7 @@ export default function ProfileInfo() {
   useEffect(() => {
     if (!pageLoading && (!roleName || !uniqueId))
       navigate("/signin");
-  }, [pageLoading, roleName, uniqueId]);
+  }, [navigate, pageLoading, roleName, uniqueId]);
 
   useEffect(() => {
     if (roleName && uniqueId) {

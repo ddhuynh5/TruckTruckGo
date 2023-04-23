@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import bear from '../../assets/images/bear.png';
 import Nike from '../../assets/images/nike.png';
 import Apple from '../../assets/images/apple-logo.png';
@@ -106,7 +106,7 @@ export default function LandingPage() {
                             <Col className="d-flex justify-content-center">
                                 <img src={FiveStars} alt="Hero" className='img-fluid' style={{ maxWidth: '93%', borderRadius: "10px" }} />
                             </Col>
-                            <p className="lead text-center">""Partnering with Nike through the Scrummy Bears app has been amazing! Not only do I get to earn rewards for safe driving, but being able to buy Nike products from their catalog is great! Thank you, Nike, for your support and partnership!"</p>
+                            <p className="lead text-center">"Partnering with Nike through the Scrummy Bears app has been amazing! Not only do I get to earn rewards for safe driving, but being able to buy Nike products from their catalog is great! Thank you, Nike, for your support and partnership!"</p>
                         </Col>
                         <Col lg={4} className="mb-5 mb-lg-0">
                             <h2 className="text-center mb-4 display-6">Amazon</h2>
