@@ -1,6 +1,10 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
+export const Divider = () => {
+    return <hr style={{ borderTop: '1px solid #000000' }} />;
+};
+
 export const getCart = async (id) => {
     try {
         const response = await axios.post('http://localhost:8000/cart', {
@@ -65,7 +69,6 @@ export const addToCart = async (UserID, item, quantity) => {
         });
         if (response) {
             toast.success('Added to cart!');
-            window.location.reload();
         }
     } catch (error) {
         if ((error.response && error.response.status === 400) || error.response.status === 401) {
@@ -118,6 +121,28 @@ export const points = async (id) => {
         }
     }
 };
+
+export const order = async (id, email, total, items) => {
+    try {
+        const response = await axios.post('http://localhost:8000/order', {
+            id: id,
+            email: email,
+            total: total,
+            items: items,
+        }, {
+            withCredentials: true
+        });
+        const data = response.data;
+        return data;
+    } catch (error) {
+        if ((error.response && error.response.status === 400) || error.response.status === 401) {
+            throw error.response.data;
+        } else {
+            console.error(error);
+            throw new Error("An error occurred while looking up item(s).");
+        }
+    }
+}
 
 export const currencySymbolMap = {
     // Most widely used currencies atm, add more as needed

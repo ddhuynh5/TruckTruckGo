@@ -18,7 +18,7 @@ export default function HomePage() {
     const [isLoading, setIsLoading] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [pageLoading, setPageLoading] = useState(true);
-
+    const [showCheckout, setShowCheckout] = useState(false);
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
@@ -58,47 +58,53 @@ export default function HomePage() {
         setSelectedItem(null);
     };
 
+    const handleShowCheckout = (show) => {
+        setShowCheckout(show);
+    };
+
     return (
         <>
-            <Header SearchCatalog={SearchCatalog} />
-            <div className="container">
-                {isLoading && (
-                    <div className="loading-spinner">
-                        <div className="spinner"></div>
-                        <p>Loading...</p>
-                    </div>
-                )}
-                {!isLoading && catalogData && (
-                    <ul className="image-gallery">
-                        {catalogData.map((item) => (
-                            <li
-                                key={item.id}
-                                className="list-item"
-                                onMouseOver={e => {
-                                    e.currentTarget.classList.add("hovered");
-                                }}
-                                onMouseOut={e => {
-                                    e.currentTarget.classList.remove("hovered");
-                                }}
-                                onClick={() => openItemModal(item)}
-                            >
-                                <img src={item.galleryURL} alt={item.title} />
-                                <p>{item.title}</p>
-                                <p>{currencySymbolMap[item.sellingStatus.currentPrice._currencyId]}{Number(item.sellingStatus.currentPrice.value).toFixed(2)}</p>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-                {selectedItem && (
-                    <ItemModal
-                        isOpen={true}
-                        closeItemModal={closeItemModal}
-                        itemImage={selectedItem.galleryURL}
-                        itemTitle={selectedItem.title}
-                        item={selectedItem}
-                    />
-                )}
-            </div>
+            <Header SearchCatalog={SearchCatalog} handleShowCheckout={handleShowCheckout} />
+            {!showCheckout && (
+                <div className="container">
+                    {isLoading && (
+                        <div className="loading-spinner">
+                            <div className="spinner"></div>
+                            <p>Loading...</p>
+                        </div>
+                    )}
+                    {!isLoading && catalogData && (
+                        <ul className="image-gallery">
+                            {catalogData.map((item) => (
+                                <li
+                                    key={item.id}
+                                    className="list-item"
+                                    onMouseOver={e => {
+                                        e.currentTarget.classList.add("hovered");
+                                    }}
+                                    onMouseOut={e => {
+                                        e.currentTarget.classList.remove("hovered");
+                                    }}
+                                    onClick={() => openItemModal(item)}
+                                >
+                                    <img src={item.galleryURL} alt={item.title} />
+                                    <p>{item.title}</p>
+                                    <p>{currencySymbolMap[item.sellingStatus.currentPrice._currencyId]}{Number(item.sellingStatus.currentPrice.value).toFixed(2)}</p>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                    {selectedItem && (
+                        <ItemModal
+                            isOpen={true}
+                            closeItemModal={closeItemModal}
+                            itemImage={selectedItem.galleryURL}
+                            itemTitle={selectedItem.title}
+                            item={selectedItem}
+                        />
+                    )}
+                </div>
+            )}
         </>
     );
 }

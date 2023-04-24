@@ -3,13 +3,14 @@ import '../../App.css';
 import React, { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { points, getCart, removeFromCart, currencySymbolMap } from './PagesHelper';
+import { points, getCart, removeFromCart, Divider } from './PagesHelper';
 import { logout } from '../Auth/AuthHelper';
 import { AiOutlineHome, AiOutlineShoppingCart } from 'react-icons/ai';
 import { SiGithubsponsors } from 'react-icons/si';
 import { HiOutlineSparkles, HiOutlineCog } from 'react-icons/hi';
 import { RxHamburgerMenu } from 'react-icons/rx';
 import GummyBear from '../../assets/images/gummy-bear.png';
+import CheckoutPage from './CheckOut.js';
 
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
@@ -17,15 +18,12 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 
-const Divider = () => {
-    return <hr style={{ borderTop: '1px solid #000000' }} />;
-};
-
 function Header(props) {
     const searchInputRef = useRef(null);
 
     const [showCart, setShowCart] = useState(false);
     const [showNav, setShowNav] = useState(false);
+    const [showCheckout, setShowCheckout] = useState(false);
 
     const [keywords, setKeywords] = useState("");
     const [totalPoints, setTotalPoints] = useState("");
@@ -36,8 +34,20 @@ function Header(props) {
 
     const [cartItems, setCartItems] = useState([]);
 
+    const [cartTotal, setCartTotal] = useState(0);
+
     const location = useLocation();
     const navigate = useNavigate();
+
+    const getMyCart = async () => {
+        const items = await getCart(id);
+        if (items && Array.isArray(items)) {
+            setCartQuant(items.length);
+        } else {
+            setCartQuant(0);
+        }
+        setCartItems(items);
+    }
 
     useEffect(() => {
         const name = Cookies.get('name');
@@ -57,16 +67,6 @@ function Header(props) {
             setTotalPoints(pointData[0].total_points);
         }
 
-        const getMyCart = async () => {
-            const items = await getCart(id);
-            if (items && Array.isArray(items)) {
-                setCartQuant(items.length);
-            } else {
-                setCartQuant(0);
-            }
-            setCartItems(items);
-        }
-
         if (roleId === "Driver") {
             getMyCart();
             getPoints();
@@ -83,6 +83,10 @@ function Header(props) {
 
     }, [location]);
 
+    useEffect(() => {
+        calculateTotal();
+    }, [cartItems]);
+
     const handleSearch = async (event) => {
         event.preventDefault();
         const searchTerm = searchInputRef.current.value;
@@ -94,6 +98,10 @@ function Header(props) {
             }
         }
         else return;
+    };
+
+    const handleClick = () => {
+        props.handleShowCheckout(true);
     };
 
     const handleLogout = async () => {
@@ -114,13 +122,27 @@ function Header(props) {
     }
 
     const handleCheckout = () => {
-        console.log('hi')
+        setShowCheckout(true);
+        setShowCart(false);
     }
+
+    const handleClose = () => {
+        setShowCheckout(false);
+        props.handleShowCheckout(false);
+    };
 
     const handleRemoveFromCart = async (itemID) => {
         const response = await removeFromCart(id, itemID);
-        if (response.data.success)
+        if (response.data.success) {
+            setShowCheckout(false);
+            props.handleShowCheckout(false);
             window.location.reload();
+        }
+    }
+
+    const calculateTotal = () => {
+        const totalPrice = cartItems.reduce((accumulator, item) => accumulator + (item.Price * item.Quantity), 0);
+        setCartTotal(totalPrice);
     }
 
     return (
@@ -206,7 +228,14 @@ function Header(props) {
                                 ))}
                                 <Divider />
                                 <Offcanvas.Body style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                    <button onClick={handleCheckout}>Checkout ({cartQuant})</button>
+                                    <button
+                                        onClick={() => {
+                                            handleCheckout();
+                                            handleClick();
+                                        }}
+                                    >
+                                        Checkout ({cartQuant}): ${cartTotal.toFixed(2)}
+                                    </button>
                                 </Offcanvas.Body>
                             </Offcanvas.Body>
                         </Offcanvas>
@@ -227,7 +256,10 @@ function Header(props) {
                 {roleId === "Driver" && (
                     <>
                         <AiOutlineShoppingCart
-                            onClick={() => setShowCart(true)}
+                            onClick={() => {
+                                setShowCart(true);
+                                getMyCart();
+                            }}
                             className='nav-button ms-auto me-2'
                             style={{ fontSize: "2rem" }}
                         />
@@ -248,6 +280,7 @@ function Header(props) {
                         Log in
                     </button>
                 )}
+                {showCheckout && (<CheckoutPage cartItems={cartItems} handleRemoveFromCart={handleRemoveFromCart} handleClose={handleClose} points={totalPoints} id={id} cartTotal={cartTotal} />)}
             </Container>
         </Navbar>
     );

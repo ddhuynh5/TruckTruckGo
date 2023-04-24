@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import Cookies from "js-cookie";
-import { currencySymbolMap } from './PagesHelper';
+import { currencySymbolMap, Divider } from './PagesHelper';
 import { addToCart } from './PagesHelper';
-
-const Divider = () => {
-  return <hr style={{ borderTop: '1px solid #000000' }} />;
-};
 
 const ItemModal = ({ isOpen, closeItemModal, itemImage, itemTitle, item }) => {
   const [quantity, setQuantity] = useState(1);
