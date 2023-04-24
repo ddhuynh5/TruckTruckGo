@@ -20,7 +20,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.decorators import api_view
 from .models import Users, Drivers, Sponsors, Admins
 from points.models import Points
-from .email_notifications import send_welcome_email, send_password_reset
+from email_notifications import send_welcome_email, send_password_reset
 from decorators.login_decorator import check_session
 
 
