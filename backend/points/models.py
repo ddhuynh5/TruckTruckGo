@@ -4,7 +4,7 @@ class Points(models.Model):
     """ Points Model Schema """
 
     driver_id = models.IntegerField(primary_key=True)
-    total_points = models.IntegerField()
+    total_points = models.FloatField()
     
     class Meta:
         db_table = "Points"

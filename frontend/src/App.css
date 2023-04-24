@@ -210,6 +210,17 @@ hr {
   }
 }
 
+.list-item {
+  cursor: pointer;
+}
+
+.list-item.hovered {
+  background-color: #e6e6e6;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
 ul.images {
   margin: 0;
   padding: 10px;
@@ -323,14 +334,11 @@ button:hover {
 }
 
 
-/* @media (min-width: 1550px) {
-  .search-input {
-    background-color: yellow;
-    width: 100%;
-    max-width: 1250px;
-    margin: 0 auto;
+@media (max-width: 1450px) {
+  .hide {
+    display: none;
   }
-} */
+}
 
 .card {
   margin: auto;

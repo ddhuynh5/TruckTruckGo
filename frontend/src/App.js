@@ -29,7 +29,6 @@ function App() {
           <Route path='/home' element={<HomePage />} />
           <Route path='/sponsors' element={<Sponsors />} />
           <Route path='/points' element={<Points />} />
-          <Route path='/LandingPage' element={<LandingPage />} />
         </Routes>
       </BrowserRouter>
       <ToastContainer />

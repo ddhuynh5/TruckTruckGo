@@ -1,90 +1,71 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import Cookies from "js-cookie";
-
-
-const Divider = () => {
-  return <hr style={{ borderTop: '1px solid #000000' }} />;
-};
+import { currencySymbolMap, Divider } from './PagesHelper';
+import { addToCart } from './PagesHelper';
 
 const ItemModal = ({ isOpen, closeItemModal, itemImage, itemTitle, item }) => {
   const [quantity, setQuantity] = useState(1);
   const [UserID, setUserID] = useState('');
 
   useEffect(() => {
-
     const id = Cookies.get('uniqueId');
-    
     setUserID(id);
-   
-    
-}, []);
+  }, []);
 
-
-
-  
-
-  const addToCart = () => {
-    // Make an HTTP POST request to the add_to_cart endpoint with the necessary data
-    console.log('add to cart called');
-    fetch('http://localhost:8000/cartAdd', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        properties: {
-          UserID: UserID,
-          ItemID: item.itemId,
-          Quantity: quantity,
-          ItemName: item.title,
-          Price: item.sellingStatus.currentPrice.value,
-        },
-      }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data);
-        // Handle success response
-      })
-      .catch((error) => {
-        console.error('There was an error!', error);
-        // Handle error response
-      });
-  };
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isOpen]);
 
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={closeItemModal}
-      contentLabel="Shopping Cart"
+      contentLabel="Item"
       style={{
         content: {
           margin: '0 auto',
-          marginTop: '65px',
-          width: '800px',
-          height: '90%',
+          marginTop: '80px',
+          width: '80%',
           display: 'flex',
           flexDirection: 'column',
           borderRadius: '10px',
+          position: 'fixed',
+          overflow: 'hidden',
         },
       }}
     >
       <h2>{itemTitle}</h2>
       <Divider />
-      <div>
-        <img src={itemImage} alt={itemTitle}></img>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <img src={itemImage} alt={itemTitle} style={{ marginRight: '10px' }} />
+        <p>{currencySymbolMap[item.sellingStatus.currentPrice._currencyId]}{Number(item.sellingStatus.currentPrice.value).toFixed(2)}</p>
       </div>
       <Divider />
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        Enter quantity
-        <input type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
-        <button onClick={addToCart}>Add to cart</button>
+        <span style={{ marginRight: '10px' }}>Enter quantity</span>
+        <input
+          type="number"
+          value={quantity}
+          min="1"
+          onChange={(e) => setQuantity(e.target.value)}
+          style={{
+            width: '50px',
+            height: '30px',
+            fontSize: '16px',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            padding: '5px'
+          }}
+        />
+        <button onClick={() => addToCart(UserID, item, quantity)}>Add to cart</button>
         <button onClick={closeItemModal}>Close</button>
       </div>
     </Modal>

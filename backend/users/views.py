@@ -20,7 +20,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.decorators import api_view
 from .models import Users, Drivers, Sponsors, Admins
 from points.models import Points
-from .email_notifications import send_welcome_email, send_password_reset
+from email_notifications import send_welcome_email, send_password_reset
 from decorators.login_decorator import check_session
 
 
@@ -146,9 +146,9 @@ def create_update_role(data, password, new_id, user=None):
         obj.__dict__.update(**defaults)
         obj.save()
 
-    # new drivers start at 0 points
+    # new drivers start at 500 points
     if created and obj.role_id == 3:
-        set_points(new_id, 0)
+        set_points(new_id, 500)
     # if updating driver, check if points are passed in (if so update)
     elif obj.role_id == 3:
         if "total_points" not in data: # if points aren't passed in, use current points in DB

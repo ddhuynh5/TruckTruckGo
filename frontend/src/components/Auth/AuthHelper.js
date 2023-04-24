@@ -1,6 +1,6 @@
+import { useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { useEffect } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 
 export const getAllSponsors = async () => {
@@ -17,8 +17,6 @@ export const getAllSponsors = async () => {
         }
     }
 };
-
-
 
 function showNotification(message) {
     toast.error(message, {

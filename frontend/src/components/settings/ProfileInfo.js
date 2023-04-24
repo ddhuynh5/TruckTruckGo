@@ -92,7 +92,7 @@ export default function ProfileInfo() {
   useEffect(() => {
     if (!pageLoading && (!roleName || !uniqueId))
       navigate("/signin");
-  }, [pageLoading, roleName, uniqueId]);
+  }, [navigate, pageLoading, roleName, uniqueId]);
 
   useEffect(() => {
     if (roleName && uniqueId) {
@@ -169,6 +169,9 @@ export default function ProfileInfo() {
     <div className="wrapper">
       <div className="container" style={{ backgroundColor: "#f2f2f2" }}>
         <form name="Sign Up">
+          <header className="section-header">
+            <h1>Settings</h1>
+          </header>
           <header className="section-header">
             <h1>Settings</h1>
           </header>
