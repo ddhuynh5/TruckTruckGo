@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export const getAllSponsors = async () => {
     try {
-        const response = await axios.get('http://localhost:8000/all_sponsors');
+        const response = await axios.get('http://http://ec2-44-198-27-111.compute-1.amazonaws.com/all_sponsors');
         const data = response.data;
         return data;
     } catch (error) {
@@ -73,7 +73,7 @@ export function useInterceptor() {
 
 export const login = async (email, password) => {
     try {
-        const response = await axios.post('http://localhost:8000/login', {
+        const response = await axios.post('http://http://ec2-44-198-27-111.compute-1.amazonaws.com/login', {
             email: email,
             password: password
         }, {
@@ -92,7 +92,7 @@ export const login = async (email, password) => {
 
 export const logout = async () => {
     try {
-        const response = await fetch('http://localhost:8000/logout', {
+        const response = await fetch('http://http://ec2-44-198-27-111.compute-1.amazonaws.com/logout', {
             method: 'POST',
             credentials: 'include'
         });
@@ -121,7 +121,7 @@ export const signup = async (
     password
 ) => {
     try {
-        const response = await axios.post('http://localhost:8000/signup', {
+        const response = await axios.post('http://http://ec2-44-198-27-111.compute-1.amazonaws.com/signup', {
             address,
             first_name,
             last_name,
