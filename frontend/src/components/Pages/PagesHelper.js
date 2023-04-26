@@ -7,7 +7,7 @@ export const Divider = () => {
 
 export const getCart = async (id) => {
     try {
-        const response = await axios.post('http://http://ec2-44-198-27-111.compute-1.amazonaws.com/cart', {
+        const response = await axios.post('http://ec2-44-198-27-111.compute-1.amazonaws.com/cart', {
             user_id: id,
         }, {
             withCredentials: true,
@@ -30,7 +30,7 @@ export const getCart = async (id) => {
 
 export const removeFromCart = async (UserID, itemID) => {
     try {
-        const response = await axios.post('http://http://ec2-44-198-27-111.compute-1.amazonaws.com/cartRemove', {
+        const response = await axios.post('http://ec2-44-198-27-111.compute-1.amazonaws.com/cartRemove', {
             UserID: UserID,
             ItemID: itemID
         }, {
@@ -52,7 +52,7 @@ export const removeFromCart = async (UserID, itemID) => {
 
 export const addToCart = async (UserID, item, quantity) => {
     try {
-        const response = await axios.post('http://http://ec2-44-198-27-111.compute-1.amazonaws.com/cartAdd', {
+        const response = await axios.post('http://ec2-44-198-27-111.compute-1.amazonaws.com/cartAdd', {
             properties: {
                 UserID: UserID,
                 ItemID: item.itemId,
@@ -82,7 +82,7 @@ export const addToCart = async (UserID, item, quantity) => {
 
 export const catalog = async (keywords) => {
     try {
-        const response = await axios.post('http://http://ec2-44-198-27-111.compute-1.amazonaws.com/catalog', {
+        const response = await axios.post('http://ec2-44-198-27-111.compute-1.amazonaws.com/catalog', {
             keywords: keywords
         }, {
             withCredentials: true
@@ -105,7 +105,7 @@ export const catalog = async (keywords) => {
 
 export const points = async (id) => {
     try {
-        const response = await axios.post('http://http://ec2-44-198-27-111.compute-1.amazonaws.com/points', {
+        const response = await axios.post('http://ec2-44-198-27-111.compute-1.amazonaws.com/points', {
             id: id
         }, {
             withCredentials: true
@@ -124,7 +124,7 @@ export const points = async (id) => {
 
 export const order = async (id, email, total, items) => {
     try {
-        const response = await axios.post('http://http://ec2-44-198-27-111.compute-1.amazonaws.com/order', {
+        const response = await axios.post('http://ec2-44-198-27-111.compute-1.amazonaws.com/order', {
             id: id,
             email: email,
             total: total,
