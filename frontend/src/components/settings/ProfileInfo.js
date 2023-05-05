@@ -172,9 +172,6 @@ export default function ProfileInfo() {
           <header className="section-header">
             <h1>Settings</h1>
           </header>
-          <header className="section-header">
-            <h1>Settings</h1>
-          </header>
 
           {isLoading && (
             <div className="loading-spinner">
