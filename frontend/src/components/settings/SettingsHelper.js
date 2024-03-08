@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const sponsor = async (unique_id) => {
     try {
-        const response = await axios.post('http://localhost:8000/sponsors', {
+        const response = await axios.post('http://ec2-44-198-27-111.compute-1.amazonaws.com/sponsors', {
             unique_id: unique_id
         }, {
             withCredentials: true
@@ -21,7 +21,7 @@ export const sponsor = async (unique_id) => {
 
 export const all_sponsors = async () => {
     try {
-        const response = await axios.get('http://localhost:8000/all_sponsors', {
+        const response = await axios.get('http://ec2-44-198-27-111.compute-1.amazonaws.com/all_sponsors', {
             withCredentials: true
         });
         const data = response.data;
@@ -38,7 +38,7 @@ export const all_sponsors = async () => {
 
 export const driver = async (id) => {
     try {
-        const response = await axios.post('http://localhost:8000/current_driver', {
+        const response = await axios.post('http://ec2-44-198-27-111.compute-1.amazonaws.com/current_driver', {
             unique_id: id
         }, {
             withCredentials: true
@@ -57,7 +57,7 @@ export const driver = async (id) => {
 
 export const driversList = async (id) => {
     try {
-        const response = await axios.post('http://localhost:8000/drivers', {
+        const response = await axios.post('http://ec2-44-198-27-111.compute-1.amazonaws.com/drivers', {
             unique_id: id
         }, {
             withCredentials: true
@@ -76,7 +76,7 @@ export const driversList = async (id) => {
 
 export const specific = async (role, id) => {
     try {
-        const response = await axios.post('http://localhost:8000/specific', {
+        const response = await axios.post('http://ec2-44-198-27-111.compute-1.amazonaws.com/specific', {
             role_id: role,
             unique_id: id
         }, {
@@ -96,7 +96,7 @@ export const specific = async (role, id) => {
 
 export const update = async (id, updateParams) => {
     try {
-        const response = await axios.post('http://localhost:8000/update', {
+        const response = await axios.post('http://ec2-44-198-27-111.compute-1.amazonaws.com/update', {
             unique_id: id,
             ...updateParams
         }, {

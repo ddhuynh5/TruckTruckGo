@@ -14,7 +14,7 @@ export default function ForgotPass() {
             setEmail(email);
 
             try {
-                const response = await axios.post('http://localhost:8000/password_reset', { email }, {
+                const response = await axios.post('http://ec2-44-198-27-111.compute-1.amazonaws.com/password_reset', { email }, {
                     withCredentials: true
                 });
                 if (response.data["success"]) {
