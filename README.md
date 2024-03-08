@@ -1,5 +1,5 @@
 # Introduction 
-CPSC 4910: Good Truck Driver Incentive Program
+TruckTruckGo
 
 # Getting Started
 
