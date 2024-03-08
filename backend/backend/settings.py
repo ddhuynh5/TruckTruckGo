@@ -90,15 +90,12 @@ WSGI_APPLICATION = "backend.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "Team10Database",
-        "USER": "scrummy_admin",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "postgres",
+        "USER": "postgres.qfqhrkznlfbfyfkkklyp",
         "PASSWORD": DB_PASS,
-        "HOST":"team10-database-instance.cobd8enwsupz.us-east-1.rds.amazonaws.com",
-        "PORT":"3306",
-        "OPTIONS": {
-            "sql_mode": "STRICT_TRANS_TABLES",
-        }
+        "HOST": "aws-0-us-west-1.pooler.supabase.com",
+        "PORT": "5432",
     }
 }
 
@@ -127,7 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'US/Eastern'
+TIME_ZONE = "US/Eastern"
 
 USE_I18N = True
 
@@ -136,7 +133,7 @@ USE_TZ = True
 # For working with localhost, disable CORS feature
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000',
+    "http://localhost:3000",
 ]
 CORS_ALLOW_CREDENTIALS = True
 

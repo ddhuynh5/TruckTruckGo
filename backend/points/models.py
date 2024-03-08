@@ -8,7 +8,7 @@ class Points(models.Model):
     
     class Meta:
         db_table = "Points"
-        managed = False
+        managed = True
 
     def __str__(self):
         return f"{self.total_points}"

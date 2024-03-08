@@ -16,7 +16,7 @@ class Drivers(models.Model):
 
     class Meta:
         db_table = "Drivers"
-        managed = False
+        managed = True
 
     def __str__(self):
         return f"{str(self.first_name)} {str(self.role_id)}"
@@ -35,7 +35,7 @@ class Sponsors(models.Model):
 
     class Meta:
         db_table = "Sponsors"
-        managed = False
+        managed = True
 
     def __str__(self):
         return f"{str(self.sponsor_name)} {str(self.role_id)}"
@@ -52,7 +52,7 @@ class Admins(models.Model):
 
     class Meta:
         db_table = "Admins"
-        managed = False
+        managed = True
 
     def __str__(self):
         return f"{str(self.admin_name)} {str(self.role_id)}"
@@ -68,11 +68,11 @@ class Users(models.Model):
     login_attempts = models.IntegerField(default=0)
     unique_id = models.AutoField(primary_key=True)
     session_id = models.CharField(max_length=255)
-    expiration_time = models.DateTimeField(default=None)
+    expiration_time = models.DateTimeField(default=None, null=True)
 
     class Meta:
         db_table = "Users"
-        managed = False
+        managed = True
 
     def __str__(self):
         return f"{str(self.email)} {str(self.role_id)}"

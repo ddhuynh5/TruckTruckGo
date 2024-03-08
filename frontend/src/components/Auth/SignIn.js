@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Cookies from 'js-cookie';
 import { login, saveCookies, getRoleName } from './AuthHelper';
+import Header from '../Pages/Header';
 
 export default function SignIn() {
   const [username, setUsername] = useState('');
@@ -76,58 +77,61 @@ export default function SignIn() {
   }, [stored]);
 
   return (
-    <div className="wrapper py-5">
-      <div className="container">
-        <form>
-          <h2>Sign In</h2>
-          {isLoading && (
-            <div className="loading-spinner">
-              <div className="spinner"></div>
-              <p>Loading...</p>
-            </div>
-          )}
+    <>
+      <Header />
+      <div className="wrapper py-5">
+        <div className="container">
+          <form>
+            <h2>Sign In</h2>
+            {isLoading && (
+              <div className="loading-spinner">
+                <div className="spinner"></div>
+                <p>Loading...</p>
+              </div>
+            )}
 
-          {!isLoading && (
-            <>
-              <div className="form-group">
-                <label htmlFor="InputUsername">Email</label>
-                <input
-                  type="username"
-                  className="form-control"
-                  id="InputUsername"
-                  placeholder="Enter Email"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="InputPassword">Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  id="InputPassword"
-                  placeholder="Enter Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <button type="submit" className="button" onClick={handleLogin}>
-                Log in
-              </button>
-              <div>
-                <input type="checkbox" onClick={hidePass} /> Show Password
-              </div>
-              <div className='mb-4'>
-                <input type="checkbox" id="rememberMeCheck" checked={rememberMe} onChange={handleRememberMeChange} /> Remember Me?
-              </div>
-              <p style={{
-                marginBottom: "0"
-              }}><a href="ForgotPass">Forgot Password?</a></p>
-              <p><a href="signup">Don't have an account?</a></p>
-            </>
-          )}
-        </form>
+            {!isLoading && (
+              <>
+                <div className="form-group">
+                  <label htmlFor="InputUsername">Email</label>
+                  <input
+                    type="username"
+                    className="form-control"
+                    id="InputUsername"
+                    placeholder="Enter Email"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="InputPassword">Password</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="InputPassword"
+                    placeholder="Enter Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+                <button type="submit" className="button" onClick={handleLogin}>
+                  Log in
+                </button>
+                <div>
+                  <input type="checkbox" onClick={hidePass} /> Show Password
+                </div>
+                <div className='mb-4'>
+                  <input type="checkbox" id="rememberMeCheck" checked={rememberMe} onChange={handleRememberMeChange} /> Remember Me?
+                </div>
+                <p style={{
+                  marginBottom: "0"
+                }}><a href="ForgotPass">Forgot Password?</a></p>
+                <p><a href="signup">Don't have an account?</a></p>
+              </>
+            )}
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -149,7 +149,18 @@ function Header(props) {
         <Navbar key={false} bg="light" expand={false} sticky="top">
             <Container fluid className="d-flex justify-content-center">
                 <RxHamburgerMenu onClick={() => setShowNav(true)} className='nav-button ms-2' style={{ fontSize: "2rem" }} />
-                <img src={GummyBear} alt="Logo" className='ms-4' style={{ width: '3%', minWidth: '40px', maxWidth: '40px' }} />
+                <img
+                    src={GummyBear}
+                    alt="Logo"
+                    className='ms-4'
+                    style={{
+                        width: '3%',
+                        minWidth: '40px',
+                        maxWidth: '40px',
+                        cursor: 'pointer'
+                    }}
+                    onClick={() => navigate(`/`)}
+                />
                 <Navbar.Offcanvas
                     show={showNav}
                     onHide={() => setShowNav(false)}

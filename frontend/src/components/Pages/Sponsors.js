@@ -58,7 +58,7 @@ export default function Sponsors() {
                                             </div>
                                         </div>
                                     )}
-                                    {sponsor.sponsor_name === "Lowe's" && (
+                                    {sponsor.sponsor_name === "Lowes" && (
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <AiFillHome style={{ marginRight: '50px' }} />
                                             <div>
@@ -67,7 +67,7 @@ export default function Sponsors() {
                                             </div>
                                         </div>
                                     )}
-                                    {sponsor.sponsor_name !== "Amazon" && sponsor.sponsor_name !== "Nike" && sponsor.sponsor_name !== "Apple" && sponsor.sponsor_name !== "Lowe's" && (
+                                    {sponsor.sponsor_name !== "Amazon" && sponsor.sponsor_name !== "Nike" && sponsor.sponsor_name !== "Apple" && sponsor.sponsor_name !== "Lowes" && (
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <div style={{ marginRight: '50px' }}><strong>{sponsor.sponsor_name.charAt(0)}</strong></div>
                                             <div>
