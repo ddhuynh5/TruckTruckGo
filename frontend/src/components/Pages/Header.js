@@ -84,6 +84,7 @@ function Header(props) {
     }, [location]);
 
     useEffect(() => {
+        console.log(fullName)
         calculateTotal();
     }, [cartItems]);
 

@@ -13,6 +13,7 @@ import HomePage from './components/Pages/HomePage';
 import Sponsors from './components/Pages/Sponsors';
 import Points from './components/Pages/Points';
 import LandingPage from './components/Pages/LandingPage';
+import Login from './components/Auth/Login';
 
 function App() {
   useInterceptor();
@@ -29,6 +30,7 @@ function App() {
           <Route path='/home' element={<HomePage />} />
           <Route path='/sponsors' element={<Sponsors />} />
           <Route path='/points' element={<Points />} />
+          <Route path='/login' element={<Login />} />
         </Routes>
       </BrowserRouter>
       <ToastContainer />

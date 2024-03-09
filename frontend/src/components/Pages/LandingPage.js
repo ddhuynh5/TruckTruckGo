@@ -19,7 +19,6 @@ export default function LandingPage() {
     return (
         <Container fluid className="p-0">
             <Header />
-            {/* Hero Section */}
             <div className="py-5">
                 <Container>
                     <Row className="justify-content-center align-items-center">

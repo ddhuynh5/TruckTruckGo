@@ -67,7 +67,7 @@ class Users(models.Model):
     sponsor_id = models.IntegerField()
     login_attempts = models.IntegerField(default=0)
     unique_id = models.AutoField(primary_key=True)
-    session_id = models.CharField(max_length=255)
+    session_id = models.CharField(max_length=255, null=True)
     expiration_time = models.DateTimeField(default=None, null=True)
 
     class Meta:

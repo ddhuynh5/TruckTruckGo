@@ -114,7 +114,7 @@ export default function SignIn() {
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
-                <button type="submit" className="button" onClick={handleLogin}>
+                <button /* type="submit" className="button" */ onClick={handleLogin}>
                   Log in
                 </button>
                 <div>

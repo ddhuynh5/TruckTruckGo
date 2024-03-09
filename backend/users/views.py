@@ -389,7 +389,7 @@ def login(request):
                     user.save()
                     return response
 
-            if not bcrypt.checkpw(password, user.password):
+            if not bcrypt.checkpw(password, bytes(user.password)):
                 user.login_attempts += 1
                 if user.login_attempts >= MAX_LOGIN_ATTEMPTS:
                     # Limit exceeded, show error message

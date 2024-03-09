@@ -330,7 +330,7 @@ export default function SignUp() {
                   placeholder="Enter Password"
                 /> {passwordError && (<div className="error">Password must be at least 8 characters long, contain at least
                   one capital letter, one number, and a special character</div>)}
-                <button onClick={handleSubmit} className="button" type="submit">
+                <button onClick={handleSubmit} /* className="button" type="submit" */>
                   Sign Up
                 </button>
                 <div className='mb-4'>
