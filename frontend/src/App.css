@@ -421,3 +421,14 @@ input::-ms-reveal,
 input::-ms-clear {
   display: none;
 }
+
+.Toastify__toast-body {
+  width: 100%;
+}
+
+.Toastify__close-button {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 10px;
+  width: 5%;
+}
