@@ -480,7 +480,7 @@ def password_reset(request):
         # reset_url = request.build_absolute_uri(reverse("password_reset", args=[user.pk, token]))
         reset_url = request.build_absolute_uri("password_reset")
 
-        response = send_password_reset(email, reset_url)
+        # response = send_password_reset(email, reset_url)
 
         return JsonResponse({"success": True})
 
@@ -559,7 +559,7 @@ def signup(request):
             name = obj.admin_name
 
         # Send a welcome email to the new user
-        response = send_welcome_email(user.email, name)
+        # response = send_welcome_email(user.email, name)
         new_user = Users.objects.filter(email=email)
         json_data = serializers.serialize("json", new_user)
 

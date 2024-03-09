@@ -107,7 +107,7 @@ def place_order(request):
         try:
             cart_items = Cart.objects.filter(UserID=user_id)
             cart_items.delete()
-            send_receipt_email(to_email=email, order_date=date.today(), order_total=total, items=items)
+            # send_receipt_email(to_email=email, order_date=date.today(), order_total=total, items=items)
             points_obj = Points.objects.get(driver_id=user_id)
             points_obj.total_points = points_obj.total_points - total
             points_obj.save()
