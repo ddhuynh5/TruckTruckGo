@@ -143,7 +143,7 @@ const SignUp = ({ accountModal, modalRef, updateView }) => {
                                                 )}
                                             </div>
                                         </div>
-                                        <div className="flex justify-between">
+                                        <div className="flex justify-between mb-4">
                                             <div className="w-1/2 mr-2">
                                                 <label htmlFor="First Name" className="block text-sm font-medium text-gray-700">First Name</label>
                                                 <input
@@ -172,7 +172,7 @@ const SignUp = ({ accountModal, modalRef, updateView }) => {
                                             type="text"
                                             id="address"
                                             className="shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 
-                                                        focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                                        focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 mb-4"
                                             placeholder="123 Sesame Street"
                                             required
                                         />
