@@ -567,7 +567,7 @@ def signup(request):
         json_dict[0]['name'] = name
         json_data = json.dumps(json_dict)
 
-        return HttpResponse(json_data, content_type="application/json", status=response)
+        return HttpResponse(json_data, content_type="application/json")
 
 
 @api_view(["POST"])
