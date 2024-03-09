@@ -243,25 +243,6 @@ ul.images li img {
   max-height: 100%;
 }
 
-/* Set a style for all buttons */
-button {
-  background-color: #04AA6D;
-  color: white;
-  padding: 14px 20px;
-  margin: 20px auto;
-  border: none;
-  cursor: pointer;
-  width: 20rem;
-  max-width: 200px;
-  opacity: 0.9;
-  border-radius: 10px;
-  display: block;
-}
-
-button:hover {
-  opacity: 1;
-}
-
 .error {
   color: red;
   border: none;

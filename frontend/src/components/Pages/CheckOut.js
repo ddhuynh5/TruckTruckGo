@@ -16,7 +16,7 @@ const CheckoutPage = ({ cartItems, handleRemoveFromCart, handleClose, points, ca
         const mail = Cookies.get('email');
         setId(user_id);
         setEmail(mail);
-    }, []);
+    }, [cartItems]);
 
     const handleOrder = useCallback(async (event) => {
         event.preventDefault();
@@ -33,7 +33,7 @@ const CheckoutPage = ({ cartItems, handleRemoveFromCart, handleClose, points, ca
         else if (points < cartTotal) {
             toast.error("Not Enough Balance");
         }
-    }, [id, email, empty]);
+    }, [id, email, empty, cartItems, cartTotal, points]);
 
     const totalPrice = cartItems.reduce((accumulator, item) => accumulator + (item.Price * item.Quantity), 0);
 
@@ -51,7 +51,7 @@ const CheckoutPage = ({ cartItems, handleRemoveFromCart, handleClose, points, ca
                 return accumulator;
             }, []).map((item) => (
                 <div key={item.ItemID}>
-                    <img src={item.ImageURL} />
+                    <img src={item.ImageURL} alt={item.ItemName} />
                     <h5>{item.ItemName}</h5>
                     <p>Price: {item.Price}</p>
                     <p>Quantity: {item.Quantity}</p>

@@ -1,6 +1,6 @@
 import '../../App.css';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { points, getCart, removeFromCart, Divider } from './PagesHelper';
@@ -11,6 +11,8 @@ import { HiOutlineSparkles, HiOutlineCog } from 'react-icons/hi';
 import { RxHamburgerMenu } from 'react-icons/rx';
 import GummyBear from '../../assets/images/gummy-bear.png';
 import CheckoutPage from './CheckOut.js';
+import SignIn from '../Auth/SignIn.js';
+import SignUp from '../Auth/SignUp.js';
 
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
@@ -20,10 +22,12 @@ import Offcanvas from 'react-bootstrap/Offcanvas';
 
 function Header(props) {
     const searchInputRef = useRef(null);
+    const modalRef = useRef(null);
 
     const [showCart, setShowCart] = useState(false);
     const [showNav, setShowNav] = useState(false);
     const [showCheckout, setShowCheckout] = useState(false);
+    const [accountModal, setAccountModal] = useState(false);
 
     const [keywords, setKeywords] = useState("");
     const [totalPoints, setTotalPoints] = useState("");
@@ -31,6 +35,7 @@ function Header(props) {
     const [id, setId] = useState("");
     const [roleId, setRoleId] = useState("");
     const [cartQuant, setCartQuant] = useState("");
+    const [view, setView] = useState("signin");
 
     const [cartItems, setCartItems] = useState([]);
 
@@ -39,15 +44,23 @@ function Header(props) {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const getMyCart = async () => {
-        const items = await getCart(id);
-        if (items && Array.isArray(items)) {
-            setCartQuant(items.length);
-        } else {
-            setCartQuant(0);
+    const getMyCart = useCallback(async () => {
+        try {
+            const items = await getCart(id);
+            if (items && Array.isArray(items)) {
+                setCartQuant(items.length);
+            } else {
+                setCartQuant(0);
+            }
+            setCartItems(items);
+        } catch (error) {
+            console.error("Error fetching cart:", error);
         }
-        setCartItems(items);
-    }
+    }, [id, setCartQuant, setCartItems]);
+
+    const updateAccountModal = useCallback(() => {
+        setAccountModal(!accountModal);
+    }, [accountModal]);
 
     useEffect(() => {
         const name = Cookies.get('name');
@@ -71,7 +84,7 @@ function Header(props) {
             getMyCart();
             getPoints();
         }
-    }, [id, roleId]);
+    }, [id, roleId, getMyCart]);
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
@@ -84,9 +97,31 @@ function Header(props) {
     }, [location]);
 
     useEffect(() => {
-        console.log(fullName)
+        function calculateTotal() {
+            const totalPrice = cartItems.reduce((accumulator, item) => accumulator + (item.Price * item.Quantity), 0);
+            setCartTotal(totalPrice);
+        }
+
         calculateTotal();
-    }, [cartItems]);
+
+        function closeModal() {
+            updateAccountModal(false);
+        };
+
+        function handleClickOutside(event) {
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                closeModal();
+            }
+        }
+
+        if (accountModal) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [cartItems, accountModal, updateAccountModal]);
 
     const handleSearch = async (event) => {
         event.preventDefault();
@@ -118,10 +153,6 @@ function Header(props) {
         }
     }
 
-    const handleLogin = () => {
-        navigate("/signin");
-    }
-
     const handleCheckout = () => {
         setShowCheckout(true);
         setShowCart(false);
@@ -141,9 +172,8 @@ function Header(props) {
         }
     }
 
-    const calculateTotal = () => {
-        const totalPrice = cartItems.reduce((accumulator, item) => accumulator + (item.Price * item.Quantity), 0);
-        setCartTotal(totalPrice);
+    const updateView = (value) => {
+        setView(value);
     }
 
     return (
@@ -201,13 +231,6 @@ function Header(props) {
                             </Offcanvas.Body>
                         </>
                     )}
-                    {!roleId && !id && (
-                        <>
-                            <Offcanvas.Body style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                <button onClick={handleLogin}>Log in</button>
-                            </Offcanvas.Body>
-                        </>
-                    )}
                 </Navbar.Offcanvas>
                 {roleId === "Driver" && (
                     <>
@@ -231,7 +254,7 @@ function Header(props) {
                                     return accumulator;
                                 }, []).map((item) => (
                                     <div key={item.ItemID}>
-                                        <img src={item.ImageURL} />
+                                        <img src={item.ImageURL} alt={item.ItemName} />
                                         <h5>{item.ItemName}</h5>
                                         <p>Price: {item.Price}</p>
                                         <p>Quantity: {item.Quantity}</p>
@@ -279,18 +302,20 @@ function Header(props) {
                     </>
                 )}
                 {!roleId && !id && (
-                    <button
-                        onClick={handleLogin}
-                        style={{
-                            marginLeft: 'auto',
-                            marginRight: '2rem',
-                            width: '100px',
-                            height: '50px'
-                        }}
-                        className='hide'
-                    >
-                        Log in
-                    </button>
+                    <>
+                        <button
+                            onClick={updateAccountModal}
+                            className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm 
+                                    font-semibold text-white shadow-sm hover:bg-gray-500 sm:ml-3 sm:w-auto"
+                        >
+                            Open Modal
+                        </button>
+                        {view === "signin" ? (
+                            <SignIn accountModal={accountModal} modalRef={modalRef} updateView={updateView} />
+                        ) : (
+                            <SignUp accountModal={accountModal} modalRef={modalRef} updateView={updateView} />
+                        )}
+                    </>
                 )}
                 {showCheckout && (<CheckoutPage cartItems={cartItems} handleRemoveFromCart={handleRemoveFromCart} handleClose={handleClose} points={totalPoints} id={id} cartTotal={cartTotal} />)}
             </Container>
