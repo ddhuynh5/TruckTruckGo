@@ -399,3 +399,18 @@ input::-ms-reveal,
 input::-ms-clear {
   display: none;
 }
+
+.line {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  /* Adjust thickness of the line */
+  height: 100vh;
+  /* Line stretches the entire height of the viewport */
+  background-color: black;
+  /* Adjust color of the line */
+  z-index: 999;
+  /* Ensure the line is above other content */
+}

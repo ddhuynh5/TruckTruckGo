@@ -1,24 +1,24 @@
-import '../../App.css';
+import "../../App.css";
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { points, getCart, removeFromCart, Divider } from './PagesHelper';
-import { logout } from '../Auth/AuthHelper';
-import { AiOutlineHome, AiOutlineShoppingCart } from 'react-icons/ai';
-import { SiGithubsponsors } from 'react-icons/si';
-import { HiOutlineSparkles, HiOutlineCog } from 'react-icons/hi';
-import { RxHamburgerMenu } from 'react-icons/rx';
-import GummyBear from '../../assets/images/gummy-bear.png';
-import CheckoutPage from './CheckOut.js';
-import SignIn from '../Auth/SignIn.js';
-import SignUp from '../Auth/SignUp.js';
+import { points, getCart, removeFromCart, Divider } from "./PagesHelper";
+import { logout } from "../Auth/AuthHelper";
+import { AiOutlineHome, AiOutlineShoppingCart } from "react-icons/ai";
+import { SiGithubsponsors } from "react-icons/si";
+import { HiOutlineSparkles, HiOutlineCog } from "react-icons/hi";
+import { RxHamburgerMenu } from "react-icons/rx";
+import { ReactComponent as Logo } from "../../assets/images/truck_logo.svg";
+import CheckoutPage from "./CheckOut.js";
+import SignIn from "../Auth/SignIn.js";
+import SignUp from "../Auth/SignUp.js";
 
-import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import Offcanvas from 'react-bootstrap/Offcanvas';
+import Container from "react-bootstrap/Container";
+import Form from "react-bootstrap/Form";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
+import Offcanvas from "react-bootstrap/Offcanvas";
 
 function Header(props) {
     const searchInputRef = useRef(null);
@@ -63,9 +63,9 @@ function Header(props) {
     }, [accountModal]);
 
     useEffect(() => {
-        const name = Cookies.get('name');
-        const id = Cookies.get('uniqueId');
-        const role = Cookies.get('role');
+        const name = Cookies.get("name");
+        const id = Cookies.get("uniqueId");
+        const role = Cookies.get("role");
         setId(id);
         setRoleId(role);
         setFullName(name);
@@ -177,63 +177,51 @@ function Header(props) {
     }
 
     return (
-        <Navbar key={false} bg="light" expand={false} sticky="top">
-            <Container fluid className="d-flex justify-content-center">
-                <RxHamburgerMenu onClick={() => setShowNav(true)} className='nav-button ms-2' style={{ fontSize: "2rem" }} />
-                <img
-                    src={GummyBear}
-                    alt="Logo"
-                    className='ms-4'
-                    style={{
-                        width: '3%',
-                        minWidth: '40px',
-                        maxWidth: '40px',
-                        cursor: 'pointer'
-                    }}
-                    onClick={() => navigate(`/`)}
-                />
-                <Navbar.Offcanvas
-                    show={showNav}
-                    onHide={() => setShowNav(false)}
-                    id={`offcanvasNavbar-expand-${false}`}
-                    aria-labelledby={`offcanvasNavbarLabel-expand-${false}`}
-                    placement="start"
-                >
-                    <Offcanvas.Header closeButton>
-                        <Offcanvas.Title id={`offcanvasNavbarLabel-expand-${false}`}>
-                            {fullName}
-                        </Offcanvas.Title>
-                    </Offcanvas.Header>
-                    <Offcanvas.Body>
-                        <Nav className="justify-content-end flex-grow-1 pe-3">
-                            <Nav.Link href="/home" style={{ display: "flex", alignItems: "center", fontSize: "20px" }}>
-                                <AiOutlineHome style={{ marginRight: "8px" }} />Home
-                            </Nav.Link>
-                            <Nav.Link href="/sponsors" style={{ display: "flex", alignItems: "center", fontSize: "20px" }}>
-                                <SiGithubsponsors style={{ marginRight: "8px" }} />Sponsors
-                            </Nav.Link>
-                            {roleId === "Driver" && (
-                                <>
-                                    <Nav.Link href="/points" style={{ display: "flex", alignItems: "center", fontSize: "20px" }}>
-                                        <HiOutlineSparkles style={{ marginRight: "8px" }} />Points: {totalPoints}
-                                    </Nav.Link>
-                                </>
-                            )}
-                            <Nav.Link href="/settings" style={{ display: "flex", alignItems: "center", fontSize: "20px" }}>
-                                <HiOutlineCog style={{ marginRight: "8px" }} />Settings
-                            </Nav.Link>
-                        </Nav>
-                    </Offcanvas.Body>
-                    {roleId && id && (
-                        <>
-                            <Offcanvas.Body style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                <button onClick={handleLogout}>Logout</button>
-                            </Offcanvas.Body>
-                        </>
-                    )}
-                </Navbar.Offcanvas>
+        <Navbar key={false} bg="light" expand={false}>
+            <Container fluid className="flex mt-8">
                 {roleId === "Driver" && (
                     <>
+                        <RxHamburgerMenu onClick={() => setShowNav(true)} className="nav-button ms-2" style={{ fontSize: "2rem" }} />
+                        <Navbar.Offcanvas
+                            show={showNav}
+                            onHide={() => setShowNav(false)}
+                            id={`offcanvasNavbar-expand-${false}`}
+                            aria-labelledby={`offcanvasNavbarLabel-expand-${false}`}
+                            placement="start"
+                        >
+                            <Offcanvas.Header closeButton>
+                                <Offcanvas.Title id={`offcanvasNavbarLabel-expand-${false}`}>
+                                    {fullName}
+                                </Offcanvas.Title>
+                            </Offcanvas.Header>
+                            <Offcanvas.Body>
+                                <Nav className="justify-content-end flex-grow-1 pe-3">
+                                    <Nav.Link href="/home" style={{ display: "flex", alignItems: "center", fontSize: "20px" }}>
+                                        <AiOutlineHome style={{ marginRight: "8px" }} />Home
+                                    </Nav.Link>
+                                    <Nav.Link href="/sponsors" style={{ display: "flex", alignItems: "center", fontSize: "20px" }}>
+                                        <SiGithubsponsors style={{ marginRight: "8px" }} />Sponsors
+                                    </Nav.Link>
+                                    {roleId === "Driver" && (
+                                        <>
+                                            <Nav.Link href="/points" style={{ display: "flex", alignItems: "center", fontSize: "20px" }}>
+                                                <HiOutlineSparkles style={{ marginRight: "8px" }} />Points: {totalPoints}
+                                            </Nav.Link>
+                                        </>
+                                    )}
+                                    <Nav.Link href="/settings" style={{ display: "flex", alignItems: "center", fontSize: "20px" }}>
+                                        <HiOutlineCog style={{ marginRight: "8px" }} />Settings
+                                    </Nav.Link>
+                                </Nav>
+                            </Offcanvas.Body>
+                            {roleId && id && (
+                                <>
+                                    <Offcanvas.Body style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                                        <button onClick={handleLogout}>Logout</button>
+                                    </Offcanvas.Body>
+                                </>
+                            )}
+                        </Navbar.Offcanvas>
                         <Offcanvas
                             show={showCart}
                             onHide={() => setShowCart(false)}
@@ -262,7 +250,7 @@ function Header(props) {
                                     </div>
                                 ))}
                                 <Divider />
-                                <Offcanvas.Body style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                <Offcanvas.Body style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                                     <button
                                         onClick={() => {
                                             handleCheckout();
@@ -276,47 +264,56 @@ function Header(props) {
                         </Offcanvas>
                     </>
                 )}
-                <div className="d-flex justify-content-center" style={{ margin: '0 auto' }}>
-                    <Form onSubmit={handleSearch} style={{ width: '75rem', marginLeft: '5rem' }}>
+                <div className="flex-none">
+                    <Logo
+                        alt="Logo"
+                        className="cursor-pointer w-64 h-14 ml-60"
+                        onClick={() => navigate(`/`)}
+                    />
+                </div>
+                <div className="flex grow justify-center">
+                    <Form onSubmit={handleSearch} className="w-full max-w-sm">
                         <Form.Control
                             type="search"
                             placeholder="Search Products"
-                            className="me-2 mb-2 search-input"
+                            className="search-input"
                             aria-label="Search Products"
                             ref={searchInputRef}
                             defaultValue={keywords ? keywords : ""}
                         />
                     </Form>
                 </div>
-                {roleId === "Driver" && (
-                    <>
-                        <AiOutlineShoppingCart
-                            onClick={() => {
-                                setShowCart(true);
-                                getMyCart();
-                            }}
-                            className='nav-button ms-auto me-2'
-                            style={{ fontSize: "2rem" }}
-                        />
-                        {cartQuant > 0 && <span>{cartQuant}</span>}
-                    </>
-                )}
-                {!roleId && !id && (
-                    <>
-                        <button
-                            onClick={updateAccountModal}
-                            className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm 
-                                    font-semibold text-white shadow-sm hover:bg-gray-500 sm:ml-3 sm:w-auto"
-                        >
-                            Open Modal
-                        </button>
-                        {view === "signin" ? (
-                            <SignIn accountModal={accountModal} modalRef={modalRef} updateView={updateView} />
-                        ) : (
-                            <SignUp accountModal={accountModal} modalRef={modalRef} updateView={updateView} />
-                        )}
-                    </>
-                )}
+                <div className="flex-none mr-60">
+                    {roleId === "Driver" && (
+                        <>
+                            <AiOutlineShoppingCart
+                                onClick={() => {
+                                    setShowCart(true);
+                                    getMyCart();
+                                }}
+                                className="nav-button ms-auto me-2"
+                                style={{ fontSize: "2rem" }}
+                            />
+                            {cartQuant > 0 && <span>{cartQuant}</span>}
+                        </>
+                    )}
+                    {!roleId && !id && (
+                        <>
+                            <button
+                                onClick={updateAccountModal}
+                                className="inline-flex w-full justify-center rounded-md bg-teal-500 px-3 py-2 text-md
+                                    font-semibold text-white shadow-sm hover:bg-teal-600 sm:ml-3 sm:w-auto"
+                            >
+                                Log In
+                            </button>
+                            {view === "signin" ? (
+                                <SignIn accountModal={accountModal} modalRef={modalRef} updateView={updateView} />
+                            ) : (
+                                <SignUp accountModal={accountModal} modalRef={modalRef} updateView={updateView} />
+                            )}
+                        </>
+                    )}
+                </div>
                 {showCheckout && (<CheckoutPage cartItems={cartItems} handleRemoveFromCart={handleRemoveFromCart} handleClose={handleClose} points={totalPoints} id={id} cartTotal={cartTotal} />)}
             </Container>
         </Navbar>
