@@ -16,6 +16,8 @@ import Jeff from '../../assets/images/jeff.jpg';
 import Header from './Header';
 
 export default function LandingPage() {
+    const currentYear = new Date().getFullYear();
+
     return (
         <Container fluid className="p-0">
             <Header />
@@ -135,7 +137,7 @@ export default function LandingPage() {
             <div className="text-white py-4">
                 <Row className="justify-content-center">
                     <Col md={6} className="text-center mb-3 mb-md-0">
-                        <p>&copy; 2023 Scrummy Bears Driving. All rights reserved.</p>
+                        <p>&copy; {currentYear} Scrummy Bears Driving. All rights reserved.</p>
                     </Col>
                 </Row>
             </div>
