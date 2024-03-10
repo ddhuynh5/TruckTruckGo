@@ -27,7 +27,9 @@ const SignIn = ({ accountModal, modalRef, updateView }) => {
             if (email && password) {
                 setIsLoading(true);
                 const response = await login(email, password);
-                toast.success("Login success!");
+                toast.success("Login success!", {
+                    closeButton: false
+                });
 
                 saveCookies({
                     email: response[0].fields.email,
@@ -43,19 +45,29 @@ const SignIn = ({ accountModal, modalRef, updateView }) => {
                 }, 1000);
             } else {
                 if (!email) {
-                    toast.error("Email required")
+                    toast.error("Email required", {
+                        closeButton: false
+                    });
                 } else {
-                    toast.error("Password required")
+                    toast.error("Password required", {
+                        closeButton: false
+                    });
                 }
                 setIsLoading(false);
             }
         } catch (error) {
             if (error && error["Login Attempts Remaining"]) {
-                toast.error(`Incorrect password. Login attempts remaining: ${error["Login Attempts Remaining"]}`);
+                toast.error(`Incorrect password. Login attempts remaining: ${error["Login Attempts Remaining"]}`, {
+                    closeButton: false
+                });
             } else if (error && error["error"]) {
-                toast.error(error["error"]);
+                toast.error(error["error"], {
+                    closeButton: false
+                });
             } else {
-                toast.error("An error occurred while logging in");
+                toast.error("An error occurred while logging in", {
+                    closeButton: false
+                });
             }
             setIsLoading(false);
         }

@@ -114,7 +114,6 @@ body {
   box-sizing: border-box
 }
 
-/* Full-width input fields */
 input[type=text],
 input[type=password] {
   width: 100%;
@@ -258,7 +257,6 @@ ul.images li img {
   width: 25%;
 }
 
-/* Add padding to container elements */
 .container {
   padding: 10px;
   margin-top: 10px;
@@ -364,7 +362,6 @@ ul.images li img {
   border-radius: 2px;
 }
 
-/* WEB ACCESSIBILITY Change styles for cancel button and signup button on extra small screens */
 @media screen and (max-width: 300px) {
   .signupbtn {
     width: 100%;
@@ -401,15 +398,4 @@ ul.images li img {
 input::-ms-reveal,
 input::-ms-clear {
   display: none;
-}
-
-.Toastify__toast-body {
-  width: 100%;
-}
-
-.Toastify__close-button {
-  display: flex;
-  justify-content: flex-end;
-  margin-right: 10px;
-  width: 5%;
 }

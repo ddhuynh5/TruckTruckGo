@@ -54,7 +54,9 @@ const SignUp = ({ accountModal, modalRef, updateView }) => {
                     password
                 );
 
-                toast.success("Signup success!");
+                toast.success("Signup success!", {
+                    closeButton: false
+                });
 
                 saveCookies({
                     email: response[0].fields.email,
@@ -70,19 +72,29 @@ const SignUp = ({ accountModal, modalRef, updateView }) => {
                 }, 1000);
             } else {
                 if (!email) {
-                    toast.error("Email required")
+                    toast.error("Email required", {
+                        closeButton: false
+                    });
                 } else {
-                    toast.error("Password required")
+                    toast.error("Password required", {
+                        closeButton: false
+                    });
                 }
                 setIsLoading(false);
             }
         } catch (error) {
             if (error && error["Login Attempts Remaining"]) {
-                toast.error(`Incorrect password. Login attempts remaining: ${error["Login Attempts Remaining"]}`);
+                toast.error(`Incorrect password. Login attempts remaining: ${error["Login Attempts Remaining"]}`, {
+                    closeButton: false
+                });
             } else if (error && error["error"]) {
-                toast.error(error["error"]);
+                toast.error(error["error"], {
+                    closeButton: false
+                });
             } else {
-                toast.error("An error occurred during signup");
+                toast.error("An error occurred during signup", {
+                    closeButton: false
+                });
             }
             setIsLoading(false);
         }
