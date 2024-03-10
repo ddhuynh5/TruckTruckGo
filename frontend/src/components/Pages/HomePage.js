@@ -36,11 +36,6 @@ export default function HomePage() {
         setPageLoading(false);
     }, [location]);
 
-    useEffect(() => {
-        if (!pageLoading && (!roleName || !uniqueId))
-            navigate("/signin");
-    }, [navigate, pageLoading, roleName, uniqueId]);
-
     async function SearchCatalog(data) {
         if (data) {
             setIsLoading(true);
