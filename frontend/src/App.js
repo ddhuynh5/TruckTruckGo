@@ -15,7 +15,7 @@ import Points from './components/Pages/Points';
 import LandingPage from './components/Pages/LandingPage';
 
 function App() {
-  useInterceptor();
+  // useInterceptor();
 
   return (
     <>
