@@ -8,7 +8,7 @@ from email_notifications import send_receipt_email
 from points.models import Points
 
 @api_view(["POST"])
-@check_session
+# @check_session
 def get_cart_items(request):
     if request.method == "POST":
         user_id = json.loads(request.body)["user_id"]
@@ -25,7 +25,7 @@ def get_cart_items(request):
 
 
 @api_view(["POST"])
-@check_session
+# @check_session
 def remove_from_cart(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -53,7 +53,7 @@ def remove_from_cart(request):
 
 
 @api_view(["POST"])
-@check_session
+# @check_session
 def add_to_cart(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -88,7 +88,7 @@ def add_to_cart(request):
 
 
 @api_view(["POST"])
-@check_session
+# @check_session
 def place_order(request):
 
     if request.method == 'POST':
