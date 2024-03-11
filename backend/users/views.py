@@ -174,7 +174,7 @@ def create_update_role(data, password, new_id, user=None):
 
 
 @api_view(["POST"])
-@check_session
+# @check_session
 def get_driver(request):
     """ Pulls Driver from Drivers Table """
 
@@ -189,7 +189,7 @@ def get_driver(request):
 
 
 @api_view(["POST"])
-@check_session
+# @check_session
 def get_all_drivers(request):
     """ Pulls All Drivers for [Sponsor] from Drivers Table """
 
@@ -230,7 +230,7 @@ def get_specific_user(request):
 
 
 @api_view(["POST"])
-@check_session
+# @check_session
 def get_sponsor(request):
     """ Pulls Sponsors from Sponsor Table """
 
@@ -261,7 +261,7 @@ def get_all_sponsors(request):
 
 
 @api_view(["GET"])
-@check_session
+# @check_session
 def check_password(request):
     """
         1-1 check on current password vs previous password
@@ -311,7 +311,7 @@ def check_password(request):
 
 
 @api_view(["GET"])
-@check_session
+# @check_session
 def login_exists(request):
     """
         Checks if the login exists in database
@@ -571,7 +571,7 @@ def signup(request):
 
 
 @api_view(["POST"])
-@check_session
+# @check_session
 def update(request):
     """
         Updates user in database
