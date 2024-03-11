@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export const getAllSponsors = async () => {
     try {
-        const response = await axios.get('http://ec2-44-198-27-111.compute-1.amazonaws.com/all_sponsors');
+        const response = await axios.get('https://trucktruckgo-backend.onrender.com/all_sponsors');
         const data = response.data;
         return data;
     } catch (error) {
@@ -73,7 +73,7 @@ export function useInterceptor() {
 
 export const login = async (email, password) => {
     try {
-        const response = await axios.post('http://ec2-44-198-27-111.compute-1.amazonaws.com/login', {
+        const response = await axios.post('https://trucktruckgo-backend.onrender.com/login', {
             email: email,
             password: password
         }, {
@@ -92,7 +92,7 @@ export const login = async (email, password) => {
 
 export const logout = async () => {
     try {
-        const response = await fetch('http://ec2-44-198-27-111.compute-1.amazonaws.com/logout', {
+        const response = await fetch('https://trucktruckgo-backend.onrender.com/logout', {
             method: 'POST',
             credentials: 'include'
         });
@@ -121,7 +121,7 @@ export const signup = async (
     password
 ) => {
     try {
-        const response = await axios.post('http://ec2-44-198-27-111.compute-1.amazonaws.com/signup', {
+        const response = await axios.post('https://trucktruckgo-backend.onrender.com/signup', {
             address,
             first_name,
             last_name,
