@@ -9,7 +9,7 @@ services:
       - ./backend:/backend
     ports:
       - "8000:8000"
-    command: bash -c "python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "python manage.py runserver"
 
   web:
     build:
@@ -20,4 +20,4 @@ services:
       - ./frontend:/node_modules
     ports:
       - "3000:3000"
-    command: "npm start"
+    command: "npm run build"
