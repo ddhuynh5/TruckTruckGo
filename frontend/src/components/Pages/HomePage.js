@@ -59,7 +59,7 @@ export default function HomePage() {
 
     return (
         <>
-            <Header SearchCatalog={SearchCatalog} handleShowCheckout={handleShowCheckout} />
+            <Header />
             {!showCheckout && (
                 <div className="container">
                     {isLoading && (
