@@ -1,5 +1,6 @@
 import React from "react";
 import Header from "./Header";
+import Footer from "./Footer";
 import Divider from "../PageComponents/Divider";
 import Driver1 from "../../assets/images/driver1.jpg";
 import Driver2 from "../../assets/images/driver2.jpg";
@@ -82,6 +83,7 @@ const About = () => {
                     </div>
                 </div>
             </section>
+            <Footer />
         </div>
     );
 }

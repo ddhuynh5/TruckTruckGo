@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ReactComponent as Logo } from "../../../assets/images/truck_logo.svg";
+import { ReactComponent as Logo } from "../../assets/images/truck_logo.svg";
 import { toast } from "react-toastify";
 
 export default function Footer(props) {

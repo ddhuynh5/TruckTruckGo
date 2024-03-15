@@ -1,5 +1,6 @@
 import React from "react";
 import Header from "./Header";
+import Footer from "./Footer";
 import Divider from "../PageComponents/Divider";
 
 const Cart = () => {
@@ -20,6 +21,7 @@ const Cart = () => {
                     </div>
                 </div>
             </section>
+            <Footer />
         </div>
     );
 }
