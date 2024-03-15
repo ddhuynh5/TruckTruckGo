@@ -188,19 +188,23 @@ def get_driver(request):
         return HttpResponse(json_data, content_type="application/json")
 
 
-@api_view(["POST"])
+@api_view(["GET"])
 # @check_session
 def get_all_drivers(request):
     """ Pulls All Drivers for [Sponsor] from Drivers Table """
 
-    if request.method == "POST":
-        data = json.loads(request.body)
+    if request.method == "GET":
+        response = []
+        drivers = list(Drivers.objects.values("first_name", "last_name", "unique_id"))
 
-        user = Sponsors.objects.filter(unique_id=data["unique_id"]).first()
-        sponsor_id = user.sponsor_id
+        for driver in drivers:
+            points_obj = Points.objects.get(driver_id=driver["unique_id"])
 
-        current = list(Drivers.objects.filter(sponsor_id=sponsor_id).values("first_name", "last_name", "email", "address"))
-        json_data = json.dumps(current)
+            response.append(driver["first_name"])
+            response.append(driver["last_name"])
+            response.append(points_obj.total_points)
+
+        json_data = json.dumps(response)
 
         return HttpResponse(json_data, content_type="application/json")
 
