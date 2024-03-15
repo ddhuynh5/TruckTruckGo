@@ -194,15 +194,18 @@ def get_all_drivers(request):
     """ Pulls All Drivers for [Sponsor] from Drivers Table """
 
     if request.method == "GET":
-        response = {}
+        response = []
         drivers = list(Drivers.objects.values("first_name", "last_name", "unique_id"))
 
         for driver in drivers:
+            listing = {}
             points_obj = Points.objects.get(driver_id=driver["unique_id"])
 
-            response["first"] = driver["first_name"]
-            response["last"] = driver["last_name"]
-            response["point"] = points_obj.total_points
+            listing["first"] = driver["first_name"]
+            listing["last"] = driver["last_name"]
+            listing["points"] = points_obj.total_points
+
+            response.append(listing)
 
         json_data = json.dumps(response)
 
