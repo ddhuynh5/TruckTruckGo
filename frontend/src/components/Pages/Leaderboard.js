@@ -1,9 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Header from "./Header";
 import Footer from "./Footer";
 import Divider from "../PageComponents/Divider";
+import Loading from "../PageComponents/Loading";
 
 const Leaderboard = () => {
+    const [drivers, setDrivers] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const getAllDrivers = async () => {
+        try {
+            const response = await axios.get("http://localhost:8000/drivers");
+            const data = response.data;
+            return data;
+        } catch (error) {
+            if ((error.response && error.response.status === 400) || error.response.status === 401) {
+                throw error.response.data;
+            } else {
+                console.error(error);
+                throw new Error("An error occurred while looking up item(s).");
+            }
+        }
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await getAllDrivers();
+
+                setDrivers(response);
+                setLoading(false);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
     return (
         <div className="h-screen inset-0">
             <Header />
@@ -16,6 +51,30 @@ const Leaderboard = () => {
                             </h1>
                             <Divider content="" />
 
+                            <div className="bg-white shadow-md rounded-md overflow-hidden max-w-lg mx-auto mt-16">
+                                <div className="bg-gray-100 py-2 px-4">
+                                    <h2 className="text-xl font-semibold text-gray-800">Top Users</h2>
+                                </div>
+
+                                {!loading ? (
+                                    <ul className="divide-y divide-gray-200">
+                                        {drivers
+                                            .slice()
+                                            .sort((a, b) => b.points - a.points)
+                                            .map((item, index) => (
+                                                <li key={index} className="flex items-center py-4 px-6">
+                                                    <span className="text-gray-700 text-lg font-medium mr-4">{index + 1}</span>
+                                                    <div className="flex-1">
+                                                        <h3 className="text-lg font-medium text-gray-800">{item.first} {item.last}</h3>
+                                                        <p className="text-gray-600 text-base">Points: {item.points}</p>
+                                                    </div>
+                                                </li>
+                                            ))}
+                                    </ul>
+                                ) : (
+                                    <Loading />
+                                )}
+                            </div>
 
                         </div>
                     </div>
