@@ -34,21 +34,21 @@ const About = () => {
                                 </div>
 
                                 <div className="p-auto">
-                                    <div class="container mx-auto">
-                                        <div class="-m-1 flex flex-wrap md:-m-2">
-                                            <div class="flex w-1/2 flex-wrap">
-                                                <div class="w-full p-1 md:p-2">
+                                    <div className="container mx-auto">
+                                        <div className="-m-1 flex flex-wrap md:-m-2">
+                                            <div className="flex w-1/2 flex-wrap">
+                                                <div className="w-full p-1 md:p-2">
                                                     <img className="block rounded-lg h-full w-full" src={Driver1} alt="driver1" />
                                                 </div>
-                                                <div class="w-full p-1 md:p-2">
+                                                <div className="w-full p-1 md:p-2">
                                                     <img className="block rounded-lg h-full w-full" src={Driver3} alt="driver3" />
                                                 </div>
                                             </div>
-                                            <div class="flex w-1/2 flex-wrap">
-                                                <div class="w-full p-1 md:p-2">
+                                            <div className="flex w-1/2 flex-wrap">
+                                                <div className="w-full p-1 md:p-2">
                                                     <img className="block rounded-lg h-full w-full" src={Driver2} alt="driver2" />
                                                 </div>
-                                                <div class="w-full p-1 md:p-2">
+                                                <div className="w-full p-1 md:p-2">
                                                     <img className="block rounded-lg h-full w-full" src={Driver4} alt="driver4" />
                                                 </div>
                                             </div>
