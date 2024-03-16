@@ -5,6 +5,7 @@ import { signup, saveCookies, getAllSponsors } from "./AuthHelper";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-toastify";
 import Select from "react-select";
+import Loading from "../PageComponents/Loading";
 
 const SignUp = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -218,10 +219,7 @@ const SignUp = () => {
                             </form>
                         </>
                     ) :
-                        <div className="loading-spinner flex items-center justify-center">
-                            <div className="spinner" />
-                            <p>Loading...</p>
-                        </div>
+                        <Loading />
                     }
                 </div>
             </div>

@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 import { login, saveCookies, getRoleName } from "./AuthHelper";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-toastify";
+import Loading from "../PageComponents/Loading";
 
 const SignIn = () => {
     const [rememberMe, setRememberMe] = useState(false);
@@ -176,10 +177,7 @@ const SignIn = () => {
                     )}
 
                     {isLoading && (
-                        <div className="loading-spinner flex items-center justify-center">
-                            <div className="spinner" />
-                            <p>Loading...</p>
-                        </div>
+                        <Loading />
                     )}
                 </div>
             </div>
