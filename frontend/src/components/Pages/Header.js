@@ -80,7 +80,7 @@ export default function Header() {
                                         {navigation.map((item) => {
                                             if (item.name === "Resources") {
                                                 return (
-                                                    <Menu as="div" className="relative focus:outline-none">
+                                                    <Menu key={item.name} as="div" className="relative focus:outline-none">
                                                         <Menu.Button className="flex text-sm">
                                                             <div className="flex items-center">
                                                                 <span
@@ -141,6 +141,7 @@ export default function Header() {
                                             } else {
                                                 return (
                                                     <Link
+                                                        key={item.name}
                                                         to={item.page}
                                                         className={classNames(
                                                             "rounded-md px-3 py-2 text-lg font-small -ml-3 focus:outline-none focus:text-teal-500 no-underline hover:underline",
@@ -247,7 +248,7 @@ export default function Header() {
                                 {navigation.map((item) => {
                                     if (item.name === "Resources") {
                                         return (
-                                            <Menu as="div" className="relative focus:outline-none">
+                                            <Menu key={item.name} as="div" className="relative focus:outline-none">
                                                 <Menu.Button className="flex text-sm">
                                                     <div className="flex items-center">
                                                         <span
