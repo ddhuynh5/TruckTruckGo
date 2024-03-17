@@ -1,8 +1,29 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "./Header";
+import Footer from "./Footer";
 import Divider from "../PageComponents/Divider";
+import Loading from "../PageComponents/Loading";
+import { fetchLoginInfo } from "../Auth/AuthHelper";
 
 const Settings = () => {
+    const [loading, setLoading] = useState(false);
+    const [id, setId] = useState("");
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        setLoading(true);
+
+        const info = fetchLoginInfo();
+
+        if (!info) {
+            navigate("/");
+        }
+
+        setId(info);
+        setLoading(false);
+    }, [id]);
+
     return (
         <div className="h-screen inset-0">
             <Header />
@@ -13,13 +34,14 @@ const Settings = () => {
                             <h1 className="text-2xl md:text-3xl font-bold leading-tighter tracking-tighter mb-4" data-aos="zoom-y-out">
                                 Settings
                             </h1>
-                            <Divider content="" />
+                            <Divider />
 
 
                         </div>
                     </div>
                 </div>
             </section>
+            <Footer />
         </div>
     );
 }
