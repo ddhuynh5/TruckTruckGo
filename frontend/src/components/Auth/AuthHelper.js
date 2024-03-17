@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const getAllSponsors = async () => {
     try {
-        const response = await axios.get('http://localhost:8000/all_sponsors');
+        const response = await axios.get("http://localhost:8000/all_sponsors");
         const data = response.data;
         return data;
     } catch (error) {
@@ -30,13 +30,13 @@ function showNotification(message) {
     });
 }
 
-function clearCookies() {
+export function clearCookies() {
     const cookies = document.cookie.split(";");
 
     for (let i = 0; i < cookies.length; i++) {
         const cookie = cookies[i];
         const eqPos = cookie.indexOf("=");
-        const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
         document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
     }
 }
@@ -73,7 +73,7 @@ export function useInterceptor() {
 
 export const login = async (email, password) => {
     try {
-        const response = await axios.post('http://localhost:8000/login', {
+        const response = await axios.post("http://localhost:8000/login", {
             email: email,
             password: password
         }, {
@@ -90,17 +90,21 @@ export const login = async (email, password) => {
     }
 };
 
-export const logout = async () => {
+export const logout = async (sessionId) => {
     try {
-        const response = await fetch('http://localhost:8000/logout', {
-            method: 'POST',
-            credentials: 'include'
+        const response = await axios.post("http://localhost:8000/logout", {
+            session_id: sessionId,
+        }, {
+            method: "POST",
+            credentials: "include"
         });
         localStorage.clear();
         sessionStorage.clear();
+
         return response;
     } catch (error) {
         if (error.response && (error.response.status === 400 || error.response.status === 401)) {
+            console.log("hi")
             throw error.response.data;
         } else {
             console.error(error);
@@ -121,7 +125,7 @@ export const signup = async (
     password
 ) => {
     try {
-        const response = await axios.post('http://localhost:8000/signup', {
+        const response = await axios.post("http://localhost:8000/signup", {
             address,
             first_name,
             last_name,
@@ -143,9 +147,15 @@ export const signup = async (
     }
 };
 
-export const saveCookies = (cookie_data) => {
-    Object.keys(cookie_data).forEach((key) => {
-        document.cookie = `${key}=${cookie_data[key]}; path=/;`;
+export const saveToLocalStorage = (data) => {
+    Object.keys(data).forEach((key) => {
+        localStorage.setItem(key, data[key]);
+    });
+};
+
+export const saveToSessionStorage = (data) => {
+    Object.keys(data).forEach((key) => {
+        sessionStorage.setItem(key, data[key]);
     });
 };
 
@@ -156,4 +166,12 @@ export const getRoleName = (roleId) => {
         3: "Driver",
     };
     return roles[roleId] || "Unknown";
+};
+
+export const fetchLoginInfo = () => {
+    return localStorage.getItem("uniqueId") || sessionStorage.getItem("uniqueId");
+};
+
+export const fetchSessionId = () => {
+    return localStorage.getItem("sessionId") || sessionStorage.getItem("sessionId");
 };

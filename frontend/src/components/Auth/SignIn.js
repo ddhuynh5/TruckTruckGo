@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
-import { login, saveCookies, getRoleName } from "./AuthHelper";
+import { login, saveToSessionStorage, saveToLocalStorage, getRoleName } from "./AuthHelper";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-toastify";
 import Loading from "../PageComponents/Loading";
@@ -13,7 +12,7 @@ const SignIn = () => {
     const navigate = useNavigate();
 
     const changePage = () => {
-        window.location = "/home";
+        window.location = "/shop";
     };
 
     const togglePasswordVisibility = () => {
@@ -34,14 +33,27 @@ const SignIn = () => {
                     closeButton: false
                 });
 
-                saveCookies({
-                    email: response[0].fields.email,
-                    role: getRoleName(response[0].fields.role_id),
-                    name: response[0].name,
-                    sessionId: response[0].fields.session_id,
-                    expiration: response[0].fields.expiration_time,
-                    uniqueId: response[0].pk,
-                });
+                if (rememberMe === true) {
+                    saveToLocalStorage({
+                        email: response[0].fields.email,
+                        role: getRoleName(response[0].fields.role_id),
+                        name: response[0].name,
+                        sessionId: response[0].fields.session_id,
+                        expiration: response[0].fields.expiration_time,
+                        uniqueId: response[0].pk,
+                        rememberMe: true
+                    });
+                } else {
+                    saveToSessionStorage({
+                        email: response[0].fields.email,
+                        role: getRoleName(response[0].fields.role_id),
+                        name: response[0].name,
+                        sessionId: response[0].fields.session_id,
+                        expiration: response[0].fields.expiration_time,
+                        uniqueId: response[0].pk,
+                        rememberMe: false
+                    });
+                }
 
                 setTimeout(() => {
                     changePage();
@@ -78,15 +90,10 @@ const SignIn = () => {
 
     const handleRememberMeChange = () => {
         setRememberMe(!rememberMe);
-        if (!rememberMe) {
-            Cookies.set("remember", true);
-        } else {
-            Cookies.remove("remember");
-        }
     };
 
     useEffect(() => {
-        if (Cookies.get("remember") !== undefined) {
+        if (localStorage.getItem("remember") === true) {
             changePage();
         }
     }, []);

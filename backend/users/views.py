@@ -378,23 +378,23 @@ def login(request):
                 name = user_obj.first_name
 
             # Checking for login attempt timeout
-            if "lockout_time" in request.COOKIES and request.COOKIES["lockout_time"] != "undefined":
-                locked_until = datetime.fromisoformat(
-                    request.COOKIES["lockout_time"]).astimezone(timezone.utc)
-                if timezone.now() < locked_until:
-                    remaining_time = locked_until - timezone.now()
-                    remaining_time_str = f"{remaining_time.seconds // 60} minutes and {remaining_time.seconds % 60} seconds"
-                    return JsonResponse({
-                        "error": f"Maximum login attempts exceeded. You may try again in {remaining_time_str}."
-                    }, status=400)
-                else:
-                    response = JsonResponse({
-                        "error": "You may attempt to log in again."
-                    }, status=400)
-                    response.delete_cookie("lockout_time")
-                    user.login_attempts = 0
-                    user.save()
-                    return response
+            # if "lockout_time" in request.COOKIES and request.COOKIES["lockout_time"] != "undefined":
+            #     locked_until = datetime.fromisoformat(
+            #         request.COOKIES["lockout_time"]).astimezone(timezone.utc)
+            #     if timezone.now() < locked_until:
+            #         remaining_time = locked_until - timezone.now()
+            #         remaining_time_str = f"{remaining_time.seconds // 60} minutes and {remaining_time.seconds % 60} seconds"
+            #         return JsonResponse({
+            #             "error": f"Maximum login attempts exceeded. You may try again in {remaining_time_str}."
+            #         }, status=400)
+            #     else:
+            #         response = JsonResponse({
+            #             "error": "You may attempt to log in again."
+            #         }, status=400)
+            #         response.delete_cookie("lockout_time")
+            #         user.login_attempts = 0
+            #         user.save()
+            #         return response
 
             if not bcrypt.checkpw(password, bytes(user.password)):
                 user.login_attempts += 1
@@ -433,13 +433,19 @@ def login(request):
 
 @api_view(['POST'])
 def logout(request):
-    """ Logs user out """
+    """ 
+        Logs user out
+
+        Parameter:
+            session id - user's session id from local/session storage
+    """
 
     if request.method == "POST":
-        session_id_from_cookie = request.COOKIES.get('sessionId')
-        if session_id_from_cookie:
-            user = Users.objects.filter(
-                session_id=session_id_from_cookie).first()
+        # session_id_from_cookie = request.headers.get('sessionId')
+        data = json.loads(request.body)
+        session_id = data["session_id"]
+        if session_id:
+            user = Users.objects.filter(session_id=session_id).first()
             if user:
                 # Set session expiration time to a past date to immediately invalidate the session
                 user.expiration_time = timezone.now() - timezone.timedelta(days=1)

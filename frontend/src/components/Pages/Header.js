@@ -3,9 +3,8 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon, UserIcon, ChevronDownIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { ReactComponent as Logo } from "../../assets/images/truck_logo.svg";
-import Cookies from "js-cookie";
 import Divider from "../PageComponents/Divider";
-import { logout } from "../Auth/AuthHelper";
+import { logout, fetchLoginInfo, fetchSessionId } from "../Auth/AuthHelper";
 
 const navigation = [
     { name: "Shop", page: "/shop", current: false },
@@ -22,14 +21,13 @@ function classNames(...classes) {
 export default function Header() {
     const navigate = useNavigate();
     const location = useLocation();
-
+    const [sessionId, setSessionId] = useState("");
     const [id, setId] = useState("");
-    const [roleId, setRoleId] = useState("");
 
     const handleLogout = async () => {
         const confirmed = window.confirm("Are you sure you want to logout?");
         if (confirmed) {
-            const response = await logout();
+            const response = await logout(sessionId);
             if (response.status >= 200 && response.status < 300) {
                 navigate(`/`);
                 if (location.pathname === "/")
@@ -39,11 +37,10 @@ export default function Header() {
     }
 
     useEffect(() => {
-        const id = Cookies.get("uniqueId");
-        const role = Cookies.get("role");
-
+        const id = fetchLoginInfo();
+        const session = fetchSessionId();
         setId(id);
-        setRoleId(role);
+        setSessionId(session);
     }, []);
 
     return (
@@ -69,10 +66,7 @@ export default function Header() {
                                     <Logo
                                         alt="Logo"
                                         className="cursor-pointer h-10 w-auto"
-                                        onClick={() => {
-                                            if (roleId && id) navigate(`/home`)
-                                            else navigate(`/`)
-                                        }}
+                                        onClick={() => { navigate(`/`) }}
                                     />
                                 </div>
                                 <div className="hidden sm:ml-6 sm:block">
@@ -157,7 +151,7 @@ export default function Header() {
                                 </div>
 
                             </div>
-                            {roleId && id ? (
+                            {id ? (
                                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                                     <Menu as="div" className="relative ml-3">
                                         <div className="flex justify-center">
@@ -323,9 +317,9 @@ export default function Header() {
                                         );
                                     }
                                 })}
-                                {!roleId && !id && (
+                                {!id && (
                                     <>
-                                        <Divider content="" />
+                                        <Divider />
                                         <button
                                             className="text-white bg-teal-500 hover:bg-teal-700 font-medium
                                             rounded-lg text-base px-2 py-2 block mx-auto w-full focus:outline-none"
@@ -343,7 +337,7 @@ export default function Header() {
                                                 Login
                                             </Link>
                                         </div>
-                                        <Divider content="" />
+                                        <Divider />
                                     </>
                                 )}
                             </div>
