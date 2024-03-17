@@ -117,3 +117,33 @@ def place_order(request):
         except Exception as e:
             print(e)
             return JsonResponse({'error': str(e)}, status=500)
+
+
+@api_view(["POST"])
+def update_item(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        # Get the data from the request
+        UserID = data["properties"]["UserID"]
+        ItemID = data["properties"]["ItemID"]
+        Quantity = data["properties"]["Quantity"]
+
+        # Validate the incoming data
+        if not UserID or not ItemID or not Quantity:
+            return JsonResponse({'error': 'Missing parameters'}, status=400)
+        
+        # Save the data to the cart table
+        try:
+            carts = Cart.objects.filter(UserID=UserID, ItemID=ItemID)
+            if carts:
+                cart = carts.first()
+                cart.Quantity = int(Quantity)
+                cart.save()
+            return JsonResponse({'success': True})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': str(e)}, status=500)
+
+    # Return an error for non-POST requests
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
