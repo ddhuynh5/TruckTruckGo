@@ -23,7 +23,7 @@ import About from "./components/Pages/About";
 import Faq from "./components/Pages/Faq";
 
 function App() {
-  useInterceptor();
+  // useInterceptor();
 
   return (
     <>
