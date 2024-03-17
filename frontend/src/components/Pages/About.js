@@ -20,7 +20,7 @@ const About = () => {
                                 About Us
                             </h1>
 
-                            <Divider content="" />
+                            <Divider />
 
                             <div className="grid grid-col-1 md:grid-cols-2 gap-10 mt-4">
                                 <div className="p-5">

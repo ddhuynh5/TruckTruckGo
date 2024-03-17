@@ -15,7 +15,7 @@ const Support = () => {
                                 Support
                             </h1>
 
-                            <Divider content="" />
+                            <Divider />
 
                             <div className="grid grid-col-1 md:grid-cols-3 gap-6 mt-4">
                                 <div className="p-5 rounded border hover:shadow-lg cursor-pointer">

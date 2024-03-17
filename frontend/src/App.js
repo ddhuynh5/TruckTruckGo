@@ -10,7 +10,6 @@ import ForgotPass from "./components/Auth/ForgotPass";
 import SignIn from "./components/Auth/SignIn";
 import SignUp from "./components/Auth/SignUp";
 
-import HomePage from "./components/Pages/HomePage";
 import LandingPage from "./components/Pages/LandingPage";
 import Test from "./components/Pages/test";
 import Search from "./components/Pages/Search";
@@ -32,7 +31,6 @@ function App() {
         <Routes>
           <Route exact path="/" element={<LandingPage />} />
           <Route path="/forgotpass" element={<ForgotPass />} />
-          <Route path="/home" element={<HomePage />} />
 
           <Route path="/test" element={<Test />} />
           <Route path="/search" element={<Search />} />

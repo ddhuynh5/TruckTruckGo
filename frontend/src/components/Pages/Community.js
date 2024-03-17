@@ -14,7 +14,7 @@ const Community = () => {
                             <h1 className="text-center text-2xl md:text-3xl font-bold leading-tighter tracking-tighter mb-4" data-aos="zoom-y-out">
                                 Community
                             </h1>
-                            <Divider content="" />
+                            <Divider />
 
                             <div className="grid grid-col-1 gap-6 mt-4">
                                 <div className="p-5 rounded border-2 hover:shadow-lg cursor-pointer flex">

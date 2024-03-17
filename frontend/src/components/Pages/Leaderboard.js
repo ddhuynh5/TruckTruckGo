@@ -56,7 +56,7 @@ const Leaderboard = () => {
                                 for excellence in driving. Congratulations to all our top drivers for their hard work and dedication on the road!
                             </p>
 
-                            <Divider content="" />
+                            <Divider />
 
                             <div className="text-center bg-white shadow-md rounded-md overflow-hidden max-w-lg mx-auto mt-16">
                                 <div className="bg-gray-100 py-2 px-4">
