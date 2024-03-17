@@ -1,18 +1,14 @@
-import axios from 'axios';
-import { toast } from 'react-toastify';
-
-export const Divider = () => {
-    return <hr style={{ borderTop: '1px solid #000000' }} />;
-};
+import axios from "axios";
+import { toast } from "react-toastify";
 
 export const getCart = async (id) => {
     try {
-        const response = await axios.post('http://localhost:8000/cart', {
+        const response = await axios.post("http://localhost:8000/cart", {
             user_id: id,
         }, {
             withCredentials: true,
             headers: {
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json"
             }
         });
         if (response) {
@@ -30,13 +26,13 @@ export const getCart = async (id) => {
 
 export const removeFromCart = async (UserID, itemID) => {
     try {
-        const response = await axios.post('http://localhost:8000/cartRemove', {
+        const response = await axios.post("http://localhost:8000/cartRemove", {
             UserID: UserID,
             ItemID: itemID
         }, {
             withCredentials: true,
             headers: {
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json"
             }
         });
         return response;
@@ -52,37 +48,74 @@ export const removeFromCart = async (UserID, itemID) => {
 
 export const addToCart = async (UserID, item, quantity) => {
     try {
-        const response = await axios.post('http://localhost:8000/cartAdd', {
+        const response = await axios.post("http://localhost:8000/cartAdd", {
             properties: {
                 UserID: UserID,
-                ItemID: item.itemId,
+                ItemID: item.id,
                 Quantity: quantity,
                 ItemName: item.title,
-                Price: item.sellingStatus.currentPrice.value,
-                img: item.galleryURL
+                Price: item.price,
+                img: item.src
             }
         }, {
             headers: {
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json"
             },
             withCredentials: true
         });
-        if (response) {
-            toast.success('Added to cart!');
-        }
+        return response;
     } catch (error) {
         if ((error.response && error.response.status === 400) || error.response.status === 401) {
-            throw error.response.data;
+            toast.error(error.response.data, {
+                closeButton: false
+            });
+
+            return;
         } else {
-            console.error(error);
-            throw new Error("An error occurred while looking up item(s).");
+            toast.error("An error occurred while looking up item(s).", {
+                closeButton: false
+            });
+
+            return;
+        }
+    }
+};
+
+export const updateItem = async (UserID, item, quantity) => {
+    try {
+        const response = await axios.post("http://localhost:8000/updateItem", {
+            properties: {
+                UserID: UserID,
+                ItemID: item.id,
+                Quantity: quantity,
+            }
+        }, {
+            headers: {
+                "Content-Type": "application/json"
+            },
+            withCredentials: true
+        });
+        return response;
+    } catch (error) {
+        if ((error.response && error.response.status === 400) || error.response.status === 401) {
+            toast.error(error.response.data, {
+                closeButton: false
+            });
+
+            return;
+        } else {
+            toast.error("An error occurred while looking up item(s).", {
+                closeButton: false
+            });
+
+            return;
         }
     }
 };
 
 export const catalog = async (keywords) => {
     try {
-        const response = await axios.post('http://localhost:8000/catalog', {
+        const response = await axios.post("http://localhost:8000/catalog", {
             keywords: keywords
         }, {
             withCredentials: true
@@ -105,7 +138,7 @@ export const catalog = async (keywords) => {
 
 export const points = async (id) => {
     try {
-        const response = await axios.post('http://localhost:8000/points', {
+        const response = await axios.post("http://localhost:8000/points", {
             id: id
         }, {
             withCredentials: true
@@ -124,7 +157,7 @@ export const points = async (id) => {
 
 export const order = async (id, email, total, items) => {
     try {
-        const response = await axios.post('http://localhost:8000/order', {
+        const response = await axios.post("http://localhost:8000/order", {
             id: id,
             email: email,
             total: total,
@@ -143,28 +176,3 @@ export const order = async (id, email, total, items) => {
         }
     }
 }
-
-export const currencySymbolMap = {
-    // Most widely used currencies atm, add more as needed
-    USD: '$',
-    EUR: '€',
-    GBP: '£',
-    JPY: '¥',
-    CHF: 'Fr.',
-    CAD: 'C$',
-    AUD: 'A$',
-    NZD: 'NZ$',
-    HKD: 'HK$',
-    SGD: 'S$',
-    CNY: '¥',
-    KRW: '₩',
-    INR: '₹',
-    MXN: '$',
-    BRL: 'R$',
-    RUB: '₽',
-    TRY: '₺',
-    ZAR: 'R',
-    AED: 'د.إ',
-    SAR: '﷼',
-    QAR: '﷼',
-};
