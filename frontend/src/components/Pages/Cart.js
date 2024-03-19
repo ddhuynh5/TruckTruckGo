@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { toast } from "react-toastify";
-import Header from "./Header";
-import Footer from "./Footer";
+import Header from "../PageComponents/Header";
+import Footer from "../PageComponents/Footer";
 import Divider from "../PageComponents/Divider";
 import Loading from "../PageComponents/Loading";
-import { getCart, updateItem, removeFromCart } from "./PagesHelper";
+import { getCart, updateItem, removeFromCart } from "../Helpers/PagesHelper";
 import { fetchLoginInfo } from "../Helpers/AuthHelper";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 

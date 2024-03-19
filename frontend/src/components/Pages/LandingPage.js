@@ -1,7 +1,7 @@
 import React from "react";
 
-import Header from "./Header";
-import Footer from "./Footer";
+import Header from "../PageComponents/Header";
+import Footer from "../PageComponents/Footer";
 import Hero from "../PageComponents/landing/Hero";
 import Features from "../PageComponents/landing/Features";
 import Testimonials from "../PageComponents/landing/Testimonials";

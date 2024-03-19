@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import Header from "./Header";
-import Footer from "./Footer";
+import Header from "../PageComponents/Header";
+import Footer from "../PageComponents/Footer";
 import Divider from "../PageComponents/Divider";
 import Loading from "../PageComponents/Loading";
-import { catalog, addToCart } from "./PagesHelper";
+import { catalog, addToCart } from "../Helpers/PagesHelper";
 import { fetchLoginInfo } from "../Helpers/AuthHelper";
 
 const Shop = () => {

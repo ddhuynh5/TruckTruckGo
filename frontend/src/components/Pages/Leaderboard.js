@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Header from "./Header";
-import Footer from "./Footer";
+import Header from "../PageComponents/Header";
+import Footer from "../PageComponents/Footer";
 import Divider from "../PageComponents/Divider";
 import Loading from "../PageComponents/Loading";
 

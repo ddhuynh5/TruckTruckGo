@@ -10,7 +10,7 @@ import SignIn from "./components/Pages/SignIn";
 import SignUp from "./components/Pages/SignUp";
 
 import LandingPage from "./components/Pages/LandingPage";
-import Test from "./components/Pages/test";
+import Test from "./components/PageComponents/test";
 import Search from "./components/Pages/Search";
 import Shop from "./components/Pages/Shop";
 import Community from "./components/Pages/Community";
