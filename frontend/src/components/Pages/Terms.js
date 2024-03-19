@@ -16,13 +16,13 @@ const Terms = () => {
                     <p className="font-light text-gray-600 mb-4">
                         Please note that TruckTruckGo and the associated website are part of a project for educational
                         and demonstration purposes only. This project is not a real commercial application and does not offer any goods or services
-                        for sale. Any references to products, services, or organizations within this website and mobile application are purely
-                        fictional and intended for demonstration purposes. By using this website and mobile application, you agree to the following
+                        for sale. Any references to products, services, or organizations within this website are purely
+                        fictional and intended for demonstration purposes. By using this website, you agree to the following
                         terms and conditions.
                     </p>
                     <p className="font-light text-gray-600 mb-4">
                         The following terminology applies to these Terms and Conditions, Privacy Statement and Disclaimer Notice and any
-                        or all Agreements: "Client", "You" and "Your" refers to you, the person accessing this website and mobile application
+                        or all Agreements: "Client", "You" and "Your" refers to you, the person accessing this website
                         and accepting the Company's terms and conditions. "The Company", "Ourselves", "We", "Our" and "Us", refers to our Company.
                         "Party", "Parties", or "Us", refers to both the Client and ourselves, or either the Client or ourselves. All terms refer
                         to the offer, acceptance, and consideration of payment necessary to undertake the process of our assistance to the
