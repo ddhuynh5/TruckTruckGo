@@ -4,7 +4,7 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon, UserIcon, ChevronDownIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { ReactComponent as Logo } from "../../assets/images/truck_logo.svg";
 import Divider from "../PageComponents/Divider";
-import { logout, fetchLoginInfo, fetchSessionId } from "../Auth/AuthHelper";
+import { logout, fetchLoginInfo, fetchSessionId } from "../Helpers/AuthHelper";
 
 const navigation = [
     { name: "Shop", page: "/shop", current: false },

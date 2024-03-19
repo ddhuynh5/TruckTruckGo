@@ -4,7 +4,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import Divider from "../PageComponents/Divider";
 import Loading from "../PageComponents/Loading";
-import { fetchLoginInfo } from "../Auth/AuthHelper";
+import { fetchLoginInfo } from "../Helpers/AuthHelper";
 
 const Settings = () => {
     const [loading, setLoading] = useState(false);

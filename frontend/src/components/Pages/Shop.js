@@ -7,7 +7,7 @@ import Footer from "./Footer";
 import Divider from "../PageComponents/Divider";
 import Loading from "../PageComponents/Loading";
 import { catalog, addToCart } from "./PagesHelper";
-import { fetchLoginInfo } from "../Auth/AuthHelper";
+import { fetchLoginInfo } from "../Helpers/AuthHelper";
 
 const Shop = () => {
     const [loading, setLoading] = useState(false);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { signup, saveToSessionStorage, getAllSponsors } from "./AuthHelper";
+import { signup, saveToSessionStorage, getAllSponsors } from "../Helpers/AuthHelper";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-toastify";
 import Select from "react-select";

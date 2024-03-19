@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { login, saveToSessionStorage, saveToLocalStorage, getRoleName } from "./AuthHelper";
+import { login, saveToSessionStorage, saveToLocalStorage, getRoleName } from "../Helpers/AuthHelper";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-toastify";
 import Loading from "../PageComponents/Loading";
@@ -145,7 +145,7 @@ const SignIn = () => {
                                     </div>
 
                                     <a
-                                        href="/forgotpass"
+                                        href="/forgot"
                                         className="text-xs text-gray-600 hover:text-indigo-500 focus:outline-none focus:ring-2 
                                                 focus:ring-offset-2 focus:ring-indigo-500"
                                     >

@@ -1,14 +1,13 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { useInterceptor } from "./components/Auth/AuthHelper";
+import { useInterceptor } from "./components/Helpers/AuthHelper";
 import { ToastContainer } from "react-toastify";
 
 import "./App.css";
 import "tailwindcss/tailwind.css";
 
-import ForgotPass from "./components/Auth/ForgotPass";
-import SignIn from "./components/Auth/SignIn";
-import SignUp from "./components/Auth/SignUp";
+import SignIn from "./components/Pages/SignIn";
+import SignUp from "./components/Pages/SignUp";
 
 import LandingPage from "./components/Pages/LandingPage";
 import Test from "./components/Pages/test";
@@ -21,6 +20,8 @@ import Settings from "./components/Pages/Settings";
 import Support from "./components/Pages/Support";
 import About from "./components/Pages/About";
 import Faq from "./components/Pages/Faq";
+import Forgot from "./components/Pages/Forgot";
+import Terms from "./components/Pages/Terms";
 
 function App() {
   // useInterceptor();
@@ -30,7 +31,6 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route exact path="/" element={<LandingPage />} />
-          <Route path="/forgotpass" element={<ForgotPass />} />
 
           <Route path="/test" element={<Test />} />
           <Route path="/search" element={<Search />} />
@@ -44,6 +44,8 @@ function App() {
           <Route path="/support" element={<Support />} />
           <Route path="/about" element={<About />} />
           <Route path="/faq" element={<Faq />} />
+          <Route path="/forgot" element={<Forgot />} />
+          <Route path="/terms" element={<Terms />} />
 
         </Routes>
       </BrowserRouter>

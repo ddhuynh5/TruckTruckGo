@@ -7,7 +7,7 @@ import Footer from "./Footer";
 import Divider from "../PageComponents/Divider";
 import Loading from "../PageComponents/Loading";
 import { getCart, updateItem, removeFromCart } from "./PagesHelper";
-import { fetchLoginInfo } from "../Auth/AuthHelper";
+import { fetchLoginInfo } from "../Helpers/AuthHelper";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 
 const Cart = () => {
