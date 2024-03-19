@@ -22,6 +22,7 @@ import About from "./components/Pages/About";
 import Faq from "./components/Pages/Faq";
 import Forgot from "./components/Pages/Forgot";
 import Terms from "./components/Pages/Terms";
+import Policy from "./components/Pages/Policy";
 
 function App() {
   // useInterceptor();
@@ -46,6 +47,7 @@ function App() {
           <Route path="/faq" element={<Faq />} />
           <Route path="/forgot" element={<Forgot />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/policy" element={<Policy />} />
 
         </Routes>
       </BrowserRouter>
