@@ -375,7 +375,7 @@ def login(request):
                 name = user_obj.sponsor_name
             else:
                 user_obj = Drivers.objects.get(email=user.email)
-                name = user_obj.first_name
+                name = user_obj.first_name + " " + user_obj.last_name
 
             # Checking for login attempt timeout
             # if "lockout_time" in request.COOKIES and request.COOKIES["lockout_time"] != "undefined":
