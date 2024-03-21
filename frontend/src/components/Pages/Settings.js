@@ -5,7 +5,7 @@ import Footer from "../PageComponents/Footer";
 import Divider from "../PageComponents/Divider";
 import Loading from "../PageComponents/Loading";
 import { fetchLoginInfo } from "../Helpers/AuthHelper";
-import { update, sponsor, all_sponsors, driver } from "../Helpers/SettingsHelper";
+import { update, sponsor, all_sponsors, driver, deactivate } from "../Helpers/SettingsHelper";
 import Select from "react-select";
 import { toast } from "react-toastify";
 
@@ -76,10 +76,25 @@ const Settings = () => {
         });
     };
 
-    const handleDeactivate = () => {
-        toast.info("Deactivate", {
-            closeButton: false
-        });
+    const handleDeactivate = async () => {
+        try {
+            const response = await deactivate(id);
+
+            if (response) {
+                toast.success("Removed all user info", {
+                    closeButton: false
+                });
+
+                navigate("/");
+            }
+        } catch (error) {
+            if (error) {
+                toast.error("An error occurred while removing info, please try again", {
+                    closeButton: false
+                });
+            }
+        }
+
     };
 
     const handleSelectChange = (selectedOption) => {
@@ -168,81 +183,83 @@ const Settings = () => {
 
                             {!loading ? (
                                 <div className="mt-4 space-y-8">
-                                    <div className="grid grid-cols-1 md:grid-cols-3 space-y-4 md:space-y-2">
-                                        <div className="col-span-1">
-                                            <label htmlFor="first" className="block text-sm font-medium text-gray-700">First Name</label>
-                                            <input
-                                                type="text"
-                                                id="first"
-                                                className="shadow-sm rounded-md px-3 py-2 border border-gray-300 
+                                    <div className="flex justify-center ">
+                                        <div className="grid grid-cols-1 md:grid-cols-3 space-y-4 md:space-y-2 gap-x-32">
+                                            <div className="col-span-1 mt-2">
+                                                <label htmlFor="first" className="block text-sm font-medium text-gray-700">First Name</label>
+                                                <input
+                                                    type="text"
+                                                    id="first"
+                                                    className="shadow-sm rounded-md px-3 py-2 border border-gray-300 
                                                             focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                                                placeholder={defaults.first}
-                                                onChange={(event) => { setFirst(event.target.value) }}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="col-span-1">
-                                            <label htmlFor="last" className="block text-sm font-medium text-gray-700">Last Name</label>
-                                            <input
-                                                type="text"
-                                                id="last"
-                                                className="shadow-sm rounded-md px-3 py-2 border border-gray-300 
-                                                            focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 md:mb-4"
-                                                placeholder={defaults.last}
-                                                onChange={(event) => { setLast(event.target.value) }}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="col-span-1">
-                                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-                                            <input
-                                                type="email"
-                                                id="email"
-                                                className="shadow-sm rounded-md px-3 py-2 border border-gray-300 
-                                                            focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                                                placeholder={defaults.email}
-                                                onChange={(event) => { setEmail(event.target.value) }}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="col-span-1">
-                                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">New Password</label>
-                                            <input
-                                                type="text"
-                                                id="password"
-                                                className="shadow-sm rounded-md px-3 py-2 border border-gray-300 
-                                                            focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                                                placeholder="Set a new password"
-                                                onChange={(event) => { setPassword(event.target.value) }}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="col-span-1">
-                                            <label htmlFor="address" className="block text-sm font-medium text-gray-700">Address</label>
-                                            <input
-                                                type="text"
-                                                id="address"
-                                                className="shadow-sm rounded-md px-3 py-2 border border-gray-300 
-                                                            focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                                                placeholder={defaults.address}
-                                                onChange={(event) => { setAddress(event.target.value) }}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="col-span-1 md:pt-1">
-                                            <label htmlFor="sponsors" className="block text-sm font-medium text-gray-700">Company</label>
-                                            <div className="w-56">
-                                                <Select
-                                                    id="sponsor"
-                                                    options={sponsors}
-                                                    value={currentSponsor}
-                                                    onChange={handleSelectChange}
-                                                    placeholder={currentSponsor}
+                                                    placeholder={defaults.first}
+                                                    onChange={(event) => { setFirst(event.target.value) }}
+                                                    required
                                                 />
+                                            </div>
+                                            <div className="col-span-1">
+                                                <label htmlFor="last" className="block text-sm font-medium text-gray-700">Last Name</label>
+                                                <input
+                                                    type="text"
+                                                    id="last"
+                                                    className="shadow-sm rounded-md px-3 py-2 border border-gray-300 
+                                                            focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 md:mb-4"
+                                                    placeholder={defaults.last}
+                                                    onChange={(event) => { setLast(event.target.value) }}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="col-span-1">
+                                                <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+                                                <input
+                                                    type="email"
+                                                    id="email"
+                                                    className="shadow-sm rounded-md px-3 py-2 border border-gray-300 
+                                                            focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                                    placeholder={defaults.email}
+                                                    onChange={(event) => { setEmail(event.target.value) }}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="col-span-1">
+                                                <label htmlFor="password" className="block text-sm font-medium text-gray-700">New Password</label>
+                                                <input
+                                                    type="text"
+                                                    id="password"
+                                                    className="shadow-sm rounded-md px-3 py-2 border border-gray-300 
+                                                            focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                                    placeholder="Set a new password"
+                                                    onChange={(event) => { setPassword(event.target.value) }}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="col-span-1">
+                                                <label htmlFor="address" className="block text-sm font-medium text-gray-700">Address</label>
+                                                <input
+                                                    type="text"
+                                                    id="address"
+                                                    className="shadow-sm rounded-md px-3 py-2 border border-gray-300 
+                                                            focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                                    placeholder={defaults.address}
+                                                    onChange={(event) => { setAddress(event.target.value) }}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="col-span-1 md:pt-1">
+                                                <label htmlFor="sponsors" className="block text-sm font-medium text-gray-700">Company</label>
+                                                <div className="w-56">
+                                                    <Select
+                                                        id="sponsor"
+                                                        options={sponsors}
+                                                        value={currentSponsor}
+                                                        onChange={handleSelectChange}
+                                                        placeholder={currentSponsor}
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="flex md:justify-end">
+                                    <div className="flex justify-center md:justify-end">
                                         <button
                                             onClick={handleUpdate}
                                             className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 

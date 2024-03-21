@@ -113,3 +113,24 @@ export const update = async (id, updateParams) => {
         }
     }
 };
+
+export const deactivate = async (id) => {
+    try {
+        const response = await axios.post('http://localhost:8000/deactivate', {
+            unique_id: id,
+        }, {
+            withCredentials: true
+        });
+        const data = response.data;
+        localStorage.clear();
+        sessionStorage.clear();
+        return data;
+    } catch (error) {
+        if ((error.response && error.response.status === 400) || error.response.status === 401) {
+            throw error.response.data;
+        } else {
+            console.error(error);
+            throw new Error("An error occurred while looking up item(s).");
+        }
+    }
+};
