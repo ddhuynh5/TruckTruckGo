@@ -7,6 +7,7 @@ import Loading from "../PageComponents/Loading";
 import { fetchLoginInfo } from "../Helpers/AuthHelper";
 import { update, sponsor, all_sponsors, driver } from "../Helpers/SettingsHelper";
 import Select from "react-select";
+import { toast } from "react-toastify";
 
 const Settings = () => {
     const navigate = useNavigate();
@@ -34,7 +35,7 @@ const Settings = () => {
         setIsOpen(false);
     };
 
-    const handleUpdate = () => {
+    const handleUpdate = async () => {
         if (
             first !== defaults.first ||
             last !== defaults.last ||
@@ -53,12 +54,32 @@ const Settings = () => {
                 sponsor_id: currentSponsor.value
             };
 
-            update(id, updatedUserInfo);
+            try {
+                const response = await update(id, updatedUserInfo);
+
+                if (response) {
+                    toast.success("Update success!", {
+                        closeButton: false
+                    });
+                }
+            } catch (error) {
+                if (error) {
+                    toast.error("An error occurred while updating, please try again", {
+                        closeButton: false
+                    });
+                }
+            }
+
         }
+        toast.info("No changes detected", {
+            closeButton: false
+        });
     };
 
     const handleDeactivate = () => {
-        console.log("HI")
+        toast.info("Deactivate", {
+            closeButton: false
+        });
     };
 
     const handleSelectChange = (selectedOption) => {
@@ -145,7 +166,7 @@ const Settings = () => {
 
                             <Divider />
 
-                            {/* !loading */ true ? (
+                            {!loading ? (
                                 <div className="mt-4 space-y-8">
                                     <div className="grid grid-cols-1 md:grid-cols-3 space-y-4 md:space-y-2">
                                         <div className="col-span-1">
