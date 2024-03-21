@@ -373,23 +373,22 @@ def login(request):
                 name = user_obj.first_name + " " + user_obj.last_name
 
             # Checking for login attempt timeout
-            # if "lockout_time" in request.COOKIES and request.COOKIES["lockout_time"] != "undefined":
-            #     locked_until = datetime.fromisoformat(
-            #         request.COOKIES["lockout_time"]).astimezone(timezone.utc)
-            #     if timezone.now() < locked_until:
-            #         remaining_time = locked_until - timezone.now()
-            #         remaining_time_str = f"{remaining_time.seconds // 60} minutes and {remaining_time.seconds % 60} seconds"
-            #         return JsonResponse({
-            #             "error": f"Maximum login attempts exceeded. You may try again in {remaining_time_str}."
-            #         }, status=400)
-            #     else:
-            #         response = JsonResponse({
-            #             "error": "You may attempt to log in again."
-            #         }, status=400)
-            #         response.delete_cookie("lockout_time")
-            #         user.login_attempts = 0
-            #         user.save()
-            #         return response
+            if "lockout_time" in request.COOKIES:# and request.COOKIES["lockout_time"] != "undefined":
+                locked_until = datetime.fromisoformat(request.COOKIES["lockout_time"]).astimezone()
+                if timezone.now() < locked_until:
+                    remaining_time = locked_until - timezone.now()
+                    remaining_time_str = f"{remaining_time.seconds // 60} minutes and {remaining_time.seconds % 60} seconds"
+                    return JsonResponse({
+                        "error": f"Maximum login attempts exceeded. You may try again in {remaining_time_str}."
+                    }, status=400)
+                else:
+                    response = JsonResponse({
+                        "error": "You may attempt to log in again."
+                    }, status=400)
+                    response.delete_cookie("lockout_time")
+                    user.login_attempts = 0
+                    user.save()
+                    return response
 
             if not bcrypt.checkpw(password, bytes(user.password)):
                 user.login_attempts += 1
