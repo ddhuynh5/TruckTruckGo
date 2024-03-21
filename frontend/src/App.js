@@ -10,7 +10,6 @@ import SignIn from "./components/Pages/SignIn";
 import SignUp from "./components/Pages/SignUp";
 
 import LandingPage from "./components/Pages/LandingPage";
-import Test from "./components/PageComponents/test";
 import Search from "./components/Pages/Search";
 import Shop from "./components/Pages/Shop";
 import Community from "./components/Pages/Community";
@@ -32,8 +31,6 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route exact path="/" element={<LandingPage />} />
-
-          <Route path="/test" element={<Test />} />
           <Route path="/search" element={<Search />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
@@ -48,7 +45,6 @@ function App() {
           <Route path="/forgot" element={<Forgot />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/policy" element={<Policy />} />
-
         </Routes>
       </BrowserRouter>
       <ToastContainer />
