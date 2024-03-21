@@ -556,28 +556,37 @@ def deactivate(request):
     if request.method == "POST":
         data = json.loads(request.body)
 
-    try:
-        user = Users.objects.get(unique_id=data["unique_id"])
+        try:
+            user = Users.objects.get(unique_id=data["unique_id"])
 
-        if user:
-            try:
-                cart = Cart.objects.filter(UserID=data["unique_id"]).all()
-                points = Points.objects.get(driver_id=data["unique_id"])
-                driver = Drivers.objects.get(unique_id=data["unique_id"])
+            if user:
+                try:
+                    cart = Cart.objects.filter(UserID=data["unique_id"]).all()
+                    points = Points.objects.get(driver_id=data["unique_id"])
+                    driver = Drivers.objects.get(unique_id=data["unique_id"])
 
-                cart.delete()
-                points.delete()
-                driver.delete()
-                user.delete()
+                    cart.delete()
+                    points.delete()
+                    driver.delete()
+                    user.delete()
 
-            except Exception as e:
-                print(e)
-                return JsonResponse({"Error: ": str(e)}, status=400)
-        else:
-            return JsonResponse({"Error deleting account, please contact support": data["unique_id"]}, status=400)
+                except Exception as e:
+                    print(e)
+                    return JsonResponse({"Error: ": str(e)}, status=400)
+            else:
+                return JsonResponse({"Error deleting account, please contact support": data["unique_id"]}, status=400)
 
-    except ConnectionRefusedError as error:
-        print(error)
-        return JsonResponse({"Connection Error": error}, status=400)
+        except ConnectionRefusedError as error:
+            print(error)
+            return JsonResponse({"Connection Error": error}, status=400)
 
+    return JsonResponse({"success": True}, status=200)
+
+
+@api_view(["GET"])
+def test(request):
+    if (request.method == "GET"):
+        data = json.loads(request.body)
+        send_welcome_email(email_address=data["email"])
+    
     return JsonResponse({"success": True}, status=200)

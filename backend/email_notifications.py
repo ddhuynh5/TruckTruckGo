@@ -5,51 +5,9 @@ from django.conf import settings
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
-SG_KEY = os.environ.get("SENDGRID_API_KEY")
-
-def send_welcome_email(email, first_name):
-    """ Sends the user a welcome email 
-    
-    :param email: Email to be sent to
-    :param first_name: First name of user
-    :returns API Response Code
-    :raises Exception """
-    
-    message = Mail(
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        to_emails=email,
-        subject="Welcome to Scrummy Bears Driving!",
-        html_content=f"""
-            <!DOCTYPE html>
-            <html>
-            <body>
-                <p>Dear { first_name },</p>
-                <p>Thank you for registering with Scrummy Bears Driving. We're excited to have you as a member of our community!</p>
-                <p>As a registered user, you can now:</p>
-                <ul>
-                <li>Create and manage your own profile</li>
-                <li>Purchase products through our point-based reward system</li>
-                <li>Connect with other members of the community</li>
-                </ul>
-                <p>If you have any questions or issues with your account, please don't hesitate to contact us.</p>
-                <p>Best regards,</p>
-                <p>The Scrummy Bears Driving team</p>
-            </body>
-            </html>
-        """
-    )
-
-    try:
-        send_grid_client = SendGridAPIClient(SG_KEY)
-        response = send_grid_client.send(message)
-        print(response.status_code)
-        print(response.body)
-        print(response.headers)
-        print("Message Sent!")
-    except Exception as e:
-        print("Error: {0}".format(e))
-
-    return str(response.status_code)
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 
 def send_password_reset(email, url):
@@ -96,6 +54,7 @@ def send_password_reset(email, url):
 
     return str(response.status_code)
 
+
 def send_receipt_email(to_email, order_date, order_total, items):
     message = Mail(
         from_email=settings.DEFAULT_FROM_EMAIL,
@@ -126,4 +85,22 @@ def send_receipt_email(to_email, order_date, order_total, items):
         response = sg.send(message)
         print(f'Receipt email sent to {to_email}. Status code: {response.status_code}')
     except Exception as e:
-        print(str(e) + "not pog")
+        print(str(e))
+
+
+def send_welcome_email(email_address):
+    subject = "Welcome to TruckTruckGo"
+    from_email = settings.DEFAULT_FROM_EMAIL
+    to_email = email_address
+
+    context = {
+        "email": email_address
+    }
+
+    html_content = render_to_string("welcome.html", {"context": "values"})
+    text_content = strip_tags(html_content)
+
+    email = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
+    email.attach_alternative(html_content, "text/html")
+    email.send()
+
