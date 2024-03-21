@@ -9,6 +9,7 @@ const SignIn = () => {
     const [rememberMe, setRememberMe] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [missingFields, setMissingFields] = useState([]);
     const navigate = useNavigate();
 
     const changePage = () => {
@@ -25,8 +26,15 @@ const SignIn = () => {
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
 
-        try {
-            if (email && password) {
+        const missing = [];
+
+        if (!email) missing.push("email");
+        if (!password) missing.push("password");
+
+        setMissingFields(missing);
+
+        if (missing.length === 0) {
+            try {
                 setIsLoading(true);
                 const response = await login(email, password);
                 toast.success("Login success!", {
@@ -58,33 +66,22 @@ const SignIn = () => {
                 setTimeout(() => {
                     changePage();
                 }, 1000);
-            } else {
-                if (!email) {
-                    toast.error("Email required", {
+            } catch (error) {
+                if (error && error["Login Attempts Remaining"]) {
+                    toast.error(`Incorrect password. Login attempts remaining: ${error["Login Attempts Remaining"]}`, {
+                        closeButton: false
+                    });
+                } else if (error && error["error"]) {
+                    toast.error(error["error"], {
                         closeButton: false
                     });
                 } else {
-                    toast.error("Password required", {
+                    toast.error("An error occurred while logging in", {
                         closeButton: false
                     });
                 }
                 setIsLoading(false);
             }
-        } catch (error) {
-            if (error && error["Login Attempts Remaining"]) {
-                toast.error(`Incorrect password. Login attempts remaining: ${error["Login Attempts Remaining"]}`, {
-                    closeButton: false
-                });
-            } else if (error && error["error"]) {
-                toast.error(error["error"], {
-                    closeButton: false
-                });
-            } else {
-                toast.error("An error occurred while logging in", {
-                    closeButton: false
-                });
-            }
-            setIsLoading(false);
         }
     };
 
@@ -111,8 +108,13 @@ const SignIn = () => {
                                     <input
                                         type="email"
                                         id="email"
-                                        className="shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 
-                                                        focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                        className={
+                                            `
+                                            shadow-sm rounded-md w-full px-3 py-2 border border-gray-300
+                                            focus:outline-none focus:ring-indigo-500 focus:border-indigo-500
+                                            ${missingFields.includes("email") ? "border-red-500" : ""}
+                                        `
+                                        }
                                         placeholder="your@email.com"
                                         required
                                     />
@@ -122,8 +124,13 @@ const SignIn = () => {
                                     <input
                                         type={showPassword ? "text" : "password"}
                                         id="password"
-                                        className="shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 
-                                                            focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                        className={
+                                            `
+                                            shadow-sm rounded-md w-full px-3 py-2 border border-gray-300
+                                            focus:outline-none focus:ring-indigo-500 focus:border-indigo-500
+                                            ${missingFields.includes("password") ? "border-red-500" : ""}
+                                        `
+                                        }
                                         placeholder="Enter your password"
                                         required
                                         style={{

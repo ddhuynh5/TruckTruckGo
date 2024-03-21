@@ -10,8 +10,16 @@ const SignUp = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [sponsors, setSponsors] = useState([]);
+    const [missingFields, setMissingFields] = useState([]);
     const [selectedSponsor, setSelectedSponsor] = useState(null);
     const navigate = useNavigate();
+
+    const customStyles = (missingFields) => ({
+        control: (base) => ({
+            ...base,
+            borderColor: missingFields.includes("selectedSponsor") ? "#ef4444" : base.borderColor,
+        })
+    });
 
     const changePage = () => {
         window.location = "/shop";
@@ -40,65 +48,69 @@ const SignUp = () => {
         const last = document.getElementById("last").value;
         const address = document.getElementById("address").value;
 
-        try {
-            if (email && password) {
-                setIsLoading(true);
+        const missing = [];
 
-                const response = await signup(
-                    address,
-                    first,
-                    last,
-                    selectedSponsor.label,
-                    null,
-                    3,
-                    selectedSponsor.value,
-                    email,
-                    password
-                );
+        if (!email) missing.push("email");
+        if (!password) missing.push("password");
+        if (!first) missing.push("first");
+        if (!last) missing.push("last");
+        if (!address) missing.push("address");
+        if (!selectedSponsor) missing.push("selectedSponsor");
 
-                toast.success("Signup success!", {
-                    closeButton: false
-                });
+        setMissingFields(missing);
 
-                saveToSessionStorage({
-                    email: response[0].fields.email,
-                    role: "Driver",
-                    name: response[0].name,
-                    sessionId: response[0].fields.session_id,
-                    expiration: response[0].fields.expiration_time,
-                    uniqueId: response[0].pk,
-                });
+        if (missing.length === 0) {
+            try {
+                if (!email || !password || !first || !last || !address || !selectedSponsor) {
+                    setIsLoading(false);
+                } else {
+                    setIsLoading(true);
 
-                setTimeout(() => {
-                    changePage();
-                }, 1000);
-            } else {
-                if (!email) {
-                    toast.error("Email required", {
+                    const response = await signup(
+                        address,
+                        first,
+                        last,
+                        selectedSponsor.label,
+                        null,
+                        3,
+                        selectedSponsor.value,
+                        email,
+                        password
+                    );
+
+                    toast.success("Signup success!", {
+                        closeButton: false
+                    });
+
+                    saveToSessionStorage({
+                        email: response[0].fields.email,
+                        role: "Driver",
+                        name: response[0].name,
+                        sessionId: response[0].fields.session_id,
+                        expiration: response[0].fields.expiration_time,
+                        uniqueId: response[0].pk,
+                    });
+
+                    setTimeout(() => {
+                        changePage();
+                    }, 1000);
+                }
+            } catch (error) {
+                if (error && error["Login Attempts Remaining"]) {
+                    toast.error(`Incorrect password. Login attempts remaining: ${error["Login Attempts Remaining"]}`, {
+                        closeButton: false
+                    });
+                } else if (error && error["Error"]) {
+                    toast.error(error["Error"], {
                         closeButton: false
                     });
                 } else {
-                    toast.error("Password required", {
+                    toast.error("An error occurred during signup", {
                         closeButton: false
                     });
                 }
                 setIsLoading(false);
             }
-        } catch (error) {
-            if (error && error["Login Attempts Remaining"]) {
-                toast.error(`Incorrect password. Login attempts remaining: ${error["Login Attempts Remaining"]}`, {
-                    closeButton: false
-                });
-            } else if (error && error["error"]) {
-                toast.error(error["error"], {
-                    closeButton: false
-                });
-            } else {
-                toast.error("An error occurred during signup", {
-                    closeButton: false
-                });
-            }
-            setIsLoading(false);
         }
     };
 
@@ -123,8 +135,13 @@ const SignUp = () => {
                                     <input
                                         type="email"
                                         id="email"
-                                        className="shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 
-                                                        focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                        className={
+                                            `
+                                                shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 
+                                                focus:outline-none focus:ring-indigo-500 focus:border-indigo-500
+                                                ${missingFields.includes("email") ? "border-red-500" : ""}
+                                            `
+                                        }
                                         placeholder="your@email.com"
                                         required
                                     />
@@ -134,8 +151,13 @@ const SignUp = () => {
                                     <input
                                         type={showPassword ? "text" : "password"}
                                         id="password"
-                                        className="shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 
-                                                            focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                        className={
+                                            `
+                                                shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 
+                                                focus:outline-none focus:ring-indigo-500 focus:border-indigo-500
+                                                ${missingFields.includes("password") ? "border-red-500" : ""}
+                                            `
+                                        }
                                         placeholder="Enter your password"
                                         required
                                         style={{
@@ -161,8 +183,13 @@ const SignUp = () => {
                                         <input
                                             type="text"
                                             id="first"
-                                            className="shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 
-                                                        focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                            className={
+                                                `
+                                                    shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 
+                                                    focus:outline-none focus:ring-indigo-500 focus:border-indigo-500
+                                                    ${missingFields.includes("first") ? "border-red-500" : ""}
+                                                `
+                                            }
                                             placeholder="Jane"
                                             required
                                         />
@@ -172,32 +199,47 @@ const SignUp = () => {
                                         <input
                                             type="text"
                                             id="last"
-                                            className="shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 
-                                                        focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                            className={
+                                                `
+                                                    shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 
+                                                    focus:outline-none focus:ring-indigo-500 focus:border-indigo-500
+                                                    ${missingFields.includes("last") ? "border-red-500" : ""}
+                                                `
+                                            }
                                             placeholder="Doe"
                                             required
                                         />
                                     </div>
                                 </div>
-                                <label htmlFor="Address" className="block text-sm font-medium text-gray-700">Address</label>
-                                <input
-                                    type="text"
-                                    id="address"
-                                    className="shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 
-                                                        focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 mb-4"
-                                    placeholder="123 Sesame Street"
-                                    required
-                                />
-                                <Select
-                                    options={sponsors.map((sponsor) => ({
-                                        value: sponsor.sponsor_id,
-                                        label: sponsor.sponsor_name,
-                                    }))}
-                                    value={selectedSponsor}
-                                    onChange={handleSponsorChange}
-                                    placeholder="Select Sponsor"
-                                    className="mb-4"
-                                />
+                                <div className="mb-4">
+                                    <label htmlFor="Address" className="block text-sm font-medium text-gray-700">Address</label>
+                                    <input
+                                        type="text"
+                                        id="address"
+                                        className={
+                                            `
+                                            shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 
+                                            focus:outline-none focus:ring-indigo-500 focus:border-indigo-500
+                                            ${missingFields.includes("address") ? "border-red-500" : ""}
+                                        `
+                                        }
+                                        placeholder="123 Sesame Street"
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="Sponsor" className="block text-sm font-medium text-gray-700">Companies</label>
+                                    <Select
+                                        options={sponsors.map((sponsor) => ({
+                                            value: sponsor.sponsor_id,
+                                            label: sponsor.sponsor_name,
+                                        }))}
+                                        styles={customStyles(missingFields)}
+                                        value={selectedSponsor}
+                                        onChange={handleSponsorChange}
+                                        placeholder="Select Company"
+                                    />
+                                </div>
                                 <span
                                     onClick={() => { navigate("/signin") }}
                                     className="text-xs text-indigo-500 hover:text-indigo-700 focus:outline-none focus:ring-2 
