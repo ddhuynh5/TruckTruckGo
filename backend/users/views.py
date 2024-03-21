@@ -71,106 +71,8 @@ def set_points(driver_id, points):
         if not points_obj:
             raise ObjectDoesNotExist()
     except ObjectDoesNotExist:
-        points_obj = Points.objects.create(
-            driver_id=driver_id, total_points=points)
+        points_obj = Points.objects.create(driver_id=driver_id, total_points=points)
     points_obj.save()
-
-
-def create_update_role(data, password, new_id, user=None):
-    """
-        Creates model based on role_id
-        If user exists, updates user instead
-    """
-
-    roles = {
-        1: Admins,
-        2: Sponsors,
-        3: Drivers
-    }
-
-    current_role = data["role_id"] if "role_id" in data else user.role_id
-
-    if current_role == 1:
-        model_class = Admins
-        related_model_class = Users
-    elif current_role == 2:
-        model_class = Sponsors
-        related_model_class = Users
-    elif current_role == 3:
-        model_class = Drivers
-        related_model_class = Users
-    else:
-        raise ValueError("Invalid role ID")
-    
-    if password is not None and isinstance(password, str):
-        password = password.encode("utf-8")
-
-    defaults = {
-        "first_name": data.get("first_name"),
-        "last_name": data.get("last_name"),
-        "sponsor_name": data.get("sponsor_name"),
-        "admin_name": data.get("admin_name"),
-        "sponsor_id": data.get("sponsor_id"),
-        "email": data.get("email"),
-        "address": data.get("address"),
-        "password": password,
-        "role_id": data.get("role_id"),
-        "unique_id": new_id
-    }
-
-    for key in list(defaults.keys()):
-        if defaults[key] is None or defaults[key] == "":
-            del defaults[key]
-
-    remove_lists = {
-        Admins: ["sponsor_id", "first_name", "last_name", "address", "sponsor_name"],
-        Sponsors: ["admin_name", "first_name", "last_name"],
-        Drivers: ["admin_name", "sponsor_name"]
-    }
-
-    remove = remove_lists.get(model_class, [])
-    defaults = {key: value for key, value in defaults.items() if key not in remove}
-
-    try:
-        obj = model_class.objects.get(unique_id=defaults["unique_id"])
-        created = False
-    except model_class.MultipleObjectsReturned:
-        obj = model_class.objects.filter(unique_id=defaults["unique_id"]).first()
-        created = False
-    except model_class.DoesNotExist:
-        obj = model_class.objects.create(**defaults)
-        created = True
-
-    # Updating current record if exists
-    if not created:
-        obj.__dict__.update(**defaults)
-        obj.save()
-
-    # new drivers start at 500 points
-    if created and obj.role_id == 3:
-        set_points(new_id, 500)
-    # if updating driver, check if points are passed in (if so update)
-    elif obj.role_id == 3:
-        if "total_points" not in data: # if points aren't passed in, use current points in DB
-            points_obj = Points.objects.get(driver_id=new_id)
-            set_points(new_id, points_obj.total_points)
-
-    # Updating tables where previous role_id existed
-    non_new_roles = [role for role in roles.values() if role !=
-                     roles[current_role]]
-
-    for role in non_new_roles:
-        if role == Drivers:
-            Points.objects.filter(driver_id=new_id).delete()
-        role.objects.filter(unique_id=new_id).delete()
-
-    # Updating Users Table
-    if related_model_class:
-        related_obj = related_model_class.objects.get(unique_id=new_id)
-        related_obj.__dict__.update(**defaults)
-        related_obj.save()
-    
-    return obj
 
 
 @api_view(["POST"])
@@ -547,23 +449,26 @@ def signup(request):
                 user.save()
                 new_id = user.unique_id
                 try:
-                    obj = create_update_role(data, password, new_id)
+                    driver = Drivers.objects.create(
+                        unique_id=new_id,
+                        first_name=data["first_name"],
+                        last_name=data["last_name"],
+                        email=data["email"],
+                        address=data["address"],
+                        password=password,
+                        role_id=data["role_id"],
+                        sponsor_id=data["sponsor_id"],
+                    )
+                    driver.save()
+                    set_points(new_id, 500)
                 except Exception as e:
                     print(e)
-                    return JsonResponse({"Error: ": str(e)}, status=400)
+                    return JsonResponse({"Error: ": str("yes")}, status=400)
             else:
                 return JsonResponse({"Error": f"User [{email}] already exists"}, status=400)
         except ConnectionRefusedError as error:
             print(error)
             return JsonResponse({"Error": error}, status=400)
-
-        # Get new user's name
-        if hasattr(obj, 'first_name') and obj.first_name:
-            name = obj.first_name
-        elif hasattr(obj, 'sponsor_name') and obj.sponsor_name:
-            name = obj.sponsor_name
-        else:
-            name = obj.admin_name
 
         # Send a welcome email to the new user
         # response = send_welcome_email(user.email, name)
@@ -571,7 +476,7 @@ def signup(request):
         json_data = serializers.serialize("json", new_user)
 
         json_dict = json.loads(json_data)
-        json_dict[0]['name'] = name
+        json_dict[0]["name"] = driver.first_name + " " + driver.last_name
         json_data = json.dumps(json_dict)
 
         return HttpResponse(json_data, content_type="application/json")
