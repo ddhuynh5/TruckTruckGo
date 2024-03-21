@@ -599,8 +599,31 @@ def update(request):
             user = Users.objects.filter(unique_id=data["unique_id"]).first()
             if user:
                 try:
-                    create_update_role(data, user.password,
-                                       user.unique_id, user)
+                    user_info = {}
+                    driver = Drivers.objects.get(unique_id=data["unique_id"])
+                    
+                    fields_mapping = {
+                        "first_name": "first_name",
+                        "last_name": "last_name",
+                        "email": "email",
+                        "address": "address",
+                        "sponsor_id": "sponsor_id",
+                        "password": "password"
+                    }
+
+                    for field, key in fields_mapping.items():
+                        if data[key] and data[key] != getattr(driver, field):
+                            if field == "password":
+                                if not bcrypt.checkpw(data["password"].encode("utf-8"), bytes(user.password)):
+                                    user_info[field] = bcrypt.hashpw(data["password"].encode(), bcrypt.gensalt())
+                            else:
+                                user_info[field] = data[key]
+
+                    driver.__dict__.update(**user_info)
+                    driver.save()
+                    user.__dict__.update(**user_info)
+                    user.save()
+
                 except Exception as e:
                     print(e)
                     return JsonResponse({"Error: ": str(e)}, status=400)
