@@ -20,6 +20,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.decorators import api_view
 from .models import Users, Drivers, Sponsors, Admins
 from points.models import Points
+from cart.models import Cart
 from email_notifications import send_welcome_email, send_password_reset
 from decorators.login_decorator import check_session
 
@@ -538,3 +539,45 @@ def update(request):
             return JsonResponse({"Connection Error": error}, status=400)
 
         return JsonResponse({"success": True}, status=200)
+
+
+@api_view(["POST"])
+def deactivate(request):
+    """
+        Removes user info from db
+
+        Parameter:
+            unique_id - User's unique id, used to locate in db
+        Returns:
+            Success msg if deletion complete
+            Error - connection, can't find user in db
+    """
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+
+    try:
+        user = Users.objects.get(unique_id=data["unique_id"])
+
+        if user:
+            try:
+                cart = Cart.objects.filter(UserID=data["unique_id"]).all()
+                points = Points.objects.get(driver_id=data["unique_id"])
+                driver = Drivers.objects.get(unique_id=data["unique_id"])
+
+                cart.delete()
+                points.delete()
+                driver.delete()
+                user.delete()
+
+            except Exception as e:
+                print(e)
+                return JsonResponse({"Error: ": str(e)}, status=400)
+        else:
+            return JsonResponse({"Error deleting account, please contact support": data["unique_id"]}, status=400)
+
+    except ConnectionRefusedError as error:
+        print(error)
+        return JsonResponse({"Connection Error": error}, status=400)
+
+    return JsonResponse({"success": True}, status=200)
