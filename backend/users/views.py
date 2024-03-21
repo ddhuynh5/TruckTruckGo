@@ -239,18 +239,14 @@ def get_specific_user(request):
 @api_view(["POST"])
 # @check_session
 def get_sponsor(request):
-    """ Pulls Sponsors from Sponsor Table """
+    """ Pulls sponsor for specified user """
 
     if request.method == "POST":
         data = json.loads(request.body)
 
-        current = Users.objects.filter(
-            unique_id=data["unique_id"]).values("sponsor_id")
-        current_sponsor = Sponsors.objects.filter(
-            sponsor_id=current[0]["sponsor_id"]).values("sponsor_name")
-        all_sponsors = Sponsors.objects.values("sponsor_name")
-        sponsor_dict = {"current_sponsor": list(
-            current_sponsor), "all_sponsors": list(all_sponsors)}
+        current = Users.objects.filter(unique_id=data["unique_id"]).values("sponsor_id")
+        current_sponsor = Sponsors.objects.filter(sponsor_id=current[0]["sponsor_id"]).values("sponsor_name")
+        sponsor_dict = {"current_sponsor": list(current_sponsor)}
         json_data = json.dumps(sponsor_dict)
 
         return HttpResponse(json_data, content_type="application/json")
