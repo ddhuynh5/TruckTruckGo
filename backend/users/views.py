@@ -245,9 +245,8 @@ def get_sponsor(request):
         data = json.loads(request.body)
 
         current = Users.objects.filter(unique_id=data["unique_id"]).values("sponsor_id")
-        current_sponsor = Sponsors.objects.filter(sponsor_id=current[0]["sponsor_id"]).values("sponsor_name")
-        sponsor_dict = {"current_sponsor": list(current_sponsor)}
-        json_data = json.dumps(sponsor_dict)
+        current_sponsor = Sponsors.objects.filter(sponsor_id=current[0]["sponsor_id"]).values("sponsor_name", "sponsor_id")
+        json_data = json.dumps(list(current_sponsor))
 
         return HttpResponse(json_data, content_type="application/json")
 
