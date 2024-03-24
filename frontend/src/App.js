@@ -42,7 +42,7 @@ function App() {
           <Route path="/support" element={<Support />} />
           <Route path="/about" element={<About />} />
           <Route path="/faq" element={<Faq />} />
-          <Route path="/forgot" element={<Forgot />} />
+          <Route path="/reset-password" element={<Forgot />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/policy" element={<Policy />} />
         </Routes>

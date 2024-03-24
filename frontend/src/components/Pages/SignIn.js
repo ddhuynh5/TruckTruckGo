@@ -152,7 +152,7 @@ const SignIn = () => {
                                     </div>
 
                                     <a
-                                        href="/forgot"
+                                        href="/reset-password"
                                         className="text-xs text-gray-600 hover:text-indigo-500 focus:outline-none focus:ring-2 
                                                 focus:ring-offset-2 focus:ring-indigo-500"
                                     >
