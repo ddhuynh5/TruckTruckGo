@@ -69,6 +69,8 @@ class Users(models.Model):
     unique_id = models.AutoField(primary_key=True)
     session_id = models.CharField(max_length=255, null=True)
     expiration_time = models.DateTimeField(default=None, null=True)
+    reset_token = models.CharField(max_length=255, null=True)
+    reset_token_created_at = models.DateTimeField(null=True)
 
     class Meta:
         db_table = "Users"
