@@ -176,16 +176,52 @@ export const fetchSessionId = () => {
     return localStorage.getItem("sessionId") || sessionStorage.getItem("sessionId");
 };
 
-export const reset = async (email) => {
+export const sendPasswordResetEmail = async (email) => {
     try {
-        const response = await axios.post("http://localhost:8000/generate_password_reset", { email }, {
+        const response = await axios.post("http://localhost:8000/generate_password_reset", {
+            email: email
+        }, {
             withCredentials: true
         });
-        if (response.data["success"]) {
-            toast.success("Email sent!", {
-                closeButton: false
-            });
+        return response.data;
+    } catch (error) {
+        if ((error.response && error.response.status === 400) || error.response.status === 401) {
+            throw error.response.data;
+        } else {
+            console.error(error);
+            throw new Error("An error occurred while looking up item(s).");
         }
+    }
+};
+
+export const validatePasswordResetEmail = async (id, token) => {
+    try {
+        const response = await axios.post("http://localhost:8000/validate_password_reset", {
+            unique_id: id,
+            token: token
+        }, {
+            withCredentials: true
+        });
+        return response.data;
+    } catch (error) {
+        if ((error.response && error.response.status === 400) || error.response.status === 401) {
+            throw error.response.data;
+        } else {
+            console.error(error);
+            throw new Error("An error occurred while looking up item(s).");
+        }
+    }
+};
+
+export const updatePassword = async (id, password) => {
+    try {
+        const response = await axios.post("http://localhost:8000/password_reset", {
+            unique_id: id,
+            password: password
+        }, {
+            withCredentials: true
+        });
+        return response.data;
     } catch (error) {
         if ((error.response && error.response.status === 400) || error.response.status === 401) {
             throw error.response.data;
