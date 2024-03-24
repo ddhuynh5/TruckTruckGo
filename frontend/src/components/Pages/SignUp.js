@@ -47,6 +47,7 @@ const SignUp = () => {
         const first = document.getElementById("first").value;
         const last = document.getElementById("last").value;
         const address = document.getElementById("address").value;
+        const terms = document.getElementById("terms").checked;
 
         const missing = [];
 
@@ -56,12 +57,13 @@ const SignUp = () => {
         if (!last) missing.push("last");
         if (!address) missing.push("address");
         if (!selectedSponsor) missing.push("selectedSponsor");
+        if (!terms) missing.push("terms");
 
         setMissingFields(missing);
 
         if (missing.length === 0) {
             try {
-                if (!email || !password || !first || !last || !address || !selectedSponsor) {
+                if (!email || !password || !first || !last || !address || !selectedSponsor || !terms) {
                     setIsLoading(false);
                 } else {
                     setIsLoading(true);
@@ -239,6 +241,29 @@ const SignUp = () => {
                                         onChange={handleSponsorChange}
                                         placeholder="Select Company"
                                     />
+                                </div>
+                                <div className="flex items-start mb-4">
+                                    <div className="flex items-center h-5">
+                                        <input
+                                            id="terms"
+                                            aria-describedby="terms"
+                                            type="checkbox"
+                                            className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300"
+                                            required={true} />
+                                    </div>
+                                    <div className="ml-3 text-sm">
+                                        <label
+                                            htmlFor="terms"
+                                            className={
+                                                `
+                                                    font-light text-gray-500
+                                                    ${missingFields.includes("terms") ? "text-red-400" : ""}
+                                                `
+                                            }
+                                        >
+                                            I accept the <a className="font-medium text-primary-600 hover:underline dark:text-primary-500" href="/terms">Terms and Conditions</a>
+                                        </label>
+                                    </div>
                                 </div>
                                 <span
                                     onClick={() => { navigate("/signin") }}
