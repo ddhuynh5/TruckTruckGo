@@ -178,7 +178,7 @@ export const fetchSessionId = () => {
 
 export const reset = async (email) => {
     try {
-        const response = await axios.post("http://localhost:8000/password_reset", { email }, {
+        const response = await axios.post("http://localhost:8000/generate_password_reset", { email }, {
             withCredentials: true
         });
         if (response.data["success"]) {
