@@ -5,18 +5,17 @@ import json
 import bcrypt
 import secrets
 import string
-from datetime import datetime
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
+from django.conf import settings
 from django.http import HttpResponse, JsonResponse
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.crypto import get_random_string
 from django.utils import timezone
-from django.urls import reverse
 from django.core import serializers
 from django.core.validators import EmailValidator
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework.decorators import api_view
 from .models import Users, Drivers, Sponsors, Admins
 from points.models import Points
@@ -31,6 +30,16 @@ DB_PASS = os.getenv("DB_PASS")
 
 MAX_LOGIN_ATTEMPTS = 5
 TOKEN_LEN = 64
+
+class CustomTokenGenerator(PasswordResetTokenGenerator):
+    def _make_hash_value(self, user, timestamp):
+        """
+        Override the method to generate a hash value using the user's information.
+        """
+
+        return (
+            str(user.pk) + str(timestamp) + str(user.last_login)
+        )
 
 
 def generate_token(length):
@@ -74,6 +83,19 @@ def set_points(driver_id, points):
     except ObjectDoesNotExist:
         points_obj = Points.objects.create(driver_id=driver_id, total_points=points)
     points_obj.save()
+
+
+def verify_token_expiration_time(user):
+    """ Verification of reset token creation time """
+
+    current_time = timezone.now()
+    expiration_duration = timedelta(hours=1)
+    expiration_time = current_time - expiration_duration
+
+    if user.reset_token_created_at >= expiration_time:
+        return True
+    else:
+        return False
 
 
 @api_view(["POST"])
@@ -235,7 +257,7 @@ def login_exists(request):
 
         try:
             user = Users.objects.get(email=email)
-            if not user:
+            if user is None:
                 raise ObjectDoesNotExist()
         except ObjectDoesNotExist:
             return JsonResponse({"exists": False})
@@ -359,7 +381,7 @@ def logout(request):
 
 
 @api_view(["POST"])
-def password_reset(request):
+def generate_password_reset(request):
     """
         Sends a password reset email to user
 
@@ -379,20 +401,91 @@ def password_reset(request):
 
         try:
             user = Users.objects.get(email=email)
-            if not user:
+            if user is None:
                 raise ObjectDoesNotExist()
         except ObjectDoesNotExist:
             return JsonResponse({"error": "User does not exist"}, status=400)
 
-        # token_generator = default_token_generator
-        # token = token_generator.make_token(user)
-        token = get_random_string(length=32)
-        # reset_url = request.build_absolute_uri(reverse("password_reset", args=[user.pk, token]))
-        reset_url = request.build_absolute_uri("password_reset")
+        token_generator = CustomTokenGenerator()
+        token = token_generator.make_token(user)
+        reset_url = f"{settings.BASE_URL}/reset-password?token={token}"
 
-        # response = send_password_reset(email, reset_url)
+        user.reset_token = token
+        user.reset_token_created_at = timezone.now()
+        user.save()
+
+        send_password_reset(email, reset_url)
 
         return JsonResponse({"success": True})
+
+
+@api_view(["POST"])
+def validate_password_reset(request):
+    """
+        Validates user's password reset request
+
+        parameter - request:
+            user id
+            password reset token
+        return - JSON:
+            Invalid user, 400 status
+            Invalid token, 400 status
+            Token expired, 400 status
+            True: token and user id valid
+    """
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+        unique_id = data["unique_id"]
+        url_token = data["token"]
+
+        try:
+            user = Users.objects.get(unique_id=unique_id)
+            if user is None:
+                raise ObjectDoesNotExist()
+        except ObjectDoesNotExist:
+            return JsonResponse({"error": "User does not exist"}, status=400)
+
+        if verify_token_expiration_time(user):
+            if url_token == user.reset_token:
+                return JsonResponse({"success": True})
+            else:
+                return JsonResponse({"error": "Invalid Token"}, status=400)
+        else:
+            return JsonResponse({"error": "Token expired"}, status=400)
+
+
+@api_view(["POST"])
+def password_reset(request):
+    """
+        Replace old password in DB with new user generated password
+
+        parameter - request:
+            user id
+            password
+        return JSON:
+            Invalid user, 400 status
+            Cannot use old password, 400 status
+            True: successfully stored new password
+    """
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+        unique_id = data["unique_id"]
+        password = data["password"].encode("utf-8")
+
+        try:
+            user = Users.objects.get(unique_id=unique_id)
+        except Users.DoesNotExist:
+            return JsonResponse({"error": "User does not exist"}, status=400)
+        
+        if bcrypt.checkpw(password, bytes(user.password)):
+            return JsonResponse({"error": "New password cannot be the old password"}, status=400)
+        else:
+            hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
+            user.password = hashed_password
+            user.save()
+            return JsonResponse({"success": True})
 
 
 @api_view(["POST"])
@@ -580,20 +673,4 @@ def deactivate(request):
             print(error)
             return JsonResponse({"Connection Error": error}, status=400)
 
-    return JsonResponse({"success": True}, status=200)
-
-
-@api_view(["POST"])
-def test(request):
-    if (request.method == "POST"):
-        data = json.loads(request.body)
-        send_receipt_email(
-            email_address=data["email"], 
-            order_date=data["order_date"], 
-            order_total=data["order_total"], 
-            items=data["items"],
-            address=data["address"],
-            name=data["name"]
-        )
-    
     return JsonResponse({"success": True}, status=200)

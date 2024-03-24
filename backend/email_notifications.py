@@ -7,7 +7,7 @@ from django.utils.html import strip_tags
 
 
 def send_password_reset(email_address, url):
-    subject = "Password Reset - TruckTruckGo"
+    subject = "TruckTruckGo - Reset your account password"
     from_email = settings.DEFAULT_FROM_EMAIL
     to_email = email_address
 

@@ -30,6 +30,8 @@ urlpatterns = [
     path("login", users_views.login),
     path("logout", users_views.logout),
     path("password_reset", users_views.password_reset),
+    path("validate_password_reset", users_views.validate_password_reset),
+    path("generate_password_reset", users_views.generate_password_reset),
     path("update", users_views.update),
     path("specific", users_views.get_specific_user),
     path("catalog", catalog_views.get_products),
@@ -39,6 +41,5 @@ urlpatterns = [
     path("cart", cart_views.get_cart_items),
     path("order", cart_views.place_order),
     path("updateItem", cart_views.update_item),
-    path("deactivate", users_views.deactivate),
-    path("test", users_views.test)
+    path("deactivate", users_views.deactivate)
 ]
