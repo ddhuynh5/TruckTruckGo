@@ -21,7 +21,7 @@ from rest_framework.decorators import api_view
 from .models import Users, Drivers, Sponsors, Admins
 from points.models import Points
 from cart.models import Cart
-from email_notifications import send_welcome_email, send_password_reset
+from email_notifications import send_welcome_email, send_password_reset, send_receipt_email
 from decorators.login_decorator import check_session
 
 
@@ -472,7 +472,7 @@ def signup(request):
             return JsonResponse({"Error": error}, status=400)
 
         # Send a welcome email to the new user
-        # response = send_welcome_email(user.email, name)
+        response = send_welcome_email(user.email)
         new_user = Users.objects.filter(email=email)
         json_data = serializers.serialize("json", new_user)
 
@@ -480,7 +480,7 @@ def signup(request):
         json_dict[0]["name"] = driver.first_name + " " + driver.last_name
         json_data = json.dumps(json_dict)
 
-        return HttpResponse(json_data, content_type="application/json")
+        return HttpResponse(json_data, content_type="application/json", status=response)
 
 
 @api_view(["POST"])
@@ -583,10 +583,17 @@ def deactivate(request):
     return JsonResponse({"success": True}, status=200)
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def test(request):
-    if (request.method == "GET"):
+    if (request.method == "POST"):
         data = json.loads(request.body)
-        send_welcome_email(email_address=data["email"])
+        send_receipt_email(
+            email_address=data["email"], 
+            order_date=data["order_date"], 
+            order_total=data["order_total"], 
+            items=data["items"],
+            address=data["address"],
+            name=data["name"]
+        )
     
     return JsonResponse({"success": True}, status=200)
