@@ -2,10 +2,10 @@ import json
 from .models import Points
 from django.http import HttpResponse
 from rest_framework.decorators import api_view
-from decorators.login_decorator import check_session
+# from decorators.login_decorator import check_session
 
 @api_view(["POST"])
-@check_session
+# @check_session
 def get_points(request):
     """
         Returns points for driver

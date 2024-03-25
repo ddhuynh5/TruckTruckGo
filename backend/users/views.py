@@ -1,27 +1,26 @@
 """ Views for API Endpoints """
 
 import os
+import re
 import json
 import bcrypt
 import secrets
 import string
-from datetime import datetime
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
+from django.conf import settings
 from django.http import HttpResponse, JsonResponse
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.crypto import get_random_string
 from django.utils import timezone
-from django.urls import reverse
 from django.core import serializers
-from django.core.validators import EmailValidator
-from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework.decorators import api_view
 from .models import Users, Drivers, Sponsors, Admins
 from points.models import Points
-from email_notifications import send_welcome_email, send_password_reset
-from decorators.login_decorator import check_session
+from cart.models import Cart
+from email_notifications import send_welcome_email, send_password_reset, send_password_reset_notification, send_receipt_email
+# # from decorators.login_decorator import check_session
 
 
 # get environment variable from .env
@@ -30,6 +29,16 @@ DB_PASS = os.getenv("DB_PASS")
 
 MAX_LOGIN_ATTEMPTS = 5
 TOKEN_LEN = 64
+
+class CustomTokenGenerator(PasswordResetTokenGenerator):
+    def _make_hash_value(self, user, timestamp):
+        """
+        Override the method to generate a hash value using the user's information.
+        """
+
+        return (
+            str(user.pk) + str(timestamp) + str(user.last_login)
+        )
 
 
 def generate_token(length):
@@ -48,18 +57,14 @@ def generate_unique_session_id():
 
 def validate_email(email):
     """
-        Validates the email using Django"s EmailValidator
+        Validates the email using Django"s validate_email
 
         parameter - email: Email to be validated
         return - bool: true if valid, false if not
     """
 
-    validator = EmailValidator()
-    try:
-        validator(email)
-    except ValidationError:
-        return False
-    return True
+    regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return bool(re.fullmatch(regex, email))
 
 
 def set_points(driver_id, points):
@@ -71,110 +76,25 @@ def set_points(driver_id, points):
         if not points_obj:
             raise ObjectDoesNotExist()
     except ObjectDoesNotExist:
-        points_obj = Points.objects.create(
-            driver_id=driver_id, total_points=points)
+        points_obj = Points.objects.create(driver_id=driver_id, total_points=points)
     points_obj.save()
 
 
-def create_update_role(data, password, new_id, user=None):
-    """
-        Creates model based on role_id
-        If user exists, updates user instead
-    """
+def verify_token_expiration_time(user):
+    """ Verification of reset token creation time """
 
-    roles = {
-        1: Admins,
-        2: Sponsors,
-        3: Drivers
-    }
+    current_time = timezone.now()
+    expiration_duration = timedelta(hours=1)
+    expiration_time = current_time - expiration_duration
 
-    current_role = data["role_id"] if "role_id" in data else user.role_id
-
-    if current_role == 1:
-        model_class = Admins
-        related_model_class = Users
-    elif current_role == 2:
-        model_class = Sponsors
-        related_model_class = Users
-    elif current_role == 3:
-        model_class = Drivers
-        related_model_class = Users
+    if user.reset_token_created_at >= expiration_time:
+        return True
     else:
-        raise ValueError("Invalid role ID")
-    
-    if password is not None and isinstance(password, str):
-        password = password.encode("utf-8")
-
-    defaults = {
-        "first_name": data.get("first_name"),
-        "last_name": data.get("last_name"),
-        "sponsor_name": data.get("sponsor_name"),
-        "admin_name": data.get("admin_name"),
-        "sponsor_id": data.get("sponsor_id"),
-        "email": data.get("email"),
-        "address": data.get("address"),
-        "password": password,
-        "role_id": data.get("role_id"),
-        "unique_id": new_id
-    }
-
-    for key in list(defaults.keys()):
-        if defaults[key] is None or defaults[key] == "":
-            del defaults[key]
-
-    remove_lists = {
-        Admins: ["sponsor_id", "first_name", "last_name", "address", "sponsor_name"],
-        Sponsors: ["admin_name", "first_name", "last_name"],
-        Drivers: ["admin_name", "sponsor_name"]
-    }
-
-    remove = remove_lists.get(model_class, [])
-    defaults = {key: value for key, value in defaults.items() if key not in remove}
-
-    try:
-        obj = model_class.objects.get(unique_id=defaults["unique_id"])
-        created = False
-    except model_class.MultipleObjectsReturned:
-        obj = model_class.objects.filter(unique_id=defaults["unique_id"]).first()
-        created = False
-    except model_class.DoesNotExist:
-        obj = model_class.objects.create(**defaults)
-        created = True
-
-    # Updating current record if exists
-    if not created:
-        obj.__dict__.update(**defaults)
-        obj.save()
-
-    # new drivers start at 500 points
-    if created and obj.role_id == 3:
-        set_points(new_id, 500)
-    # if updating driver, check if points are passed in (if so update)
-    elif obj.role_id == 3:
-        if "total_points" not in data: # if points aren't passed in, use current points in DB
-            points_obj = Points.objects.get(driver_id=new_id)
-            set_points(new_id, points_obj.total_points)
-
-    # Updating tables where previous role_id existed
-    non_new_roles = [role for role in roles.values() if role !=
-                     roles[current_role]]
-
-    for role in non_new_roles:
-        if role == Drivers:
-            Points.objects.filter(driver_id=new_id).delete()
-        role.objects.filter(unique_id=new_id).delete()
-
-    # Updating Users Table
-    if related_model_class:
-        related_obj = related_model_class.objects.get(unique_id=new_id)
-        related_obj.__dict__.update(**defaults)
-        related_obj.save()
-    
-    return obj
+        return False
 
 
 @api_view(["POST"])
-@check_session
+# @check_session
 def get_driver(request):
     """ Pulls Driver from Drivers Table """
 
@@ -188,19 +108,26 @@ def get_driver(request):
         return HttpResponse(json_data, content_type="application/json")
 
 
-@api_view(["POST"])
-@check_session
+@api_view(["GET"])
+# @check_session
 def get_all_drivers(request):
     """ Pulls All Drivers for [Sponsor] from Drivers Table """
 
-    if request.method == "POST":
-        data = json.loads(request.body)
+    if request.method == "GET":
+        response = []
+        drivers = list(Drivers.objects.values("first_name", "last_name", "unique_id"))
 
-        user = Sponsors.objects.filter(unique_id=data["unique_id"]).first()
-        sponsor_id = user.sponsor_id
+        for driver in drivers:
+            listing = {}
+            points_obj = Points.objects.get(driver_id=driver["unique_id"])
 
-        current = list(Drivers.objects.filter(sponsor_id=sponsor_id).values("first_name", "last_name", "email", "address"))
-        json_data = json.dumps(current)
+            listing["first"] = driver["first_name"]
+            listing["last"] = driver["last_name"]
+            listing["points"] = points_obj.total_points
+
+            response.append(listing)
+
+        json_data = json.dumps(response)
 
         return HttpResponse(json_data, content_type="application/json")
 
@@ -230,21 +157,16 @@ def get_specific_user(request):
 
 
 @api_view(["POST"])
-@check_session
+# @check_session
 def get_sponsor(request):
-    """ Pulls Sponsors from Sponsor Table """
+    """ Pulls sponsor for specified user """
 
     if request.method == "POST":
         data = json.loads(request.body)
 
-        current = Users.objects.filter(
-            unique_id=data["unique_id"]).values("sponsor_id")
-        current_sponsor = Sponsors.objects.filter(
-            sponsor_id=current[0]["sponsor_id"]).values("sponsor_name")
-        all_sponsors = Sponsors.objects.values("sponsor_name")
-        sponsor_dict = {"current_sponsor": list(
-            current_sponsor), "all_sponsors": list(all_sponsors)}
-        json_data = json.dumps(sponsor_dict)
+        current = Users.objects.filter(unique_id=data["unique_id"]).values("sponsor_id")
+        current_sponsor = Sponsors.objects.filter(sponsor_id=current[0]["sponsor_id"]).values("sponsor_name", "sponsor_id")
+        json_data = json.dumps(list(current_sponsor))
 
         return HttpResponse(json_data, content_type="application/json")
 
@@ -261,7 +183,7 @@ def get_all_sponsors(request):
 
 
 @api_view(["GET"])
-@check_session
+# @check_session
 def check_password(request):
     """
         1-1 check on current password vs previous password
@@ -311,7 +233,7 @@ def check_password(request):
 
 
 @api_view(["GET"])
-@check_session
+# @check_session
 def login_exists(request):
     """
         Checks if the login exists in database
@@ -330,7 +252,7 @@ def login_exists(request):
 
         try:
             user = Users.objects.get(email=email)
-            if not user:
+            if user is None:
                 raise ObjectDoesNotExist()
         except ObjectDoesNotExist:
             return JsonResponse({"exists": False})
@@ -368,12 +290,11 @@ def login(request):
                 name = user_obj.sponsor_name
             else:
                 user_obj = Drivers.objects.get(email=user.email)
-                name = user_obj.first_name
+                name = user_obj.first_name + " " + user_obj.last_name
 
             # Checking for login attempt timeout
-            if "lockout_time" in request.COOKIES and request.COOKIES["lockout_time"] != "undefined":
-                locked_until = datetime.fromisoformat(
-                    request.COOKIES["lockout_time"]).astimezone(timezone.utc)
+            if "lockout_time" in request.COOKIES:# and request.COOKIES["lockout_time"] != "undefined":
+                locked_until = datetime.fromisoformat(request.COOKIES["lockout_time"]).astimezone()
                 if timezone.now() < locked_until:
                     remaining_time = locked_until - timezone.now()
                     remaining_time_str = f"{remaining_time.seconds // 60} minutes and {remaining_time.seconds % 60} seconds"
@@ -389,7 +310,7 @@ def login(request):
                     user.save()
                     return response
 
-            if not bcrypt.checkpw(password, user.password):
+            if not bcrypt.checkpw(password, bytes(user.password)):
                 user.login_attempts += 1
                 if user.login_attempts >= MAX_LOGIN_ATTEMPTS:
                     # Limit exceeded, show error message
@@ -426,13 +347,19 @@ def login(request):
 
 @api_view(['POST'])
 def logout(request):
-    """ Logs user out """
+    """ 
+        Logs user out
+
+        Parameter:
+            session id - user's session id from local/session storage
+    """
 
     if request.method == "POST":
-        session_id_from_cookie = request.COOKIES.get('sessionId')
-        if session_id_from_cookie:
-            user = Users.objects.filter(
-                session_id=session_id_from_cookie).first()
+        # session_id_from_cookie = request.headers.get('sessionId')
+        data = json.loads(request.body)
+        session_id = data["session_id"]
+        if session_id:
+            user = Users.objects.filter(session_id=session_id).first()
             if user:
                 # Set session expiration time to a past date to immediately invalidate the session
                 user.expiration_time = timezone.now() - timezone.timedelta(days=1)
@@ -449,7 +376,7 @@ def logout(request):
 
 
 @api_view(["POST"])
-def password_reset(request):
+def generate_password_reset(request):
     """
         Sends a password reset email to user
 
@@ -465,24 +392,96 @@ def password_reset(request):
         email = data["email"]
 
         if not validate_email(email):
-            return JsonResponse({"error": "Invalid email"})
+            return JsonResponse({"error": "Invalid email"}, status=400)
 
         try:
             user = Users.objects.get(email=email)
-            if not user:
+            if user is None:
+                raise ObjectDoesNotExist()
+        except ObjectDoesNotExist:
+            return JsonResponse({"error": "Email not found"}, status=400)
+
+        token_generator = CustomTokenGenerator()
+        token = token_generator.make_token(user)
+        reset_url = f"{settings.BASE_URL}/reset-password?token={token}"
+
+        user.reset_token = token
+        user.reset_token_created_at = timezone.now()
+        user.save()
+
+        send_password_reset(email, reset_url)
+
+        return JsonResponse({"success": True})
+
+
+@api_view(["POST"])
+def validate_password_reset(request):
+    """
+        Validates user's password reset request
+
+        parameter - request:
+            password reset token
+        return - JSON:
+            Invalid user, 400 status
+            Invalid token, 400 status
+            Token expired, 400 status
+            True: token and user id valid
+    """
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+        url_token = data["token"]
+
+        try:
+            user = Users.objects.get(reset_token=url_token)
+            if user is None:
                 raise ObjectDoesNotExist()
         except ObjectDoesNotExist:
             return JsonResponse({"error": "User does not exist"}, status=400)
 
-        # token_generator = default_token_generator
-        # token = token_generator.make_token(user)
-        token = get_random_string(length=32)
-        # reset_url = request.build_absolute_uri(reverse("password_reset", args=[user.pk, token]))
-        reset_url = request.build_absolute_uri("password_reset")
+        if verify_token_expiration_time(user):
+            if url_token == user.reset_token:
+                return JsonResponse({"success": True})
+            else:
+                return JsonResponse({"error": "Invalid Token"}, status=400)
+        else:
+            return JsonResponse({"error": "Token expired"}, status=400)
 
-        response = send_password_reset(email, reset_url)
 
-        return JsonResponse({"success": True})
+@api_view(["POST"])
+def password_reset(request):
+    """
+        Replace old password in DB with new user generated password
+
+        parameter - request:
+            password reset token
+            password
+        return JSON:
+            Invalid user, 400 status
+            Cannot use old password, 400 status
+            True: successfully stored new password
+    """
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+        token = data["token"]
+        password = data["password"].encode("utf-8")
+
+        try:
+            user = Users.objects.get(reset_token=token)
+        except Users.DoesNotExist:
+            return JsonResponse({"error": "Invalid Token"}, status=400)
+        
+        if bcrypt.checkpw(password, bytes(user.password)):
+            return JsonResponse({"error": "New password cannot be the old password"}, status=400)
+        else:
+            hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
+            user.password = hashed_password
+            user.reset_token = None
+            user.reset_token_created_at = None
+            user.save()
+            send_password_reset_notification(user.email)
+            return JsonResponse({"success": True})
 
 
 @api_view(["POST"])
@@ -540,38 +539,41 @@ def signup(request):
                 user.save()
                 new_id = user.unique_id
                 try:
-                    obj = create_update_role(data, password, new_id)
+                    driver = Drivers.objects.create(
+                        unique_id=new_id,
+                        first_name=data["first_name"],
+                        last_name=data["last_name"],
+                        email=data["email"],
+                        address=data["address"],
+                        password=password,
+                        role_id=data["role_id"],
+                        sponsor_id=data["sponsor_id"],
+                    )
+                    driver.save()
+                    set_points(new_id, 500)
                 except Exception as e:
                     print(e)
-                    return JsonResponse({"Error: ": str(e)}, status=400)
+                    return JsonResponse({"Error: ": str("yes")}, status=400)
             else:
                 return JsonResponse({"Error": f"User [{email}] already exists"}, status=400)
         except ConnectionRefusedError as error:
             print(error)
             return JsonResponse({"Error": error}, status=400)
 
-        # Get new user's name
-        if hasattr(obj, 'first_name') and obj.first_name:
-            name = obj.first_name
-        elif hasattr(obj, 'sponsor_name') and obj.sponsor_name:
-            name = obj.sponsor_name
-        else:
-            name = obj.admin_name
-
         # Send a welcome email to the new user
-        response = send_welcome_email(user.email, name)
+        response = send_welcome_email(user.email)
         new_user = Users.objects.filter(email=email)
         json_data = serializers.serialize("json", new_user)
 
         json_dict = json.loads(json_data)
-        json_dict[0]['name'] = name
+        json_dict[0]["name"] = driver.first_name + " " + driver.last_name
         json_data = json.dumps(json_dict)
 
         return HttpResponse(json_data, content_type="application/json", status=response)
 
 
 @api_view(["POST"])
-@check_session
+# @check_session
 def update(request):
     """
         Updates user in database
@@ -591,8 +593,31 @@ def update(request):
             user = Users.objects.filter(unique_id=data["unique_id"]).first()
             if user:
                 try:
-                    create_update_role(data, user.password,
-                                       user.unique_id, user)
+                    user_info = {}
+                    driver = Drivers.objects.get(unique_id=data["unique_id"])
+                    
+                    fields_mapping = {
+                        "first_name": "first_name",
+                        "last_name": "last_name",
+                        "email": "email",
+                        "address": "address",
+                        "sponsor_id": "sponsor_id",
+                        "password": "password"
+                    }
+
+                    for field, key in fields_mapping.items():
+                        if data[key] and data[key] != getattr(driver, field):
+                            if field == "password":
+                                if not bcrypt.checkpw(data["password"].encode("utf-8"), bytes(user.password)):
+                                    user_info[field] = bcrypt.hashpw(data["password"].encode(), bcrypt.gensalt())
+                            else:
+                                user_info[field] = data[key]
+
+                    driver.__dict__.update(**user_info)
+                    driver.save()
+                    user.__dict__.update(**user_info)
+                    user.save()
+
                 except Exception as e:
                     print(e)
                     return JsonResponse({"Error: ": str(e)}, status=400)
@@ -603,3 +628,45 @@ def update(request):
             return JsonResponse({"Connection Error": error}, status=400)
 
         return JsonResponse({"success": True}, status=200)
+
+
+@api_view(["POST"])
+def deactivate(request):
+    """
+        Removes user info from db
+
+        Parameter:
+            unique_id - User's unique id, used to locate in db
+        Returns:
+            Success msg if deletion complete
+            Error - connection, can't find user in db
+    """
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+
+        try:
+            user = Users.objects.get(unique_id=data["unique_id"])
+
+            if user:
+                try:
+                    cart = Cart.objects.filter(UserID=data["unique_id"]).all()
+                    points = Points.objects.get(driver_id=data["unique_id"])
+                    driver = Drivers.objects.get(unique_id=data["unique_id"])
+
+                    cart.delete()
+                    points.delete()
+                    driver.delete()
+                    user.delete()
+
+                except Exception as e:
+                    print(e)
+                    return JsonResponse({"Error: ": str(e)}, status=400)
+            else:
+                return JsonResponse({"Error deleting account, please contact support": data["unique_id"]}, status=400)
+
+        except ConnectionRefusedError as error:
+            print(error)
+            return JsonResponse({"Connection Error": error}, status=400)
+
+    return JsonResponse({"success": True}, status=200)

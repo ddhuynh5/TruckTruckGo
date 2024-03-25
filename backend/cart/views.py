@@ -3,12 +3,13 @@ from datetime import date
 from cart.models import Cart
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
-from decorators.login_decorator import check_session
+# from decorators.login_decorator import check_session
 from email_notifications import send_receipt_email
 from points.models import Points
+from users.models import Users, Drivers
 
 @api_view(["POST"])
-@check_session
+# @check_session
 def get_cart_items(request):
     if request.method == "POST":
         user_id = json.loads(request.body)["user_id"]
@@ -25,7 +26,7 @@ def get_cart_items(request):
 
 
 @api_view(["POST"])
-@check_session
+# @check_session
 def remove_from_cart(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -53,7 +54,7 @@ def remove_from_cart(request):
 
 
 @api_view(["POST"])
-@check_session
+# @check_session
 def add_to_cart(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -88,16 +89,24 @@ def add_to_cart(request):
 
 
 @api_view(["POST"])
-@check_session
+# @check_session
 def place_order(request):
 
     if request.method == 'POST':
         data = json.loads(request.body)
 
         user_id = data["id"]
-        email = data["email"]
+        try:
+            user = Users.objects.get(unique_id=user_id)
+            driver = Drivers.objects.get(unique_id=user_id)
+        except [Users.DoesNotExist, Drivers.DoesNotExist]:
+            return JsonResponse({"error": "User not found"}, status=400)
+
+        email = user.email
         total = data["total"]
         items = data["items"]
+        address = driver.address
+        name = driver.first_name + " " + driver.last_name
 
         # Validate the incoming data
         if not user_id:
@@ -107,7 +116,14 @@ def place_order(request):
         try:
             cart_items = Cart.objects.filter(UserID=user_id)
             cart_items.delete()
-            send_receipt_email(to_email=email, order_date=date.today(), order_total=total, items=items)
+            send_receipt_email(
+                email_address=email, 
+                order_date=date.today(), 
+                order_total=total, 
+                items=items,
+                address=address,
+                name=name
+            )
             points_obj = Points.objects.get(driver_id=user_id)
             points_obj.total_points = points_obj.total_points - total
             points_obj.save()
@@ -117,3 +133,33 @@ def place_order(request):
         except Exception as e:
             print(e)
             return JsonResponse({'error': str(e)}, status=500)
+
+
+@api_view(["POST"])
+def update_item(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        # Get the data from the request
+        UserID = data["properties"]["UserID"]
+        ItemID = data["properties"]["ItemID"]
+        Quantity = data["properties"]["Quantity"]
+
+        # Validate the incoming data
+        if not UserID or not ItemID or not Quantity:
+            return JsonResponse({'error': 'Missing parameters'}, status=400)
+        
+        # Save the data to the cart table
+        try:
+            carts = Cart.objects.filter(UserID=UserID, ItemID=ItemID)
+            if carts:
+                cart = carts.first()
+                cart.Quantity = int(Quantity)
+                cart.save()
+            return JsonResponse({'success': True})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': str(e)}, status=500)
+
+    # Return an error for non-POST requests
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+

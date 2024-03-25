@@ -7,7 +7,7 @@ from ebaysdk.exception import ConnectionError
 
 from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import api_view
-from decorators.login_decorator import check_session
+# from decorators.login_decorator import check_session
 
 load_dotenv()
 

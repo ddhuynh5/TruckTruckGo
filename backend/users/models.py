@@ -67,8 +67,11 @@ class Users(models.Model):
     sponsor_id = models.IntegerField()
     login_attempts = models.IntegerField(default=0)
     unique_id = models.AutoField(primary_key=True)
-    session_id = models.CharField(max_length=255)
+    session_id = models.CharField(max_length=255, null=True)
     expiration_time = models.DateTimeField(default=None, null=True)
+    reset_token = models.CharField(max_length=255, null=True)
+    reset_token_created_at = models.DateTimeField(null=True)
+    last_login = models.DateTimeField(null=True)
 
     class Meta:
         db_table = "Users"
@@ -81,6 +84,7 @@ class Users(models.Model):
         expiration_time_utc = timezone.now() + timezone.timedelta(hours=1)
         est_tz = timezone.get_fixed_timezone(-300)  # -5 hours from UTC
         expiration_time = expiration_time_utc.astimezone(est_tz)
+        self.last_login = timezone.now()
         self.session_id = session_id
         self.expiration_time = expiration_time
         self.save()
