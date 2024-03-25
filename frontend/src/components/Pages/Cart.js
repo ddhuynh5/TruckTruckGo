@@ -175,7 +175,7 @@ const Cart = () => {
                             </h1>
                             <Divider />
 
-                            {!loading || (cart && cart.length != 0) ? (
+                            {!loading || (cart && cart.length !== 0) ? (
                                 <div className="mt-4 space-y-8">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="col-span-1 grid grid-cols-1 gap-6">
@@ -223,7 +223,7 @@ const Cart = () => {
                                                 </div>
                                             ))}
                                         </div>
-                                        {(cart && cart.length != 0) && (
+                                        {(cart && cart.length !== 0) && (
                                             <div className="col-span-1 justify-end">
                                                 <div className="p-10 bg-gray-100">
                                                     <p className="text-md">Order Summary</p>

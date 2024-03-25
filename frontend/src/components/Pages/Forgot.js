@@ -92,7 +92,7 @@ const Forgot = () => {
         };
 
         getTokenFromURL();
-    }, []);
+    }, [location.searc]);
 
     useEffect(() => {
         if (token)
