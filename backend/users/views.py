@@ -19,7 +19,7 @@ from rest_framework.decorators import api_view
 from .models import Users, Drivers, Sponsors, Admins
 from points.models import Points
 from cart.models import Cart
-from email_notifications import send_welcome_email, send_password_reset, send_receipt_email
+from email_notifications import send_welcome_email, send_password_reset, send_password_reset_notification, send_receipt_email
 # from decorators.login_decorator import check_session
 
 
@@ -464,14 +464,13 @@ def password_reset(request):
 
     if request.method == "POST":
         data = json.loads(request.body)
-        print(data)
         token = data["token"]
         password = data["password"].encode("utf-8")
 
         try:
             user = Users.objects.get(reset_token=token)
         except Users.DoesNotExist:
-            return JsonResponse({"error": "User does not exist"}, status=400)
+            return JsonResponse({"error": "Invalid Token"}, status=400)
         
         if bcrypt.checkpw(password, bytes(user.password)):
             return JsonResponse({"error": "New password cannot be the old password"}, status=400)
@@ -481,6 +480,7 @@ def password_reset(request):
             user.reset_token = None
             user.reset_token_created_at = None
             user.save()
+            send_password_reset_notification(user.email)
             return JsonResponse({"success": True})
 
 

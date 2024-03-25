@@ -1,6 +1,8 @@
 """ All Email Notification Functions """
 
+
 from django.conf import settings
+from django.utils import timezone
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -14,6 +16,21 @@ def send_password_reset(email_address, url):
     context = {"url": url}
 
     html_content = render_to_string("reset.html", context)
+    text_content = strip_tags(html_content)
+
+    email = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
+    email.attach_alternative(html_content, "text/html")
+    email.send()
+
+
+def send_password_reset_notification(email_address):
+    subject = "TruckTruckGo Account Password Change"
+    from_email = settings.DEFAULT_FROM_EMAIL
+    to_email = email_address
+
+    context = {"time": timezone.now(), "email": email_address}
+
+    html_content = render_to_string("reset_notification.html", context)
     text_content = strip_tags(html_content)
 
     email = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
