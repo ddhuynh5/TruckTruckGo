@@ -1,6 +1,7 @@
 """ Views for API Endpoints """
 
 import os
+import re
 import json
 import bcrypt
 import secrets
@@ -12,8 +13,6 @@ from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from django.core import serializers
-from django.core.validators import EmailValidator
-from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework.decorators import api_view
@@ -21,7 +20,7 @@ from .models import Users, Drivers, Sponsors, Admins
 from points.models import Points
 from cart.models import Cart
 from email_notifications import send_welcome_email, send_password_reset, send_receipt_email
-from decorators.login_decorator import check_session
+# from decorators.login_decorator import check_session
 
 
 # get environment variable from .env
@@ -58,18 +57,14 @@ def generate_unique_session_id():
 
 def validate_email(email):
     """
-        Validates the email using Django"s EmailValidator
+        Validates the email using Django"s validate_email
 
         parameter - email: Email to be validated
         return - bool: true if valid, false if not
     """
 
-    validator = EmailValidator()
-    try:
-        validator(email)
-    except ValidationError:
-        return False
-    return True
+    regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return bool(re.fullmatch(regex, email))
 
 
 def set_points(driver_id, points):
@@ -397,7 +392,7 @@ def generate_password_reset(request):
         email = data["email"]
 
         if not validate_email(email):
-            return JsonResponse({"error": "Invalid email"})
+            return JsonResponse({"error": "Invalid email"}, status=400)
 
         try:
             user = Users.objects.get(email=email)
