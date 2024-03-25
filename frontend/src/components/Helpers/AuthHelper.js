@@ -194,10 +194,9 @@ export const sendPasswordResetEmail = async (email) => {
     }
 };
 
-export const validatePasswordResetEmail = async (id, token) => {
+export const validatePasswordResetURL = async (token) => {
     try {
         const response = await axios.post("http://localhost:8000/validate_password_reset", {
-            unique_id: id,
             token: token
         }, {
             withCredentials: true
@@ -213,10 +212,10 @@ export const validatePasswordResetEmail = async (id, token) => {
     }
 };
 
-export const updatePassword = async (id, password) => {
+export const updatePassword = async (token, password) => {
     try {
         const response = await axios.post("http://localhost:8000/password_reset", {
-            unique_id: id,
+            token: token,
             password: password
         }, {
             withCredentials: true

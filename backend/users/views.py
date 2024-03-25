@@ -399,7 +399,7 @@ def generate_password_reset(request):
             if user is None:
                 raise ObjectDoesNotExist()
         except ObjectDoesNotExist:
-            return JsonResponse({"error": "User does not exist"}, status=400)
+            return JsonResponse({"error": "Email not found"}, status=400)
 
         token_generator = CustomTokenGenerator()
         token = token_generator.make_token(user)
@@ -454,7 +454,7 @@ def password_reset(request):
         Replace old password in DB with new user generated password
 
         parameter - request:
-            user id
+            password reset token
             password
         return JSON:
             Invalid user, 400 status
@@ -464,11 +464,12 @@ def password_reset(request):
 
     if request.method == "POST":
         data = json.loads(request.body)
-        unique_id = data["unique_id"]
+        print(data)
+        token = data["token"]
         password = data["password"].encode("utf-8")
 
         try:
-            user = Users.objects.get(unique_id=unique_id)
+            user = Users.objects.get(reset_token=token)
         except Users.DoesNotExist:
             return JsonResponse({"error": "User does not exist"}, status=400)
         
@@ -477,6 +478,8 @@ def password_reset(request):
         else:
             hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
             user.password = hashed_password
+            user.reset_token = None
+            user.reset_token_created_at = None
             user.save()
             return JsonResponse({"success": True})
 
