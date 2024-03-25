@@ -43,6 +43,8 @@ def send_receipt_email(email_address, order_date, order_total, items, address, n
     from_email = settings.DEFAULT_FROM_EMAIL
     to_email = email_address
 
+    print(items)
+
     context = {
         "order_date": order_date,
         "order_total": order_total,

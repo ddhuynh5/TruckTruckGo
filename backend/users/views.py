@@ -20,7 +20,7 @@ from .models import Users, Drivers, Sponsors, Admins
 from points.models import Points
 from cart.models import Cart
 from email_notifications import send_welcome_email, send_password_reset, send_password_reset_notification, send_receipt_email
-# from decorators.login_decorator import check_session
+# # from decorators.login_decorator import check_session
 
 
 # get environment variable from .env

@@ -155,15 +155,12 @@ export const points = async (id) => {
     }
 };
 
-export const order = async (id, email, total, items, address, name) => {
+export const order = async (id, total, items) => {
     try {
         const response = await axios.post("http://localhost:8000/order", {
             id: id,
-            email: email,
             total: total,
             items: items,
-            address: address,
-            name: name
         }, {
             withCredentials: true
         });

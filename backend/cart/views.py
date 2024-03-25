@@ -3,9 +3,10 @@ from datetime import date
 from cart.models import Cart
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
-from decorators.login_decorator import check_session
+# from decorators.login_decorator import check_session
 from email_notifications import send_receipt_email
 from points.models import Points
+from users.models import Users, Drivers
 
 @api_view(["POST"])
 # @check_session
@@ -95,11 +96,17 @@ def place_order(request):
         data = json.loads(request.body)
 
         user_id = data["id"]
-        email = data["email"]
+        try:
+            user = Users.objects.get(unique_id=user_id)
+            driver = Drivers.objects.get(unique_id=user_id)
+        except [Users.DoesNotExist, Drivers.DoesNotExist]:
+            return JsonResponse({"error": "User not found"}, status=400)
+
+        email = user.email
         total = data["total"]
         items = data["items"]
-        address = data["address"]
-        name = data["name"]
+        address = driver.address
+        name = driver.first_name + " " + driver.last_name
 
         # Validate the incoming data
         if not user_id:
@@ -110,7 +117,7 @@ def place_order(request):
             cart_items = Cart.objects.filter(UserID=user_id)
             cart_items.delete()
             send_receipt_email(
-                to_email=email, 
+                email_address=email, 
                 order_date=date.today(), 
                 order_total=total, 
                 items=items,

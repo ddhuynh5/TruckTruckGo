@@ -19,7 +19,7 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
 };
 
-export default function Header() {
+export default function Header({ handlePoints }) {
     const navigate = useNavigate();
     const location = useLocation();
     const [sessionId, setSessionId] = useState("");
@@ -50,6 +50,9 @@ export default function Header() {
             if (id) {
                 const response = await points(id);
                 setUserPoints(response[0]["total_points"]);
+                if (typeof handlePoints === "function") {
+                    handlePoints(response[0]["total_points"]);
+                }
             }
         };
 
@@ -170,7 +173,8 @@ export default function Header() {
                                         <div className="flex justify-center">
                                             <span
                                                 className="mr-4 text-white bg-teal-500 hover:bg-teal-700 font-medium
-                                                            rounded-md text-sm px-4 py-2"
+                                                            rounded-md text-sm px-4 py-2 hidden sm:block"
+                                                id="points"
                                             >
                                                 Points: {userPoints}
                                             </span>
@@ -261,7 +265,7 @@ export default function Header() {
                                 {navigation.map((item) => {
                                     if (item.name === "Resources") {
                                         return (
-                                            <Menu key={item.name} as="div" className="relative focus:outline-none">
+                                            <Menu key={item.name} as="div" className="relative focus:outline-none pb-4">
                                                 <Menu.Button className="flex text-sm">
                                                     <div className="flex items-center">
                                                         <span
@@ -358,6 +362,15 @@ export default function Header() {
                                         </div>
                                         <Divider />
                                     </>
+                                )}
+                                {id && (
+                                    <span
+                                        className="text-white bg-teal-500 hover:bg-teal-700 font-medium
+                                                    rounded-md text-sm px-4 py-2 ml-2"
+                                        id="points"
+                                    >
+                                        Points: {userPoints}
+                                    </span>
                                 )}
                             </div>
                         </Disclosure.Panel>
