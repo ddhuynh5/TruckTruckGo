@@ -420,7 +420,6 @@ def validate_password_reset(request):
         Validates user's password reset request
 
         parameter - request:
-            user id
             password reset token
         return - JSON:
             Invalid user, 400 status
@@ -431,11 +430,10 @@ def validate_password_reset(request):
 
     if request.method == "POST":
         data = json.loads(request.body)
-        unique_id = data["unique_id"]
         url_token = data["token"]
 
         try:
-            user = Users.objects.get(unique_id=unique_id)
+            user = Users.objects.get(reset_token=url_token)
             if user is None:
                 raise ObjectDoesNotExist()
         except ObjectDoesNotExist:
