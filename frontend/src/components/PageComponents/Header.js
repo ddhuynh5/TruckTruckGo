@@ -5,6 +5,7 @@ import { Bars3Icon, XMarkIcon, UserIcon, ChevronDownIcon, ShoppingCartIcon } fro
 import { ReactComponent as Logo } from "../../assets/images/truck_logo.svg";
 import Divider from "./Divider";
 import { logout, fetchLoginInfo, fetchSessionId } from "../Helpers/AuthHelper";
+import { points } from "../Helpers/PagesHelper";
 
 const navigation = [
     { name: "Shop", page: "/shop", current: false },
@@ -23,6 +24,7 @@ export default function Header() {
     const location = useLocation();
     const [sessionId, setSessionId] = useState("");
     const [id, setId] = useState("");
+    const [userPoints, setUserPoints] = useState(null);
 
     const handleLogout = async () => {
         const confirmed = window.confirm("Are you sure you want to logout?");
@@ -42,6 +44,17 @@ export default function Header() {
         setId(id);
         setSessionId(session);
     }, []);
+
+    useEffect(() => {
+        const fetchPoints = async () => {
+            if (id) {
+                const response = await points(id);
+                setUserPoints(response[0]["total_points"]);
+            }
+        };
+
+        fetchPoints();
+    }, [id]);
 
     return (
         <Disclosure as="nav" className="py-2 max-w-6xl mx-auto px-4 sm:px-6">
@@ -155,6 +168,12 @@ export default function Header() {
                                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                                     <Menu as="div" className="relative ml-3">
                                         <div className="flex justify-center">
+                                            <span
+                                                className="mr-4 text-white bg-teal-500 hover:bg-teal-700 font-medium
+                                                            rounded-md text-sm px-4 py-2"
+                                            >
+                                                Points: {userPoints}
+                                            </span>
                                             <Menu.Button className="relative flex rounded-full text-sm">
                                                 <span className="absolute -inset-1.5" />
                                                 <span className="sr-only">Open user menu</span>
