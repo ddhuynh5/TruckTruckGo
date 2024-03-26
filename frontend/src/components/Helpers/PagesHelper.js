@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 
 export const getCart = async (id) => {
     try {
-        const response = await axios.post("http://localhost:8000/cart", {
+        const response = await axios.post("https://trucktruckgo-backend.onrender.com/cart", {
             user_id: id,
         }, {
             withCredentials: true,
@@ -26,7 +26,7 @@ export const getCart = async (id) => {
 
 export const removeFromCart = async (UserID, itemID) => {
     try {
-        const response = await axios.post("http://localhost:8000/cartRemove", {
+        const response = await axios.post("https://trucktruckgo-backend.onrender.com/cartRemove", {
             UserID: UserID,
             ItemID: itemID
         }, {
@@ -48,7 +48,7 @@ export const removeFromCart = async (UserID, itemID) => {
 
 export const addToCart = async (UserID, item, quantity) => {
     try {
-        const response = await axios.post("http://localhost:8000/cartAdd", {
+        const response = await axios.post("https://trucktruckgo-backend.onrender.com/cartAdd", {
             properties: {
                 UserID: UserID,
                 ItemID: item.id,
@@ -83,7 +83,7 @@ export const addToCart = async (UserID, item, quantity) => {
 
 export const updateItem = async (UserID, item, quantity) => {
     try {
-        const response = await axios.post("http://localhost:8000/updateItem", {
+        const response = await axios.post("https://trucktruckgo-backend.onrender.com/updateItem", {
             properties: {
                 UserID: UserID,
                 ItemID: item.id,
@@ -115,7 +115,7 @@ export const updateItem = async (UserID, item, quantity) => {
 
 export const catalog = async (keywords) => {
     try {
-        const response = await axios.post("http://localhost:8000/catalog", {
+        const response = await axios.post("https://trucktruckgo-backend.onrender.com/catalog", {
             keywords: keywords
         }, {
             withCredentials: true
@@ -138,7 +138,7 @@ export const catalog = async (keywords) => {
 
 export const points = async (id) => {
     try {
-        const response = await axios.post("http://localhost:8000/points", {
+        const response = await axios.post("https://trucktruckgo-backend.onrender.com/points", {
             id: id
         }, {
             withCredentials: true
@@ -157,7 +157,7 @@ export const points = async (id) => {
 
 export const order = async (id, total, items) => {
     try {
-        const response = await axios.post("http://localhost:8000/order", {
+        const response = await axios.post("https://trucktruckgo-backend.onrender.com/order", {
             id: id,
             total: total,
             items: items,

@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 export const getAllSponsors = async () => {
     try {
-        const response = await axios.get("http://localhost:8000/all_sponsors");
+        const response = await axios.get("https://trucktruckgo-backend.onrender.com/all_sponsors");
         const data = response.data;
         return data;
     } catch (error) {
@@ -73,7 +73,7 @@ export function useInterceptor() {
 
 export const login = async (email, password) => {
     try {
-        const response = await axios.post("http://localhost:8000/login", {
+        const response = await axios.post("https://trucktruckgo-backend.onrender.com/login", {
             email: email,
             password: password
         }, {
@@ -92,7 +92,7 @@ export const login = async (email, password) => {
 
 export const logout = async (sessionId) => {
     try {
-        const response = await axios.post("http://localhost:8000/logout", {
+        const response = await axios.post("https://trucktruckgo-backend.onrender.com/logout", {
             session_id: sessionId,
         }, {
             method: "POST",
@@ -125,7 +125,7 @@ export const signup = async (
     password
 ) => {
     try {
-        const response = await axios.post("http://localhost:8000/signup", {
+        const response = await axios.post("https://trucktruckgo-backend.onrender.com/signup", {
             address,
             first_name,
             last_name,
@@ -178,7 +178,7 @@ export const fetchSessionId = () => {
 
 export const sendPasswordResetEmail = async (email) => {
     try {
-        const response = await axios.post("http://localhost:8000/generate_password_reset", {
+        const response = await axios.post("https://trucktruckgo-backend.onrender.com/generate_password_reset", {
             email: email
         }, {
             withCredentials: true
@@ -196,7 +196,7 @@ export const sendPasswordResetEmail = async (email) => {
 
 export const validatePasswordResetURL = async (token) => {
     try {
-        const response = await axios.post("http://localhost:8000/validate_password_reset", {
+        const response = await axios.post("https://trucktruckgo-backend.onrender.com/validate_password_reset", {
             token: token
         }, {
             withCredentials: true
@@ -214,7 +214,7 @@ export const validatePasswordResetURL = async (token) => {
 
 export const updatePassword = async (token, password) => {
     try {
-        const response = await axios.post("http://localhost:8000/password_reset", {
+        const response = await axios.post("https://trucktruckgo-backend.onrender.com/password_reset", {
             token: token,
             password: password
         }, {

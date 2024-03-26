@@ -11,7 +11,7 @@ const Leaderboard = () => {
 
     const getAllDrivers = async () => {
         try {
-            const response = await axios.get("http://localhost:8000/drivers");
+            const response = await axios.get("https://trucktruckgo-backend.onrender.com/drivers");
             const data = response.data;
             return data;
         } catch (error) {

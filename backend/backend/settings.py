@@ -23,8 +23,7 @@ DB_PASS = os.getenv("DB_PASS")
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Base TruckTruckGo URL
-# BASE_URL = "https://truck-truck-go.vercel.app"
-BASE_URL = "http://localhost:3000"
+BASE_URL = "https://truck-truck-go.vercel.app"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
