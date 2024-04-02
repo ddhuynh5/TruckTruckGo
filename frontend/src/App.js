@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useInterceptor } from "./components/Helpers/AuthHelper";
 import { ToastContainer } from "react-toastify";
+import { Analytics } from "@vercel/analytics/react"
 
 import "./App.css";
 import "tailwindcss/tailwind.css";
@@ -48,6 +49,7 @@ function App() {
         </Routes>
       </BrowserRouter>
       <ToastContainer />
+      <Analytics />
     </>
   );
 }
