@@ -32,7 +32,7 @@ BASE_URL = "https://truck-truck-go.vercel.app"
 SECRET_KEY = SECRET
 
 # SECURITY WARNING: don"t run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
