@@ -1,0 +1,55 @@
+name: Run TTG-Ping [Python]
+on:
+  schedule:
+    - cron: "0 8 * * *"
+jobs:
+  TTG-Ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Log Python Version
+        run: |
+          python --version
+
+      - name: Log Working Directory
+        run: |
+          echo "Current working directory: $(pwd)"
+
+      - name: Create Python Virtual Environment
+        run: |
+          echo "Creating virtual environment inside python/ folder..."
+          python -m venv backend/automation/ping-venv
+
+      - name: Log Virtual Environment Creation
+        run: |
+          echo "Virtual environment created at $(pwd)/backend/automation/ping-venv"
+
+      - name: Enable Environment
+        run: |
+          echo "Activating virtual environment..."
+          source backend/automation/ping-venv/bin/activate
+
+      - name: Install Requirements
+        run: |
+          echo "Installing requirements from python/requirements.txt..."
+          pip install -r backend/automation/ping-requirements.txt
+
+      - name: Log Installed Packages
+        run: |
+          pip list
+
+      - name: Run Script
+        run: |
+          echo "Running ping.py script..."
+          python backend/automation/ping.py
+
+      - name: Log Completion
+        run: |
+          echo "Script completed successfully."
