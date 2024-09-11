@@ -1,12 +1,13 @@
 # CRON Job to automatically ping pages and log into site to ping DB
 
-import time
 import requests
 
 urls = [
     'https://truck-truck-go.vercel.app/',
     'https://truck-truck-go.vercel.app/shop',
-    'https://truck-truck-go.vercel.app/leaderboard'
+    'https://truck-truck-go.vercel.app/leaderboard',
+    'https://trucktruckgo-backend.onrender.com/drivers',
+    'https://trucktruckgo-backend.onrender.com/all_sponsors'
 ]
 
 login_url = 'https://trucktruckgo-backend.onrender.com/login'
@@ -25,7 +26,6 @@ def ping_website():
                 print(f"Failed to ping {url}, status code: {response.status_code}")
         except requests.exceptions.RequestException as e:
             print(f"Error pinging {url}: {e}")
-        time.sleep(300) # wait 5 mins
 
 def login():
     try:
@@ -39,5 +39,4 @@ def login():
         print(f"Error logging in: {e}")
 
 ping_website()
-time.sleep(600) # wait 10 mins
 login()

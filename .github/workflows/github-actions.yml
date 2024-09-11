@@ -2,7 +2,7 @@ name: Run TTG-Ping [Python]
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 8 * * *"
+    - cron: "*/14 * * * *"
 jobs:
   TTG-Ping:
     runs-on: ubuntu-latest
