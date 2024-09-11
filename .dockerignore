@@ -1,5 +1,6 @@
 # virtual environments
 venv
+ping-venv
 
 # Python files
 *.pyc
