@@ -19,6 +19,7 @@ from users import views as users_views
 from catalog import views as catalog_views
 from points import views as points_views
 from cart import views as cart_views
+from .views import health_check
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -41,5 +42,6 @@ urlpatterns = [
     path("cart", cart_views.get_cart_items),
     path("order", cart_views.place_order),
     path("updateItem", cart_views.update_item),
-    path("deactivate", users_views.deactivate)
+    path("deactivate", users_views.deactivate),
+    path("health_check", health_check)
 ]
